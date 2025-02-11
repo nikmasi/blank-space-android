@@ -121,11 +121,11 @@ fun BlankSpaceApp(){
             startDestination = Destinacije.UcitavanjeEkrana.ruta
         ) {
             composable(route = Destinacije.UcitavanjeEkrana.ruta){
-                UcitavanjeEkrana(Modifier,navController)
+                UcitavanjeEkrana(Modifier,navController,viewModelLogin)
             }
             composable(route = Destinacije.Pocetna.ruta) {
                 userType=""
-                Pocetna(modifier = Modifier.padding(padding),navController)
+                Pocetna(modifier = Modifier.padding(padding),navController,viewModelLogin)
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"

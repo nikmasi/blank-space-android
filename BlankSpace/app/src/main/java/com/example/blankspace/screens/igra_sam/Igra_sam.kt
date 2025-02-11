@@ -90,7 +90,7 @@ fun Igra_sam_mainCard(navController: NavController, selectedZanrovi: List<String
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.6f),
+            .fillMaxHeight(0.7f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -160,7 +160,7 @@ fun TimerEffect(
             delay(1000)  // pauza -1 sekunda
             count.value += 1  // count+1
         }
-        navController.navigate(Destinacije.Igra_sam.ruta+"/"+sZ+"/"+sN+"/"+ uiState.igrasam?.runda!!+"/"+(poeni).toString())
+        navController.navigate(Destinacije.Igra_sam.ruta+"/"+sZ+"/"+sN+"/"+ (runda+1).toString()+"/"+(poeni).toString())
     }
 }
 
@@ -210,6 +210,7 @@ fun DisplayContentIgraSam(uiState: UiStateI, crta: MutableState<String>) {
                 color = TEXT_COLOR,
                 fontSize = if (flag) 12.sp else 15.sp
             )
+
         }
         Text("${crta.value}", color = TEXT_COLOR, fontSize = if (crta.value.length > 36) 12.sp else 15.sp)
     }

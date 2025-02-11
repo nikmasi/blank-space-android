@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.blankspace.data.retrofit.models.PredloziPesamaResponse
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.HeadlineText
@@ -78,45 +79,8 @@ fun PredloziPesama_mainCard(navController:NavController,viewModelPredlozi:Predlo
                         .padding(16.dp).border(3.dp, TEXT_COLOR, RoundedCornerShape(3.dp))
                         .background(Color(0xFFF0DAE7))
                 ) {
-                    // LazyColumn sa naizmeničnim redovima boja
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFF0DAE7))
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Pesma",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Izvođač",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Žanr"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Korisnik"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Prihvati?"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Ukloni?",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                    }
+                    HeaderPredloziPesama()
+
                     LazyColumn(
                         contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
@@ -128,66 +92,117 @@ fun PredloziPesama_mainCard(navController:NavController,viewModelPredlozi:Predlo
                                 } else {
                                     Color(0xFFADD8E6)
                                 }
-                            Column {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(backgroundColor)
-                                        .padding(12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = item.naziv_pesme,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = item.izv_ime,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = item.zan_naziv,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = item.kor_ime,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Black
-                                    )
 
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(backgroundColor)
-                                        .padding(12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Button(
-                                        onClick = {
-                                            //Sacuvaj
-                                            navController.navigate(Destinacije.PesmaPodaci2.ruta)
-                                        }
-                                    ) {
-                                        Text("Prihvati")
-                                    }
+                            ItemPredloziPesama(item,backgroundColor,navController,viewModel)
 
-                                    Button(
-                                        onClick = {
-                                            viewModel.odbijPredlogPesme(item.id)
-                                        }
-                                    ) {
-                                        Text("Odbij")
-                                    }
-                                }
-                            }
                         }
                     }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun HeaderPredloziPesama(){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFF0DAE7))
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Pesma",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+        Text(
+            text = "Izvođač",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+        Text(
+            text = "Žanr"// poslednje aktivnosti"
+            ,style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+        Text(
+            text = "Korisnik"// poslednje aktivnosti"
+            ,style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+        Text(
+            text = "Prihvati?"// poslednje aktivnosti"
+            ,style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+        Text(
+            text = "Ukloni?",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Black
+        )
+    }
+}
+
+@Composable
+fun ItemPredloziPesama(
+    item:PredloziPesamaResponse,
+    backgroundColor:Color,
+    navController: NavController,
+    viewModel: PredloziViewModel
+){
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = item.naziv_pesme,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
+            Text(
+                text = item.izv_ime,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
+            Text(
+                text = item.zan_naziv,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
+            Text(
+                text = item.kor_ime,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = {
+                    navController.navigate(Destinacije.PesmaPodaci2.ruta)
+                }
+            ) {
+                Text("Prihvati")
+            }
+            Button(
+                onClick = {
+                    viewModel.odbijPredlogPesme(item.id)
+                }
+            ) {
+                Text("Odbij")
+            }
         }
     }
 }

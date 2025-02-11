@@ -17,7 +17,10 @@ fun PocetnaStudent(modifier: Modifier = Modifier,navController: NavController,vi
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
+        checkLoginState(viewModelLogin,navController)
+
         val uiStateLogin by viewModelLogin.uiState.collectAsState()
+        val ime by viewModelLogin.ime.collectAsState()
         val userName = uiStateLogin.login?.ime
         val isLoggedIn = uiStateLogin.login != null
 
@@ -31,7 +34,7 @@ fun PocetnaStudent(modifier: Modifier = Modifier,navController: NavController,vi
         PocetnaMainCard(
             navController = navController,
             imgSize = 8,
-            userName = userName,
+            userName = ime.ime,
             isLoggedIn = isLoggedIn,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },

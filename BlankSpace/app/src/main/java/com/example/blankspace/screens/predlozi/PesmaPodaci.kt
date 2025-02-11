@@ -42,7 +42,7 @@ import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.components.BodyLargeText
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
 
@@ -78,7 +78,6 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(22.dp))
-
             HeadlineText("Podaci o pesmi")
 
             var naziv_pesme by remember { mutableStateOf("") }
@@ -104,11 +103,7 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
                 label = "Poznati stihovi"
             )
 
-            Text(
-                text = "Nivo",
-                style = MaterialTheme.typography.bodyLarge,
-                color = TEXT_COLOR
-            )
+            BodyLargeText("Nivo")
 
             val selectedDifficulty = remember { mutableStateOf("easy") }
 
@@ -155,11 +150,8 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
                 }
             }
 
-            Text(
-                text = "Dodaj zvuk",
-                style = MaterialTheme.typography.bodyLarge,
-                color = TEXT_COLOR
-            )
+
+            BodyLargeText("Dodaj zvuk")
 
             val filePickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent(),

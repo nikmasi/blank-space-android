@@ -31,26 +31,22 @@ fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, view
                 createButton("Početna") {
                     navController.navigate(Destinacije.Pocetna.ruta)
                 }
+                createButton("Uloguj se") {
+                    navController.navigate(Destinacije.Login.ruta)
+                }
             }
-
-            createButton("Pravila igre") {
-                navController.navigate(Destinacije.PravilaIgre.ruta)
-            }
-
-            if (Destinacije.Login.ruta != currentRoute || Destinacije.Registracija.ruta != currentRoute ||
+            else if (Destinacije.Login.ruta != currentRoute || Destinacije.Registracija.ruta != currentRoute ||
                 Destinacije.ZaboravljenaLozinka.ruta !=currentRoute ||
                 Destinacije.ZaboravljenaLozinkaPitanje.ruta !=currentRoute ||
                 Destinacije.Pocetna.ruta !=currentRoute) {
                 createButton("Izloguj se") {
-                    viewModelLogin.izloguj_se()
                     navController.navigate(Destinacije.Login.ruta)
+                    viewModelLogin.izloguj_se()
+                    //navController.navigate(Destinacije.Login.ruta)
                 }
             }
-
-            if (Destinacije.Pocetna.ruta == currentRoute) {
-                createButton("Uloguj se") {
-                    navController.navigate(Destinacije.Login.ruta)
-                }
+            createButton("Pravila igre") {
+                navController.navigate(Destinacije.PravilaIgre.ruta)
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(

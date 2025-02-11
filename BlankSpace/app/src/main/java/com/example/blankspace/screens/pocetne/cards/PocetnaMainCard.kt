@@ -46,8 +46,9 @@ fun PocetnaMainCard(
             if (isLoggedIn) {
                 HeadlineText("Ulogovani ste kao $userName!")
             } else {
-                HeadlineText("Igra dopunjavanja tekstova")
-                HeadlineText("pesama")
+                HeadlineText("Ulogovani ste kao $userName!")
+                //HeadlineText("Igra dopunjavanja tekstova")
+                //HeadlineText("pesama")
             }
 
             Spacer(modifier = Modifier.height(22.dp))

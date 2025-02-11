@@ -17,7 +17,10 @@ fun PocetnaBrucos(modifier: Modifier = Modifier,navController: NavController,vie
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
+        checkLoginState(viewModelLogin,navController)
+
         val uiStateLogin by viewModelLogin.uiState.collectAsState()
+        val ime by viewModelLogin.ime.collectAsState()
         val isLoggedIn = uiStateLogin.login != null
 
         LaunchedEffect(uiStateLogin.login?.odgovor) {
@@ -32,7 +35,7 @@ fun PocetnaBrucos(modifier: Modifier = Modifier,navController: NavController,vie
         PocetnaMainCard(
             navController = navController,
             imgSize = 8,
-            userName = uiStateLogin.login?.ime,
+            userName = ime.ime,
             isLoggedIn = isLoggedIn,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) }

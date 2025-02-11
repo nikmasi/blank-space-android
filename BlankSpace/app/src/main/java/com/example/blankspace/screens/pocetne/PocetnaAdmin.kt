@@ -25,6 +25,8 @@ import com.example.blankspace.viewModels.LoginViewModel
 fun PocetnaAdmin(modifier: Modifier = Modifier,navController: NavController,viewModelLogin:LoginViewModel) {
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
+
+        checkLoginState(viewModelLogin,navController)
         PocetnaAdmin_mainCard(navController,viewModelLogin)
     }
 }
@@ -32,6 +34,7 @@ fun PocetnaAdmin(modifier: Modifier = Modifier,navController: NavController,view
 @Composable
 fun PocetnaAdmin_mainCard(navController:NavController,viewModelLogin:LoginViewModel) {
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
+    val ime by viewModelLogin.ime.collectAsState()
 
     LaunchedEffect(uiStateLogin.login?.odgovor) {
         val odgovor = uiStateLogin.login?.odgovor
@@ -59,7 +62,8 @@ fun PocetnaAdmin_mainCard(navController:NavController,viewModelLogin:LoginViewMo
             verticalArrangement = Arrangement.Center
         ) {
             MyImage(ContentScale.Fit,8)
-            HeadlineText("Ulogovani ste kao ${uiStateLogin.login?.ime}!")
+
+            HeadlineText("Ulogovani ste kao ${ime.ime}!")
 
             Spacer(modifier = Modifier.height(22.dp))
 

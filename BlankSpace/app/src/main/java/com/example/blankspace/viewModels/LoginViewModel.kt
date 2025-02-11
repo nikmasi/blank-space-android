@@ -15,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +35,9 @@ class LoginViewModel @Inject constructor(
 
     private var _uiState = MutableStateFlow(UiStateL())
     val uiState: StateFlow<UiStateL> = _uiState
+
+    private var _ime = MutableStateFlow(Ime())
+    val ime:StateFlow<Ime> = _ime
 
     private val sharedPreferences = EncryptedSharedPreferences.create(
         "auth_prefs",
@@ -75,6 +79,7 @@ class LoginViewModel @Inject constructor(
             editor.putString("user_key", username)
             editor.putString("password_key", password)
             editor.apply()
+            _ime.value= Ime(ime=_uiState.value.login?.ime)
 
         } catch (e: Exception) {
             _uiState.value = UiStateL(login = null, isRefreshing = false, error = e.localizedMessage)
@@ -87,7 +92,11 @@ class LoginViewModel @Inject constructor(
         editor.putString("user_key", "")
         editor.putString("password_key", "")
         editor.apply()
-        fetchLogin("","")
+
+        _ime.value= Ime(ime=_uiState.value.login?.ime)
+        _uiState.value = _uiState.value.copy(login = null)
+
+        //fetchLogin("","")
     }
 
     fun setKorisnik(UIStateR:UiStateR)= viewModelScope.launch {
@@ -118,4 +127,8 @@ data class UiStateL(
     val login: LoginResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null
+)
+
+data class Ime(
+    val ime:String?=""
 )
