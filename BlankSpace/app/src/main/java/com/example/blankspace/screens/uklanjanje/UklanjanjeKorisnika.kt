@@ -25,6 +25,7 @@ import com.example.blankspace.data.retrofit.models.KorisniciResponse
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.KorisniciViewModel
 import com.example.blankspace.viewModels.UiStateUklanjanjeKorisnika
 import com.example.blankspace.viewModels.UklanjanjeViewModel
@@ -33,7 +34,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun UklanjanjeKorisnika(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         UklanjanjeKorisnika_mainCard(navController)
     }
@@ -65,7 +66,7 @@ fun UklanjanjeKorisnika_mainCard(navController:NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top=12.dp, bottom = 12.dp),
+                .padding( bottom = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

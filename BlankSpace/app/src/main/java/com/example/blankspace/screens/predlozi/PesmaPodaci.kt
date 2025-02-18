@@ -43,12 +43,13 @@ import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.BodyLargeText
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
 
 @Composable
 fun PesmaPodaci(navController: NavController,viewModel: PredloziViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
         PesmaPodaci_mainCard(navController,viewModel)
@@ -73,7 +74,7 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

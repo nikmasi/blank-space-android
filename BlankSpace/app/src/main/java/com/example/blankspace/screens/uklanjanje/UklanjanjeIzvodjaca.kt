@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.IzvodjaciZanraViewModel
 import com.example.blankspace.viewModels.UiStateUklanjanjeIzvodjaca
 import com.example.blankspace.viewModels.UklanjanjeViewModel
@@ -32,7 +33,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun UklanjanjeIzvodjaca(navController: NavController, zanr:Int) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         UklanjanjeIzvodjaca_mainCard(navController,zanr)
     }
@@ -65,7 +66,7 @@ fun UklanjanjeIzvodjaca_mainCard(navController:NavController,zanr: Int) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start=16.dp, end = 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

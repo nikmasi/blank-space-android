@@ -41,6 +41,7 @@ import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredlaganjeIzvodjacaViewModel
 import com.example.blankspace.viewModels.UiStateL
@@ -52,7 +53,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun PredlaganjeIzvodjaca(navController: NavController,viewModelLogin:LoginViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
         PredlaganjeIzvodjaca_mainCard(navController,viewModelLogin)
@@ -84,7 +85,7 @@ fun PredlaganjeIzvodjaca_mainCard(navController: NavController,viewModelLogin:Lo
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 16.dp,end=16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

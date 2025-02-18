@@ -40,11 +40,12 @@ import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.ZanrViewModel
 
 @Composable
 fun IzborZanraUklanjanjeIzvodjaca(navController: NavController){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +30.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
         IzborZanraUklanjanjeIzvodjaca_mainCard(navController)
@@ -78,7 +79,7 @@ fun IzborZanraUklanjanjeIzvodjaca_mainCard(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 16.dp,end=16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

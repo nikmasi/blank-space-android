@@ -41,6 +41,7 @@ import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.BodyTextClickable
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.UiStateL
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun Login(navController: NavController,viewModelLogin:LoginViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight+30.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
         Login_mainCard(navController,viewModelLogin)
@@ -73,7 +74,7 @@ fun Login_mainCard(navController: NavController,viewModel:LoginViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp), // Povećan padding
+                .padding(end = 20.dp, start = 20.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -139,7 +140,6 @@ fun LoginHeader() {
 
 @Composable
 fun LoginImage(){
-    Spacer(modifier = Modifier.height(30.dp))
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 

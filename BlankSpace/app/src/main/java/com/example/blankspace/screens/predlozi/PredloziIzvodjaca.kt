@@ -22,12 +22,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
+import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.PredloziViewModel
 
 @Composable
 fun PredloziIzvodjaca(navController: NavController,viewModelPredlozi:PredloziViewModel) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +12.dp)) {
         BgCard2()
         PredloziIzvodjaca_mainCard(navController,viewModelPredlozi)
     }
@@ -40,7 +42,7 @@ fun PredloziIzvodjaca_mainCard(navController:NavController,viewModelPredlozi:Pre
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.98f),
+            .fillMaxHeight(0.95f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         val context= LocalContext.current
@@ -66,17 +68,16 @@ fun PredloziIzvodjaca_mainCard(navController:NavController,viewModelPredlozi:Pre
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top=12.dp, bottom = 12.dp),
+                .padding(bottom = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = "Predlozi izvođača",
                 style = MaterialTheme.typography.headlineSmall,
                 color = TEXT_COLOR
             )
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             // Profil Card
             Card(
                 modifier = Modifier
@@ -170,22 +171,17 @@ fun PredloziIzvodjaca_mainCard(navController:NavController,viewModelPredlozi:Pre
                                         .padding(12.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Button(
-                                        onClick = {
-                                            viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,item.ime_izvodjaca,item.zan_naziv,item.kor_ime)
-                                            navController.navigate(Destinacije.PesmaPodaci.ruta)
-                                        }
-                                    ) {
-                                        Text("Prihvati")
-                                    }
+                                    val buttonStyle = MaterialTheme.typography.bodyMedium
 
-                                    Button(
-                                        onClick = {
-                                            viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
-                                        }
-                                    ) {
-                                        Text("Odbij")
-                                    }
+                                    SmallButton(onClick = {
+                                        viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,item.ime_izvodjaca,
+                                            item.zan_naziv,item.kor_ime)
+                                        navController.navigate(Destinacije.PesmaPodaci.ruta)
+                                    }, text = "Prihvati", style = buttonStyle)
+
+                                    SmallButton(onClick = {
+                                        viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
+                                    }, text = "Odbij", style = buttonStyle)
                                 }
                             }
                         }

@@ -23,13 +23,15 @@ import com.example.blankspace.data.retrofit.models.PredloziPesamaResponse
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.HeadlineText
+import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.PredloziViewModel
 
 
 @Composable
 fun PredloziPesama(navController: NavController,viewModelPredlozi:PredloziViewModel) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +30.dp)) {
         BgCard2()
         PredloziPesama_mainCard(navController,viewModelPredlozi)
     }
@@ -50,19 +52,18 @@ fun PredloziPesama_mainCard(navController:NavController,viewModelPredlozi:Predlo
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.98f),
+            .fillMaxHeight(0.95f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top=12.dp, bottom = 12.dp),
+                .padding(bottom = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(22.dp))
             HeadlineText("Predlozi pesama")
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Card(
                 modifier = Modifier
@@ -189,20 +190,15 @@ fun ItemPredloziPesama(
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(
-                onClick = {
-                    navController.navigate(Destinacije.PesmaPodaci2.ruta)
-                }
-            ) {
-                Text("Prihvati")
-            }
-            Button(
-                onClick = {
-                    viewModel.odbijPredlogPesme(item.id)
-                }
-            ) {
-                Text("Odbij")
-            }
+            val buttonStyle = MaterialTheme.typography.bodyMedium
+
+            SmallButton(onClick = {
+                navController.navigate(Destinacije.PesmaPodaci2.ruta)
+            }, text = "Prihvati", style = buttonStyle)
+
+            SmallButton(onClick = {
+                viewModel.odbijPredlogPesme(item.id)
+            }, text = "Odbij", style = buttonStyle)
         }
     }
 }

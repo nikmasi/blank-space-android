@@ -28,6 +28,7 @@ import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.UiStateUklanjanjePesme
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZanrViewModel
@@ -36,7 +37,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun UklanjanjePesme(navController: NavController,viewModelUklanjanje: UklanjanjeViewModel) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         UklanjanjePesme_mainCard(navController,viewModelUklanjanje)
     }
@@ -78,7 +79,7 @@ fun UklanjanjePesme_mainCard(navController:NavController,viewModelUklanjanje: Uk
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp), // Padding unutar card-a
+                .padding(start=16.dp,end=   16.dp, bottom = 16.dp), // Padding unutar card-a
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center // Centriranje sadržaja unutar card-a
         ) {

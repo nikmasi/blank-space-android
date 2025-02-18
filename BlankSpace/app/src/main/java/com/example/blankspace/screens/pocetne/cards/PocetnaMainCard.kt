@@ -43,20 +43,16 @@ fun PocetnaMainCard(
         ) {
             MyImage(ContentScale.Crop, imgSize)
 
-            if (isLoggedIn) {
+            if (isLoggedIn || userName!=null) {
                 HeadlineText("Ulogovani ste kao $userName!")
             } else {
-                HeadlineText("Ulogovani ste kao $userName!")
-                //HeadlineText("Igra dopunjavanja tekstova")
-                //HeadlineText("pesama")
+                HeadlineText("Igra dopunjavanja tekstova")
+                HeadlineText("pesama")
             }
 
             Spacer(modifier = Modifier.height(22.dp))
 
             SmallButton(onClick = onGameSoloClick, text = "Igraj sam", style = MaterialTheme.typography.bodyMedium)
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             SmallButton(onClick = onGameDuelClick, text = "Igraj u duelu", style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(12.dp))

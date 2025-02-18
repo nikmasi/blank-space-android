@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +32,12 @@ import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.LoginViewModel
 import kotlinx.coroutines.delay
+import android.media.AudioAttributes
+import android.media.SoundPool
+import android.media.MediaPlayer
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController,loginViewModel: LoginViewModel) {
@@ -41,29 +48,31 @@ fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController
 }
 
 @Composable
-fun UcitavanjeEkrana_main(navController: NavController,loginViewModel: LoginViewModel) {
+fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel) {
+    val context = LocalContext.current
     val isLoading = remember { mutableStateOf(true) }
     val uiStateLogin by loginViewModel.uiState.collectAsState()
 
+    val mediaPlayer = remember { MediaPlayer.create(context, R.raw.taylorswiftblankspace2) }
+
     LaunchedEffect(true) {
-        delay(3000)
+        mediaPlayer.start()  // Pokreće zvučni efekat
+        delay(5400)
+        mediaPlayer.stop()   // Zaustavi zvuk nakon što je učitavanje završeno
         isLoading.value = false
-        //navController.navigate(Destinacije.Login.ruta)
-        Log.d("LOGIN ",uiStateLogin.toString())
-        if(uiStateLogin.login?.access!=null){
+
+        if (uiStateLogin.login?.access != null) {
             uiStateLogin.login?.tip?.let {
                 when (it) {
                     "S" -> navController.navigate(Destinacije.PocetnaStudent.ruta)
                     "B" -> navController.navigate(Destinacije.PocetnaBrucos.ruta)
                     "M" -> navController.navigate(Destinacije.PocetnaMaster.ruta)
                     "A" -> navController.navigate(Destinacije.PocetnaAdmin.ruta)
-
                 }
             }
-        }else{
+        } else {
             navController.navigate(Destinacije.Login.ruta)
         }
-
     }
 
     Surface(
@@ -91,7 +100,6 @@ fun UcitavanjeEkrana_main(navController: NavController,loginViewModel: LoginView
                 )
             )
 
-            // Animated text: "Cause I’ve got a blank space, baby, and I’ll write your name"
             val alpha by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 1f,
@@ -146,3 +154,4 @@ fun UcitavanjeEkrana_main(navController: NavController,loginViewModel: LoginView
         }
     }
 }
+

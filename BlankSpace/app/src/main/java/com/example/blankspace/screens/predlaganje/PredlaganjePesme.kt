@@ -50,6 +50,7 @@ import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.theme.TEXT_COLOR
+import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.IzvodjacZanrViewModel
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredlaganjeIzvodjacaViewModel
@@ -63,8 +64,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun PredlaganjePesme(navController: NavController,viewModelLogin:LoginViewModel){
     Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 52.dp)) {
+        .fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
         PredlaganjePesme_mainCard(navController,viewModelLogin)
@@ -98,7 +98,7 @@ fun PredlaganjePesme_mainCard(navController: NavController,viewModelLogin:LoginV
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
