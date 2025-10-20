@@ -2,8 +2,15 @@ package com.example.blankspace.screens.igra_sam
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -232,6 +239,60 @@ fun UserInputSectionIgraSam(
 ) {
     var odgovor by remember { mutableStateOf("") }
 
+    var isListening by remember { mutableStateOf(false) }
+    val speechRecognizer = remember {
+        SpeechRecognizer.createSpeechRecognizer(context)
+    }
+
+    // RecognitionListener koji hvata događaje prepoznavanja
+    val recognitionListener = remember {
+        object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {
+                // Možeš staviti neki log ili UI indikator
+            }
+
+            override fun onBeginningOfSpeech() {
+                // Korisnik počeo da govori
+            }
+
+            override fun onRmsChanged(rmsdB: Float) {
+                // Možeš iskoristiti za vizualni indikator jačine glasa
+            }
+
+            override fun onBufferReceived(buffer: ByteArray?) {}
+
+            override fun onEndOfSpeech() {
+                // Korisnik je završio govor
+                isListening = false
+            }
+
+            override fun onError(error: Int) {
+                isListening = false
+                // Možeš prikazati grešku, na primer Toast
+                Toast.makeText(context, "Greška prilikom prepoznavanja govora: $error", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResults(results: Bundle?) {
+                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                if (!matches.isNullOrEmpty()) {
+                    odgovor = matches[0] // Prvi rezultat
+                }
+                isListening = false
+            }
+
+            override fun onPartialResults(partialResults: Bundle?) {
+                // Opcionalno: delimični rezultati
+            }
+
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        }
+    }
+
+    // Postavljanje listenera jednom
+    LaunchedEffect(Unit) {
+        speechRecognizer.setRecognitionListener(recognitionListener)
+    }
+
     OutlinedTextField(
         value = odgovor,
         onValueChange = { odgovor = it },
@@ -248,8 +309,46 @@ fun UserInputSectionIgraSam(
     )
 
     Spacer(modifier = Modifier.height(22.dp))
+    // Launcher za traženje dozvole
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) {
+            Toast.makeText(context, "Dozvola za mikrofon je potrebna.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Row {
+        Button(
+            onClick = {
+                // Provera dozvole
+                if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                    return@Button
+                }
+
+                if (!isListening) {
+                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
+                    }
+                    speechRecognizer.startListening(intent)
+                    isListening = true
+
+                } else {
+                    speechRecognizer.stopListening()
+                    isListening = false
+
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isListening) Color.Red else Color(0xFFFF69B4),
+                contentColor = Color.White
+            )
+        ) {
+            Text(if (isListening) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
+        }
+
         Button(
             onClick = {
                 if (!isAudioP.value) {
@@ -266,7 +365,7 @@ fun UserInputSectionIgraSam(
         ) {
             Text(text = "Pusti", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(1.dp))
 
         Button(
             onClick = {
@@ -298,7 +397,9 @@ fun UserInputSectionIgraSam(
             Text(text = "Proveri", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(1.dp))
+    }
+    Row{
 
         Button(
             onClick = {
@@ -316,6 +417,7 @@ fun UserInputSectionIgraSam(
         ) {
             Text(text = "Dalje", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
         }
+
     }
 }
 

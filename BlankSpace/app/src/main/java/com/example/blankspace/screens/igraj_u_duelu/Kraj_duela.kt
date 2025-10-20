@@ -60,8 +60,10 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
     val uiStateKraj by viewModelDuel.uiStateKrajDuela.collectAsState()
 
     LaunchedEffect(Unit) {
-        //viewModelDuel.fetchKrajDuela()
-    }
+        uiState.duel?.poeni?.let { uiStateSifra.sifraResponse?.sifra?.let { it1 ->
+            viewModelDuel.fetchKrajDuela(it,
+                it1,uiState.duel!!.rundePoeni,0,"true")
+    }}}
 
 
     Surface(
@@ -100,6 +102,12 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                         .background(Color(0xFFF0DAE7))
                 ) {
                     // LazyColumn sa naizmeničnim redovima boja
+
+                    val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
+                    val igrac1 = uiStateKraj.krajDuela?.igrac1 ?: "Igrač 1"
+                    val igrac2 = uiStateKraj.krajDuela?.igrac2 ?: "Igrač 2"
+
+// Naslov red
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -107,31 +115,17 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                             .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = "Runda",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
+                        Text(text = "Runda", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                        Text(text = igrac1, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                        Text(text = igrac2, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                     }
+
+// Lista rundi sa poenima
                     LazyColumn(
                         contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
-                        items((1 .. 7).toList()) { index ->
-                            val backgroundColor = if (index % 2 == 1) {
-                                Color(0xFFF0DAE7)
-                            } else {
-                                Color(0xFFADD8E6)
-                            }
+                        itemsIndexed(runde) { index, poeni ->
+                            val backgroundColor = if (index % 2 == 0) Color(0xFFF0DAE7) else Color(0xFFADD8E6)
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -139,11 +133,26 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                                     .padding(12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(
-                                    text = "$index", // Using $index to display the number
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
+                                Text(text = "${index + 1}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                                Text(text = "${poeni[0]}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                                Text(text = "${poeni[1]}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                            }
+                        }
+
+                        // Red za ukupno
+                        item {
+                            val ukupno1 = runde.sumOf { it[0] }
+                            val ukupno2 = runde.sumOf { it[1] }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFFF0DAE7))
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = "Ukupno", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                                Text(text = "$ukupno1", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                                Text(text = "$ukupno2", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                             }
                         }
                     }

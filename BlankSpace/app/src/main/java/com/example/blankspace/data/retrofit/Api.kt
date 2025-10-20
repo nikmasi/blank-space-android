@@ -60,7 +60,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-const val BASE_URL = "http://192.168.143.178:8000/"
+const val BASE_URL = "http://10.132.56.178:8000/"
 //const val BASE_URL = "http://10.0.2.2:8000/"
 const val BASE_URL_LOCALHOST ="http://127.0.0.1:8000/"
 

@@ -51,6 +51,10 @@ class DuelViewModel @Inject constructor(
             val request = GenerisiSifruRequest(korisnickoIme)
             val response = repository.generisiSifru(request)
             _uiStateSifSobe.value = UiStateSifSobe(sifraResponse = response, isRefreshing = false)
+
+            // ✨ NEW LINE: Save the generated code to trigger the polling
+            response.sifra?.let { upisiSifruSobe(it) }
+
         }catch (e: Exception) {
             _uiStateSifSobe.value = UiStateSifSobe(sifraResponse = null, isRefreshing = false, error = e.localizedMessage)
         }
@@ -174,7 +178,7 @@ class DuelViewModel @Inject constructor(
             RedniBroj(redniBroj = redniBroj)
     }
 
-    private val _uiStateKrajDuela = MutableStateFlow(UiStateKrajDuela())
+    private val _uiStateKrajDuela = MutableStateFlow(UiStateKrajDuela(emptyList()))
     val uiStateKrajDuela: StateFlow<UiStateKrajDuela> = _uiStateKrajDuela
 
     fun fetchKrajDuela(poeni:Int,soba:Int,rundaPoeni:List<Int>,redniBroj: Int,upisuj:String) = viewModelScope.launch {
@@ -183,10 +187,10 @@ class DuelViewModel @Inject constructor(
             val request = KrajDuelaRequest(rundaPoeni,poeni,soba,redniBroj,upisuj)
             val response = repository.krajDuela(request)
 
-            _uiStateKrajDuela.value = UiStateKrajDuela(krajDuela = response, isRefreshing = false)
+            _uiStateKrajDuela.value = UiStateKrajDuela(poeni_runde = response.poeni_runde, krajDuela = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateKrajDuela.value =
-                UiStateKrajDuela(krajDuela = null, isRefreshing = false, error = e.localizedMessage)
+                UiStateKrajDuela(poeni_runde = emptyList(),krajDuela = null, isRefreshing = false, error = e.localizedMessage)
         }
     }
 
@@ -232,6 +236,7 @@ data class RedniBroj(
 )
 
 data class UiStateKrajDuela(
+    val poeni_runde: List<List<Int>>,
     val krajDuela: KrajDuelaResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null

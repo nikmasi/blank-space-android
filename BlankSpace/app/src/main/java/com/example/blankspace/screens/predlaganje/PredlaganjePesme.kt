@@ -83,7 +83,10 @@ fun PredlaganjePesme_mainCard(navController: NavController,viewModelLogin:LoginV
     val context = LocalContext.current
     var selectedZanr by remember { mutableStateOf("") }
     var selectedIzvodjac by remember { mutableStateOf("") }
-    val selectedOption = remember { mutableStateOf("")}
+
+    val selectedOption = remember(uiState.izvodjaci) {
+        mutableStateOf(uiState.izvodjaci.firstOrNull()?.ime ?: "")
+    }
 
     HandlePredlaganjePesmeResponse(navController,context,uiStatePredlaganjePesme)
 
@@ -121,7 +124,7 @@ fun PredlaganjePesme_mainCard(navController: NavController,viewModelLogin:LoginV
                     Text(text = "Greška: ${uiState.error}", color = Color.Red)
                 } else {
                     var expanded by remember { mutableStateOf(false) }
-                    selectedOption.value =uiState.izvodjaci[0].ime
+                    //selectedOption.value =uiState.izvodjaci[0].ime
 
                     Column(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(

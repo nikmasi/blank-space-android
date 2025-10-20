@@ -1,6 +1,7 @@
 package com.example.blankspace.screens.igraj_u_duelu
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,10 +51,10 @@ fun Generisi_sifru_sobe_mainCard(navController: NavController,viewModelDuel:Duel
     val uiStateStigaoIgrac by viewModelDuel.uiStateStigaoIgrac.collectAsState()
     val uiStateSifra by viewModelDuel.uiStateSifSobe.collectAsState()
     val uiStateDuel by viewModelDuel.uiStateSifSobe.collectAsState()
-
+    /*
     LaunchedEffect(uiStateSifra.sifraResponse?.sifra) {
         uiStateSifra.sifraResponse?.sifra?.let { viewModelDuel.stigaoIgrac(it) }
-    }
+    }*/
 
     HandleSifraResponse(navController, viewModelDuel, context, uiStateStigaoIgrac, uiStateSifra, uiStateDuel)
 
@@ -97,19 +99,37 @@ fun HandleSifraResponse(
     uiStateSifra: UiStateSifSobe,
     uiStateDuel:UiStateSifSobe
 ){
-    LaunchedEffect(true) {
+    val sifraSobe by viewModelDuel.sifraSobe.collectAsState()
+
+    // Kreiraj coroutineScope za launch
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(sifraSobe.sifra) {
+        if (sifraSobe.sifra == -1) return@LaunchedEffect
+
         while (true) {
+            // POZOVI FUNKCIJU koja šalje zahtev na backend
+            viewModelDuel.stigaoIgrac(sifraSobe.sifra)
+
+            // Sačekaj da se UI state ažurira, delay između poziva
             delay(3000)
-            uiStateSifra.sifraResponse?.sifra?.let { viewModelDuel.stigaoIgrac(it) }
-            if (uiStateStigaoIgrac.stigaoIgrac?.stigao == "true") {
-                // Kada je stigao, predji na sledecu stranicu
-                uiStateSifra.sifraResponse?.stihovi?.let {
-                    viewModelDuel.fetchDuel(0, 0, it, rundaPoeni = emptyList(), context)
+
+            // Uzmi aktuelno stanje u svakoj iteraciji
+            val stigaoIgrac = viewModelDuel.uiStateStigaoIgrac.value.stigaoIgrac?.stigao
+
+            // Debug log da vidiš šta je stanje
+            Log.d("HandleSifraResponse", "Polling: stigaoIgrac = $stigaoIgrac")
+
+            if (stigaoIgrac == "true") {
+                // Kad je stigao, napravi ostale pozive i navigaciju
+                val stihovi = viewModelDuel.uiStateSifSobe.value.sifraResponse?.stihovi
+                if (stihovi != null) {
+                    viewModelDuel.fetchDuel(0, 0, stihovi, rundaPoeni = emptyList(), context)
                 }
-                viewModelDuel.upisiRedniBroj(redniBroj = 1)
-                uiStateDuel.sifraResponse?.sifra?.let { viewModelDuel.upisiSifruSobe(it) }
+                viewModelDuel.upisiRedniBroj(1)
+                viewModelDuel.upisiSifruSobe(sifraSobe.sifra)
                 navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0)
-                break // Prekini polling kada je igrac stigao
+                break
             }
         }
     }

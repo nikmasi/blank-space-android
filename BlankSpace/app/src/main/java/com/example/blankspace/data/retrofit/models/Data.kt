@@ -278,7 +278,7 @@ data class KrajDuelaRequest(
 )
 data class KrajDuelaResponse(
     val poeni:Int,
-    val poeni_runde:Int,
+    val poeni_runde:List<List<Int>>,
     val igrac1:String,
     val igrac2:String,
     val ulogovan:String
