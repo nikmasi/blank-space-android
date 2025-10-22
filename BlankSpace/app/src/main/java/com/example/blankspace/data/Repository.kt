@@ -52,6 +52,8 @@ import com.example.blankspace.data.retrofit.models.UklanjanjePesmeRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjePesmeResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeZanraRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeZanraResponse
+import com.example.blankspace.data.retrofit.models.WebScrapperRequest
+import com.example.blankspace.data.retrofit.models.WebScrapperResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRequest
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaRequest
@@ -72,6 +74,8 @@ class Repository @Inject constructor(
     suspend fun getZanrovi():List<Zanr> = Api.getZanrovi()
 
     suspend fun dohvati_izvodjace_zanra(request:ZanrNazivRequest):List<IzvodjaciZanra> = Api.dohvati_izvodjace_zanra(request)
+
+    suspend fun web_scrapper(request: WebScrapperRequest): List<WebScrapperResponse> = Api.web_scrapper(request)
 
     suspend fun getIgraSamData(request: IgraSamRequest): IgraSamResponse = Api.getIgraSamData(request)
 

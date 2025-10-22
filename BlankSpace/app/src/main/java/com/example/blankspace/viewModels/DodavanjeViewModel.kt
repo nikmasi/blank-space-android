@@ -90,11 +90,6 @@ class DodavanjeViewModel @Inject constructor(
                 filename = "$nazivPesme - $nivo.mp3",
                 body = audioFile
             )
-
-            Log.d("mp3 file", audioPart.toString())
-
-            Log.d("mp3 file", audioPart.body.toString())
-
             _uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(isRefreshing = true)
             try {
                // val request = DodajZanrRequest(zanr,izvodjac,nazivPesme,nepoznatiStihovi,poznatiStihovi,nivo,audioPart)

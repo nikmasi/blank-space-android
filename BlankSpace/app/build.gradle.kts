@@ -75,4 +75,8 @@ dependencies {
 
     //jwt
 
+    // add for room database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler) // add the plugin also!
 }

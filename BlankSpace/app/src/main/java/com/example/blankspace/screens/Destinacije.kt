@@ -117,6 +117,12 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ikonica = Icons.Default.Star
     )
 
+    object PretragaPredlaganje: Destinacije(
+        ime="pretraga_predlaganje",
+        ruta="pretraga_predlaganje",
+        ikonica = Icons.Default.Star
+    )
+
     object UklanjanjeZanra: Destinacije(
         ime="uklanjanje_zanra",
         ruta="uklanjanje_zanra",

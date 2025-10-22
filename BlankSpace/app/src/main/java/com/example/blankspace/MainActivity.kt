@@ -53,6 +53,7 @@ import com.example.blankspace.screens.predlaganje.IzborZanra
 import com.example.blankspace.screens.predlaganje.NazivZanra
 import com.example.blankspace.screens.predlaganje.PredlaganjeIzvodjaca
 import com.example.blankspace.screens.predlaganje.PredlaganjePesme
+import com.example.blankspace.screens.predlaganje.PretragaPredlaganje
 import com.example.blankspace.screens.profil_rang_pravila.MojProfil
 import com.example.blankspace.screens.profil_rang_pravila.PravilaIgre
 import com.example.blankspace.screens.uklanjanje.IzborIzvodjacaUklanjanjePesme
@@ -212,6 +213,9 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PredlaganjePesme.ruta) {
                 PredlaganjePesme(navController,viewModelLogin)
+            }
+            composable(route = Destinacije.PretragaPredlaganje.ruta) {
+                PretragaPredlaganje(navController,viewModelLogin)
             }
             composable(route = Destinacije.UklanjanjeZanra.ruta) {
                 UklanjanjeZanra(navController)

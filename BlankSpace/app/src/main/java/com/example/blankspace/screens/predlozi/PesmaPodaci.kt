@@ -46,6 +46,8 @@ import com.example.blankspace.ui.components.BodyLargeText
 import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
 fun PesmaPodaci(navController: NavController,viewModel: PredloziViewModel){
@@ -62,6 +64,8 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
     val uiState by viewModel.uiState.collectAsState()
 
     var selectedIzvodjac by remember { mutableStateOf("") }
+
+    var selectedMp3Uri by remember { mutableStateOf<Uri?>(null) }
 
     Surface(
         color = Color.White,
@@ -154,41 +158,36 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
 
             BodyLargeText("Dodaj zvuk")
 
-            val filePickerLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.GetContent(),
-                onResult = { uri: Uri? ->
-                    if (uri != null) {
-                        // Ovdje se može obraditi odabrani fajl
-                        val filePath = getFilePath(context, uri)
+            FilePicker { uri ->
+                selectedMp3Uri = uri
+            }
 
-                        // Proveravamo da li je fajl MP3
-                        if (filePath?.endsWith(".mp3") == true) {
-                            // Učitaj MP3 fajl
-                            println("MP3 file selected: $filePath")
-                        } else {
-                            println("Selected file is not an MP3 file.")
-                        }
+            Spacer(modifier = Modifier.height(22.dp))
+
+            SmallButton(onClick = {
+                selectedMp3Uri?.let { uri ->
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val requestBody = inputStream?.readBytes()?.let { bytes ->
+                        bytes.toRequestBody("audio/mpeg".toMediaType())
+                    }
+
+                    if (requestBody != null) {
+                        /*viewModel.dodajZanrSaFajlom(
+                            zanr = zanr,
+                            izvodjac = izvodjac,
+                            nazivPesme = naziv_pesme,
+                            nepoznatiStihovi = nepoznati_stihovi,
+                            poznatiStihovi = poznati_stihovi,
+                            nivo = nivo,
+                            audioFile = requestBody
+                        )*/
+                    } else {
+                        println("Neuspešno otvaranje MP3 fajla.")
                     }
                 }
-            )
+            }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
 
-            // Sekcija sa stilizovanim dugmetom za izbor fajla
-            Column(modifier = Modifier.padding(16.dp)) {
-                Button(
-                    onClick = {
-                        // Otvorite dijalog za odabir fajla
-                        filePickerLauncher.launch("audio/mp3")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFADD8E6))
-                ) {
-                    Text("Choose MP3 File", color = Color.White)
-                }
-            }
+
 
             Spacer(modifier = Modifier.height(22.dp))
 

@@ -51,6 +51,8 @@ import com.example.blankspace.data.retrofit.models.UklanjanjePesmeRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjePesmeResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeZanraRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeZanraResponse
+import com.example.blankspace.data.retrofit.models.WebScrapperRequest
+import com.example.blankspace.data.retrofit.models.WebScrapperResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRequest
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaRequest
@@ -75,6 +77,9 @@ interface Api {
 
     @POST("dohvati_izvodjace_zanra_android/")
     suspend fun dohvati_izvodjace_zanra(@Body request: ZanrNazivRequest):List<IzvodjaciZanra>
+
+    @POST("web_scrapper_android/")
+    suspend fun web_scrapper(@Body request: WebScrapperRequest): List<WebScrapperResponse>
 
     @GET("izvodjaci_andoid")
     suspend fun getIzvodjaci(): List<Izvodjac>

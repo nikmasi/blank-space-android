@@ -24,7 +24,7 @@ fun Pocetna(modifier: Modifier = Modifier, navController: NavController,viewMode
             userName = null,
             isLoggedIn = false,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
-            onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) }
+            onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
         )
     }
 }

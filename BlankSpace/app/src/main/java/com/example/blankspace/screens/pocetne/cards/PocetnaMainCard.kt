@@ -24,14 +24,15 @@ fun PocetnaMainCard(
     onGameSoloClick: () -> Unit,
     onGameDuelClick: () -> Unit,
     onSuggestArtistClick: (() -> Unit)? = null,
-    onSuggestSongClick: (() -> Unit)? = null
+    onSuggestSongClick: (() -> Unit)? = null,
+    onSearchAndSuggestClick: (() -> Unit)? = null
 ) {
     Surface(
         color = Color.White,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.75f),
+            .fillMaxHeight(0.85f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
@@ -63,6 +64,10 @@ fun PocetnaMainCard(
 
             onSuggestSongClick?.let {
                 SmallButton(onClick = it, text = "Predloži pesmu", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            onSearchAndSuggestClick?.let {
+                SmallButton(onClick = it, text = "Pretraži i predloži", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

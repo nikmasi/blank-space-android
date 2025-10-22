@@ -19,7 +19,15 @@ data class ZanrNazivRequest(
     val zanr:String
 )
 
+data class WebScrapperRequest(
+    val reci:String
+)
 
+data class WebScrapperResponse(
+    val naslov: String,
+    val izvodjac: String,
+    val tekst: String
+)
 
 data class Izvodjac(
     val id:Int,
