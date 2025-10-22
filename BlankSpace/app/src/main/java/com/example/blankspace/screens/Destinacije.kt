@@ -179,7 +179,7 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
     )
     object ImeIzvodjaca:Destinacije(
         ime="ime_izvodjaca",
-        ruta="ime_izvodjaca",
+        ruta="ime_izvodjaca/{zanr}",
         ikonica = Icons.Default.Star
     )
     object PesmaPodaciD:Destinacije(
@@ -190,6 +190,16 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
     object IzborZanra:Destinacije(
         ime="izbor_zanra",
         ruta="izbor_zanra",
+        ikonica = Icons.Default.Star
+    )
+    object IzborZanra2:Destinacije(
+        ime="izbor_zanra2",
+        ruta="izbor_zanra2",
+        ikonica = Icons.Default.Star
+    )
+    object IzborIzvodjaca:Destinacije(
+        ime="izbor_izvodjaca",
+        ruta="izbor_izvodjaca/{selectedZanr}",
         ikonica = Icons.Default.Star
     )
     object Generisi_sifru_sobe:Destinacije(

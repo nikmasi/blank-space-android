@@ -91,7 +91,7 @@ fun AdminActionButtons(navController: NavController) {
     }, text = "Dodaj izvođača", style = buttonStyle)
 
     SmallButton(onClick = {
-        // Action for "Dodaj pesmu" can be implemented later
+        navController.navigate(Destinacije.IzborZanra2.ruta)
     }, text = "Dodaj pesmu", style = buttonStyle)
 }
 

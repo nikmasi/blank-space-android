@@ -57,7 +57,11 @@ import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRes
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Zanr
+import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
 import com.example.blankspace.data.retrofit.models.ZanrResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import javax.inject.Inject
@@ -66,6 +70,8 @@ class Repository @Inject constructor(
     private val Api: Api,
 ) {
     suspend fun getZanrovi():List<Zanr> = Api.getZanrovi()
+
+    suspend fun dohvati_izvodjace_zanra(request:ZanrNazivRequest):List<IzvodjaciZanra> = Api.dohvati_izvodjace_zanra(request)
 
     suspend fun getIgraSamData(request: IgraSamRequest): IgraSamResponse = Api.getIgraSamData(request)
 
@@ -135,7 +141,21 @@ class Repository @Inject constructor(
     suspend fun provera_da_li_postoji(@Body request: ProveraDaLiPostojiRequest): ProveraDaLiPostojiResponse
         =Api.provera_da_li_postoji(request)
 
-    suspend fun dodajZanr(@Body request: DodajZanrRequest): DodajZanrResponse = Api.dodajZanr(request)
+    suspend fun dodajZanr( zanr: String,
+                           izvodjac: String,
+                           nazivPesme: String,
+                           nepoznatiStihovi: String,
+                           poznatiStihovi: String,
+                           nivo: String,
+                           zvuk: MultipartBody.Part): DodajZanrResponse = Api.dodajZanr(
+        zanr = zanr.toRequestBody("text/plain".toMediaType()),
+        izvodjac = izvodjac.toRequestBody("text/plain".toMediaType()),
+        nazivPesme = nazivPesme.toRequestBody("text/plain".toMediaType()),
+        nepoznatiStihovi = nepoznatiStihovi.toRequestBody("text/plain".toMediaType()),
+        poznatiStihovi = poznatiStihovi.toRequestBody("text/plain".toMediaType()),
+        nivo = nivo.toRequestBody("text/plain".toMediaType()),
+        zvuk = zvuk
+    )
 
     suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst): CekanjeRezultataResponse
         = Api.cekanjeRezultata(request)

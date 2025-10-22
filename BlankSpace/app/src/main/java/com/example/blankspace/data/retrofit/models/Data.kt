@@ -2,6 +2,7 @@ package com.example.blankspace.data.retrofit.models
 
 import com.example.blankspace.viewModels.RedniBroj
 import com.google.gson.annotations.SerializedName
+import okhttp3.MultipartBody
 
 data class Korisnik(
     val id: Int,
@@ -13,6 +14,12 @@ data class Zanr(
     val id: Int,
     val naziv: String
 )
+
+data class ZanrNazivRequest(
+    val zanr:String
+)
+
+
 
 data class Izvodjac(
     val id:Int,
@@ -332,7 +339,7 @@ data class DodajZanrRequest(
     val nepoznati_stihovi:String,
     val poznati_stihovi:String,
     val nivo:String,
-    val zvuk: String
+    val zvuk: MultipartBody.Part
 )
 data class DodajZanrResponse(
     val odgovor: String

@@ -55,7 +55,6 @@ fun IzborZanra_mainCard(navController: NavController,viewModel: DodavanjeViewMod
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    var selectedZanr by remember { mutableStateOf("") }
 
     val viewModelZanr: ZanrViewModel = hiltViewModel()
     val uiStateZanr by viewModelZanr.uiState.collectAsState()
@@ -94,8 +93,8 @@ fun IzborZanra_mainCard(navController: NavController,viewModel: DodavanjeViewMod
                                 .clickable {  }
                         ) {
                             RadioButton(
-                                selected = selectedZanr == zanr.id.toString(),
-                                onClick = { selectedZanr = zanr.id.toString() }
+                                selected = selectedZanr == zanr.naziv.toString(),
+                                onClick = { selectedZanr = zanr.naziv }
                             )
                             Text(text = zanr.naziv,color= TEXT_COLOR)
                         }
@@ -105,7 +104,7 @@ fun IzborZanra_mainCard(navController: NavController,viewModel: DodavanjeViewMod
             Spacer(modifier = Modifier.height(22.dp))
 
             SmallButton(onClick = {
-                navController.navigate(Destinacije.ImeIzvodjaca.ruta)
+                navController.navigate(Destinacije.ImeIzvodjaca.ruta+"/"+selectedZanr)
             },text = "Dalje", style = MaterialTheme.typography.bodyMedium)
         }
     }

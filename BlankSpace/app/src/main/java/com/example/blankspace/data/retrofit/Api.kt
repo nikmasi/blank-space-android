@@ -56,9 +56,14 @@ import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRes
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Zanr
+import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 const val BASE_URL = "http://10.132.56.178:8000/"
 //const val BASE_URL = "http://10.0.2.2:8000/"
@@ -67,6 +72,9 @@ const val BASE_URL_LOCALHOST ="http://127.0.0.1:8000/"
 interface Api {
     @GET("zanrovi")
     suspend fun getZanrovi(): List<Zanr>
+
+    @POST("dohvati_izvodjace_zanra_android/")
+    suspend fun dohvati_izvodjace_zanra(@Body request: ZanrNazivRequest):List<IzvodjaciZanra>
 
     @GET("izvodjaci_andoid")
     suspend fun getIzvodjaci(): List<Izvodjac>
@@ -162,8 +170,15 @@ interface Api {
     @POST("provera_da_li_postoji/")
     suspend fun provera_da_li_postoji(@Body request: ProveraDaLiPostojiRequest): ProveraDaLiPostojiResponse
 
+    @Multipart
     @POST("dodaj_zanr_android/")
-    suspend fun dodajZanr(@Body request: DodajZanrRequest): DodajZanrResponse
+    suspend fun dodajZanr(@Part("zanr") zanr: RequestBody,
+                          @Part("izvodjac") izvodjac: RequestBody,
+                          @Part("naziv_pesme") nazivPesme: RequestBody,
+                          @Part("nepoznati_stihovi") nepoznatiStihovi: RequestBody,
+                          @Part("poznati_stihovi") poznatiStihovi: RequestBody,
+                          @Part("nivo") nivo: RequestBody,
+                          @Part zvuk: MultipartBody.Part): DodajZanrResponse
 
     @POST("cekanje_rezultata_android/")
     suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst):CekanjeRezultataResponse

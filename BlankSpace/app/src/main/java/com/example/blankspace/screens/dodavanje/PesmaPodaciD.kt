@@ -1,6 +1,7 @@
 package com.example.blankspace.screens.dodavanje
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -23,23 +24,29 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DodavanjeViewModel
+import kotlinx.coroutines.delay
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
 fun PesmaPodaciD(navController: NavController,viewModel: DodavanjeViewModel,zanr:String,izvodjac:String){
@@ -52,7 +59,28 @@ fun PesmaPodaciD(navController: NavController,viewModel: DodavanjeViewModel,zanr
 
 @Composable
 fun PesmaPodaciD_mainCard(navController: NavController,viewModel: DodavanjeViewModel,zanr:String,izvodjac:String){
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiStateDodajZanr.collectAsState()
+    val context = LocalContext.current
+    var selectedMp3Uri by remember { mutableStateOf<Uri?>(null) }
+
+    LaunchedEffect(key1 = true) {
+        snapshotFlow { uiState.dodajZanr }
+            .collect { response ->
+                response?.let {
+                    Toast.makeText(context, it.odgovor, Toast.LENGTH_SHORT).show()
+                    delay(3000)
+                    navController.navigate(Destinacije.PocetnaAdmin.ruta) {
+                        popUpTo(0) // Ovo čisti ceo stack
+                        launchSingleTop = true
+                    }
+
+
+                    // resetuj state posle obrade da se ne ponavlja
+                    viewModel.resetDodajZanr()
+                }
+            }
+    }
+
 
     Surface(
         color = Color.White,
@@ -94,12 +122,37 @@ fun PesmaPodaciD_mainCard(navController: NavController,viewModel: DodavanjeViewM
                 color = TEXT_COLOR
             )
 
-            FilePicker()
+            FilePicker { uri ->
+                selectedMp3Uri = uri
+            }
+
+
             Spacer(modifier = Modifier.height(22.dp))
 
             SmallButton(onClick = {
-                viewModel.dodajZanr(zanr,izvodjac,naziv_pesme,nepoznati_stihovi,poznati_stihovi,nivo,"")
+                selectedMp3Uri?.let { uri ->
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val requestBody = inputStream?.readBytes()?.let { bytes ->
+                        bytes.toRequestBody("audio/mpeg".toMediaType())
+                    }
+
+
+                    if (requestBody != null) {
+                        viewModel.dodajZanrSaFajlom(
+                            zanr = zanr,
+                            izvodjac = izvodjac,
+                            nazivPesme = naziv_pesme,
+                            nepoznatiStihovi = nepoznati_stihovi,
+                            poznatiStihovi = poznati_stihovi,
+                            nivo = nivo,
+                            audioFile = requestBody
+                        )
+                    } else {
+                        println("Neuspešno otvaranje MP3 fajla.")
+                    }
+                }
             }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
+
         }
     }
 }
@@ -166,17 +219,17 @@ fun DifficultyRadioButton(value: String, selectedValue: String, onValueChange: (
 }
 
 @Composable
-fun FilePicker() {
+fun FilePicker(onFileSelected: (Uri) -> Unit) {
     val context = LocalContext.current
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? ->
             uri?.let {
-                val filePath = getFilePath(context, uri)
-                if (filePath?.endsWith(".mp3") == true) {
-                    println("MP3 file selected: $filePath")
+                val type = context.contentResolver.getType(uri)
+                if (type == "audio/mpeg" || uri.toString().endsWith(".mp3")) {
+                    onFileSelected(uri)
                 } else {
-                    println("Selected file is not an MP3 file.")
+                    println("Selected file is not an MP3.")
                 }
             }
         }
@@ -184,7 +237,7 @@ fun FilePicker() {
 
     Column(modifier = Modifier.padding(16.dp)) {
         Button(
-            onClick = { filePickerLauncher.launch("audio/mp3") },
+            onClick = { filePickerLauncher.launch("audio/*") },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)

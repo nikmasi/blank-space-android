@@ -14,6 +14,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,7 +70,7 @@ class DodavanjeViewModel @Inject constructor(
 
     fun dodajZanr(zanr:String,izv:String,naz_pes:String,nep_stih:String,po_stih:String,nivo:String,zvuk:String)
     = viewModelScope.launch {
-        _uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(isRefreshing = true)
+        /*_uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(isRefreshing = true)
         try {
             val request = DodajZanrRequest(zanr,izv,naz_pes,nep_stih,po_stih,nivo,zvuk)
             val response = repository.dodajZanr(request)
@@ -76,8 +78,40 @@ class DodavanjeViewModel @Inject constructor(
         } catch (e: Exception) {
             _uiStateDodajZanr.value =
                 UiStateDodajZanr(dodajZanr = null, isRefreshing = false, error = e.localizedMessage)
+        }*/
+    }
+
+    fun dodajZanrSaFajlom(zanr: String, izvodjac: String, nazivPesme: String, nepoznatiStihovi: String,
+        poznatiStihovi: String, nivo: String, audioFile: RequestBody
+    ) {
+        viewModelScope.launch {
+            val audioPart = MultipartBody.Part.createFormData(
+                name = "audio",
+                filename = "$nazivPesme - $nivo.mp3",
+                body = audioFile
+            )
+
+            Log.d("mp3 file", audioPart.toString())
+
+            Log.d("mp3 file", audioPart.body.toString())
+
+            _uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(isRefreshing = true)
+            try {
+               // val request = DodajZanrRequest(zanr,izvodjac,nazivPesme,nepoznatiStihovi,poznatiStihovi,nivo,audioPart)
+                val response = repository.dodajZanr(zanr, izvodjac, nazivPesme,
+                    nepoznatiStihovi, poznatiStihovi, nivo,
+                    audioPart)
+                _uiStateDodajZanr.value = UiStateDodajZanr(dodajZanr = response, isRefreshing = false)
+            } catch (e: Exception) {
+                _uiStateDodajZanr.value =
+                    UiStateDodajZanr(dodajZanr = null, isRefreshing = false, error = e.localizedMessage)
+            }
         }
     }
+    fun resetDodajZanr() {
+        _uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(dodajZanr = null)
+    }
+
 }
 
 data class UiStatePredloziZanr(

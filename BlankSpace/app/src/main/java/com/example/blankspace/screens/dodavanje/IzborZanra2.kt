@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.predlaganje
+package com.example.blankspace.screens.dodavanje
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,37 +34,29 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DodavanjeViewModel
-import com.example.blankspace.viewModels.IzvodjacZanrViewModel
-import com.example.blankspace.viewModels.IzvodjaciZanraViewModel
 import com.example.blankspace.viewModels.ZanrViewModel
 
 @Composable
-fun IzborIzvodjaca(navController: NavController,viewModel: DodavanjeViewModel,zanr:String){
+fun IzborZanra2(navController: NavController,viewModel: DodavanjeViewModel){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        IzborIzvodjaca_mainCard(navController,viewModel,zanr)
+        IzborZanra2_mainCard(navController,viewModel)
     }
 }
 
 @Composable
-fun IzborIzvodjaca_mainCard(navController: NavController,viewModel: DodavanjeViewModel,zanr:String) {
+fun IzborZanra2_mainCard(navController: NavController,viewModel: DodavanjeViewModel) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-
-    val viewModelZanr: IzvodjaciZanraViewModel = hiltViewModel()
+    val viewModelZanr: ZanrViewModel = hiltViewModel()
     val uiStateZanr by viewModelZanr.uiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModelZanr.fetchIzvodjaciZanraNaziv(zanr)
-    }
 
     Surface(
         color = Color.White,
@@ -82,9 +74,9 @@ fun IzborIzvodjaca_mainCard(navController: NavController,viewModel: DodavanjeVie
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(22.dp))
-            HeadlineText("Kojem izvođaču pripada pesma?")
+            HeadlineText("Kojem žanru pripada izvođač?")
 
-            var izvodjac by remember { mutableStateOf("") }
+            var selectedZanr by remember { mutableStateOf("") }
 
             if (uiState.isRefreshing) {
                 CircularProgressIndicator()
@@ -92,7 +84,7 @@ fun IzborIzvodjaca_mainCard(navController: NavController,viewModel: DodavanjeVie
                 if (uiState.error != null) {
                     Text(text = "Greška: ${uiState.error}", color = Color.Red)
                 } else {
-                    uiStateZanr.izvodjaci.forEach { izv ->
+                    uiStateZanr.zanrovi.forEach { zanr ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -100,20 +92,19 @@ fun IzborIzvodjaca_mainCard(navController: NavController,viewModel: DodavanjeVie
                                 .clickable {  }
                         ) {
                             RadioButton(
-                                selected = izvodjac == izv.ime.toString(),
-                                onClick = { izvodjac = izv.ime }
+                                selected = selectedZanr == zanr.naziv.toString(),
+                                onClick = { selectedZanr = zanr.naziv }
                             )
-                            Text(text = izv.ime ,color= TEXT_COLOR)
+                            Text(text = zanr.naziv,color= TEXT_COLOR)
                         }
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(22.dp))
 
             SmallButton(onClick = {
-                navController.navigate(Destinacije.PesmaPodaciD.ruta+"/"+zanr+"/"+izvodjac)
-            },text = "Dodaj izvođača", style = MaterialTheme.typography.bodyMedium)
+                navController.navigate(Destinacije.IzborIzvodjaca.ruta+"/"+selectedZanr)
+            },text = "Dalje", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

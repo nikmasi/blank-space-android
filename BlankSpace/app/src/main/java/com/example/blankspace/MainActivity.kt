@@ -27,6 +27,7 @@ import com.example.blankspace.screens.autorizacija.PromenaLozinke
 import com.example.blankspace.screens.autorizacija.Registracija
 import com.example.blankspace.screens.autorizacija.ZaboravljenaLozinka
 import com.example.blankspace.screens.autorizacija.ZaboravljenaLozinkaPitanje
+import com.example.blankspace.screens.dodavanje.IzborZanra2
 import com.example.blankspace.screens.dodavanje.PesmaPodaci
 import com.example.blankspace.screens.dodavanje.PesmaPodaci2
 import com.example.blankspace.screens.dodavanje.PesmaPodaciD
@@ -47,6 +48,7 @@ import com.example.blankspace.screens.pocetne.PocetnaStudent
 import com.example.blankspace.screens.pocetne.RangLista
 import com.example.blankspace.screens.pocetne.UcitavanjeEkrana
 import com.example.blankspace.screens.predlaganje.ImeIzvodjaca
+import com.example.blankspace.screens.predlaganje.IzborIzvodjaca
 import com.example.blankspace.screens.predlaganje.IzborZanra
 import com.example.blankspace.screens.predlaganje.NazivZanra
 import com.example.blankspace.screens.predlaganje.PredlaganjeIzvodjaca
@@ -276,6 +278,18 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.IzborZanra.ruta){
                 IzborZanra(navController, viewModelDodavanje)
+            }
+            composable(route = Destinacije.IzborZanra2.ruta){
+                IzborZanra2(navController, viewModelDodavanje)
+            }
+            composable(route = "${Destinacije.IzborIzvodjaca.ruta}/{zanr}",
+                arguments = listOf(
+                    navArgument("zanr") { type = NavType.StringType }
+                )
+                ) { navBackStackEntry ->
+                val zanr=navBackStackEntry.arguments?.getString("zanr")?:""
+
+                IzborIzvodjaca(navController, viewModelDodavanje,zanr)
             }
             composable(route = Destinacije.Generisi_sifru_sobe.ruta){
                 Generisi_sifru_sobe(navController,viewModelDuel)
