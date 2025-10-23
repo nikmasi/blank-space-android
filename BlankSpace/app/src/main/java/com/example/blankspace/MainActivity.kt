@@ -1,6 +1,11 @@
 package com.example.blankspace
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,6 +37,10 @@ import com.example.blankspace.screens.dodavanje.IzborZanra2
 import com.example.blankspace.screens.dodavanje.PesmaPodaci
 import com.example.blankspace.screens.dodavanje.PesmaPodaci2
 import com.example.blankspace.screens.dodavanje.PesmaPodaciD
+import com.example.blankspace.screens.igra_offline.Igra_offline
+import com.example.blankspace.screens.igra_offline.Kraj_igre_offline
+import com.example.blankspace.screens.igra_offline.Nivo_igra_offline
+import com.example.blankspace.screens.igra_offline.Zanr_igra_offline
 import com.example.blankspace.screens.igra_sam.Duel
 import com.example.blankspace.screens.igra_sam.Igra_sam
 import com.example.blankspace.screens.igra_sam.Kraj_igre_igre_sam
@@ -44,6 +54,7 @@ import com.example.blankspace.screens.pocetne.Pocetna
 import com.example.blankspace.screens.pocetne.PocetnaAdmin
 import com.example.blankspace.screens.pocetne.PocetnaBrucos
 import com.example.blankspace.screens.pocetne.PocetnaMaster
+import com.example.blankspace.screens.pocetne.PocetnaOffline
 import com.example.blankspace.screens.pocetne.PocetnaStudent
 import com.example.blankspace.screens.pocetne.RangLista
 import com.example.blankspace.screens.pocetne.UcitavanjeEkrana
@@ -68,6 +79,7 @@ import com.example.blankspace.screens.uklanjanje.UklanjanjeZanra
 import com.example.blankspace.ui.bars.BlankSpaceBottomBar
 import com.example.blankspace.ui.bars.BlankSpaceTopAppBar
 import com.example.blankspace.ui.theme.BlankSpaceTheme
+import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.DuelViewModel
 import com.example.blankspace.viewModels.IgraSamViewModel
@@ -76,6 +88,9 @@ import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -96,6 +111,24 @@ fun rememberCurrentRoute(navController: NavController): String {
     return currentDestination?.route ?: Destinacije.Pocetna.ruta
 }
 
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+fun hasDownloadedData(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("offline_mode", Context.MODE_PRIVATE)
+    return prefs.getBoolean("data_downloaded", false)
+}
+
+fun setDownloadedFlag(context: Context) {
+    val prefs = context.getSharedPreferences("offline_mode", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("data_downloaded", true).apply()
+}
+
 @Composable
 fun BlankSpaceApp(){
     val viewModelIgraSam: IgraSamViewModel = hiltViewModel()
@@ -107,6 +140,7 @@ fun BlankSpaceApp(){
     val viewModelPredlozi: PredloziViewModel = hiltViewModel()
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
 
+    val databaseViewModel: DatabaseViewModel = viewModel()
     val navController = rememberNavController()
     val currentRoute = rememberCurrentRoute(navController)
 
@@ -124,11 +158,15 @@ fun BlankSpaceApp(){
             startDestination = Destinacije.UcitavanjeEkrana.ruta
         ) {
             composable(route = Destinacije.UcitavanjeEkrana.ruta){
-                UcitavanjeEkrana(Modifier,navController,viewModelLogin)
+                UcitavanjeEkrana(Modifier,navController,viewModelLogin, databaseViewModel)
             }
             composable(route = Destinacije.Pocetna.ruta) {
                 userType=""
                 Pocetna(modifier = Modifier.padding(padding),navController,viewModelLogin)
+            }
+            composable(route = Destinacije.PocetnaOffline.ruta) {
+                userType=""
+                PocetnaOffline(modifier = Modifier.padding(padding),navController,viewModelLogin)
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"
@@ -152,6 +190,9 @@ fun BlankSpaceApp(){
             composable(route = Destinacije.Nivo_igra_sam.ruta) {
                 Nivo_igra_sam(navController)
             }
+            composable(route = Destinacije.Nivo_igra_offline.ruta) {
+                Nivo_igra_offline(navController)
+            }
             composable(route = Destinacije.Sifra_sobe_duel.ruta) {
                 Sifra_sobe_duel(navController,viewModelDuel,viewModelLogin)
             }
@@ -161,6 +202,13 @@ fun BlankSpaceApp(){
                 ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
                 Zanr_igra_sam(navController,selectedNivo,viewModelIgraSam)
+            }
+            composable(
+                route = "${Destinacije.Zanr_igra_offline.ruta}/{selectedNivo}",
+                arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
+            ) { navBackStackEntry ->
+                val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
+                Zanr_igra_offline(navController,selectedNivo,databaseViewModel)
             }
             composable(
                 route = "${Destinacije.Igra_sam.ruta}/{selectedZanrovi}/{selectedNivo}/{runda}/{poeni}",
@@ -179,12 +227,36 @@ fun BlankSpaceApp(){
                 Igra_sam(navController, selectedZanrovi, selectedNivo,runda,poeni,viewModelIgraSam)
             }
             composable(
+                route = "${Destinacije.Igra_offline.ruta}/{selectedZanrovi}/{selectedNivo}/{runda}/{poeni}",
+                arguments = listOf(
+                    navArgument("selectedZanrovi") { type = NavType.StringType },
+                    navArgument("selectedNivo") { type = NavType.StringType },
+                    navArgument("runda") { type = NavType.IntType },
+                    navArgument("poeni") { type = NavType.IntType }// Pretpostavljamo da je `selectedNivo` String
+                )
+            ) { navBackStackEntry ->
+                val selectedZanrovi = navBackStackEntry.arguments?.getString("selectedZanrovi") ?: ""
+                val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
+                val runda=navBackStackEntry.arguments?.getInt("runda")?:0
+                val poeni=navBackStackEntry.arguments?.getInt("poeni")?:0
+
+                Igra_offline(navController, selectedZanrovi, selectedNivo,runda,poeni,databaseViewModel)
+            }
+            composable(
                 route = "${Destinacije.Kraj_igre_igre_sam.ruta}/{poeni}",
                 arguments = listOf(navArgument("poeni") { type = NavType.IntType }  // Pretpostavljamo da je `selectedNivo` String
                 )
             ) { navBackStackEntry ->
                     val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
                     Kraj_igre_igre_sam(navController,poeni,viewModelLogin,viewModelIgraSam)
+            }
+            composable(
+                route = "${Destinacije.Kraj_igre_offline.ruta}/{poeni}",
+                arguments = listOf(navArgument("poeni") { type = NavType.IntType }  // Pretpostavljamo da je `selectedNivo` String
+                )
+            ) { navBackStackEntry ->
+                val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
+                Kraj_igre_offline(navController,poeni,databaseViewModel)
             }
             composable(route = Destinacije.Login.ruta) {
                 userType=""

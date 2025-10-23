@@ -25,7 +25,8 @@ fun PocetnaMainCard(
     onGameDuelClick: () -> Unit,
     onSuggestArtistClick: (() -> Unit)? = null,
     onSuggestSongClick: (() -> Unit)? = null,
-    onSearchAndSuggestClick: (() -> Unit)? = null
+    onSearchAndSuggestClick: (() -> Unit)? = null,
+
 ) {
     Surface(
         color = Color.White,

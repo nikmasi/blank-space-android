@@ -26,6 +26,7 @@ import com.example.blankspace.data.retrofit.models.MojProfilRequest
 import com.example.blankspace.data.retrofit.models.MojProfilResponse
 import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
+import com.example.blankspace.data.retrofit.models.Pesma
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
@@ -44,6 +45,7 @@ import com.example.blankspace.data.retrofit.models.RegistracijaRequest
 import com.example.blankspace.data.retrofit.models.RegistracijaResponse
 import com.example.blankspace.data.retrofit.models.StigaoIgracRequest
 import com.example.blankspace.data.retrofit.models.StigaoIgracResponse
+import com.example.blankspace.data.retrofit.models.Stih
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
@@ -84,6 +86,10 @@ class Repository @Inject constructor(
     suspend fun getMojProfilData(@Body request: MojProfilRequest): MojProfilResponse=Api.getMojProfilData(request)
 
     suspend fun getIzvodjaci(): List<Izvodjac> = Api.getIzvodjaci()
+
+    suspend fun getPesme(): List<Pesma> = Api.getPesme()
+
+    suspend fun getStihovi(): List<Stih> = Api.getStihovi()
 
     suspend fun getAudio(request:AudioRequest):AudioResponse = Api.getAudio(request)
 

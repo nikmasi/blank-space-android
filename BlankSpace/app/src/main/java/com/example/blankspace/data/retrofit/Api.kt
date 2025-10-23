@@ -25,6 +25,7 @@ import com.example.blankspace.data.retrofit.models.MojProfilRequest
 import com.example.blankspace.data.retrofit.models.MojProfilResponse
 import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
+import com.example.blankspace.data.retrofit.models.Pesma
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
@@ -43,6 +44,7 @@ import com.example.blankspace.data.retrofit.models.RegistracijaRequest
 import com.example.blankspace.data.retrofit.models.RegistracijaResponse
 import com.example.blankspace.data.retrofit.models.StigaoIgracRequest
 import com.example.blankspace.data.retrofit.models.StigaoIgracResponse
+import com.example.blankspace.data.retrofit.models.Stih
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
@@ -83,6 +85,12 @@ interface Api {
 
     @GET("izvodjaci_andoid")
     suspend fun getIzvodjaci(): List<Izvodjac>
+
+    @GET("pesme_android")
+    suspend fun getPesme(): List<Pesma>
+
+    @GET("stihovi_android")
+    suspend fun getStihovi(): List<Stih>
 
     @POST("igra_sam_android/")
     suspend fun getIgraSamData(@Body request: IgraSamRequest): IgraSamResponse

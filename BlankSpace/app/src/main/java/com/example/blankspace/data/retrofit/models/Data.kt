@@ -32,9 +32,23 @@ data class WebScrapperResponse(
 data class Izvodjac(
     val id:Int,
     val ime:String,
-    val zan_id:Int
+    val zan:Int
 )
 
+data class Pesma(
+    val id:Int,
+    val naziv:String,
+    val izv:Int
+)
+
+data class Stih(
+    val id:Int,
+    val nivo:String,
+    val poznat_tekst:String,
+    val nepoznat_tekst:String,
+    val zvuk_url:String,
+    val pes:Int
+)
 data class ZanrResponse(
     val zanrovi: List<Zanr>
 )
@@ -55,6 +69,18 @@ data class IgraSamResponse(
     val zvuk: String,
     val pesma: String,
     val runda: Int,
+    val poeni: Int,
+    val listaBilo:List<Int>
+)
+
+data class IgraOfflineData(
+    val stihpoznat: List<String>,
+    val crtice: String,
+    val tacno: String,
+    val izvodjac: String,
+    val zvuk: String,
+    val pesma: String,
+    var runda: Int,
     val poeni: Int,
     val listaBilo:List<Int>
 )

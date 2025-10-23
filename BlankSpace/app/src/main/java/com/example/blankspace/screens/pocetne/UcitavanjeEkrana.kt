@@ -37,18 +37,25 @@ import android.media.SoundPool
 import android.media.MediaPlayer
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import com.example.blankspace.hasDownloadedData
+import com.example.blankspace.isInternetAvailable
+import com.example.blankspace.viewModels.DatabaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
-fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController,loginViewModel: LoginViewModel) {
+fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController,loginViewModel: LoginViewModel,databaseViewModel: DatabaseViewModel) {
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
-        UcitavanjeEkrana_main(navController,loginViewModel)
+        UcitavanjeEkrana_main(navController,loginViewModel,databaseViewModel)
     }
 }
 
 @Composable
-fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel) {
+fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel,databaseViewModel: DatabaseViewModel) {
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(true) }
     val uiStateLogin by loginViewModel.uiState.collectAsState()
@@ -56,24 +63,55 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
     val mediaPlayer = remember { MediaPlayer.create(context, R.raw.taylorswiftblankspace2) }
 
     LaunchedEffect(true) {
-        mediaPlayer.start()  // Pokreće zvučni efekat
+        mediaPlayer.start()
         delay(5400)
-        mediaPlayer.stop()   // Zaustavi zvuk nakon što je učitavanje završeno
+        mediaPlayer.stop()
+
         isLoading.value = false
 
-        if (uiStateLogin.login?.access != null) {
-            uiStateLogin.login?.tip?.let {
-                when (it) {
-                    "S" -> navController.navigate(Destinacije.PocetnaStudent.ruta)
-                    "B" -> navController.navigate(Destinacije.PocetnaBrucos.ruta)
-                    "M" -> navController.navigate(Destinacije.PocetnaMaster.ruta)
-                    "A" -> navController.navigate(Destinacije.PocetnaAdmin.ruta)
+        if (isInternetAvailable(context)) {
+            if (!hasDownloadedData(context)) {
+                // Preuzimanje u IO threadu
+                withContext(Dispatchers.IO) {
+                    databaseViewModel.loadZanrovi()
+                    databaseViewModel.loadIzvodjaci()
+                    databaseViewModel.loadPesme()
+                    databaseViewModel.loadStihovi()
+                }
+            }
+
+            // Navigacija na glavnom threadu
+            withContext(Dispatchers.Main) {
+                if (uiStateLogin.login?.access != null) {
+                    when (uiStateLogin.login?.tip) {
+                        "S" -> navController.navigate(Destinacije.PocetnaStudent.ruta)
+                        "B" -> navController.navigate(Destinacije.PocetnaBrucos.ruta)
+                        "M" -> navController.navigate(Destinacije.PocetnaMaster.ruta)
+                        "A" -> navController.navigate(Destinacije.PocetnaAdmin.ruta)
+                    }
+                } else {
+                    navController.navigate(Destinacije.Login.ruta)
                 }
             }
         } else {
-            navController.navigate(Destinacije.Login.ruta)
+            if (hasDownloadedData(context)) {
+                Log.d("AppInit", "Offline mode active, using local data")
+
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Destinacije.PocetnaOffline.ruta) // ili neka offline ruta
+                }
+
+            } else {
+                Log.e("AppInit", "No internet and no local data")
+                // možeš prikazati grešku korisniku ako želiš
+                withContext(Dispatchers.Main) {
+                    navController.navigate(Destinacije.PocetnaOffline.ruta) // ili neka offline ruta
+                }
+
+            }
         }
     }
+
 
     Surface(
         color = Color.White,

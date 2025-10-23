@@ -33,6 +33,11 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="pocetna_master",
         ikonica = Icons.Default.Home
     )
+    object PocetnaOffline: Destinacije(
+        ime="pocetna_offline",
+        ruta="pocetna_offline",
+        ikonica = Icons.Default.Home
+    )
     object PocetnaAdmin: Destinacije(
         ime="pocetna_admin",
         ruta="pocetna_admin",
@@ -46,6 +51,21 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
     object Nivo_igra_sam: Destinacije(
         ime="nivo_igra_sam",
         ruta="nivo_igra_sam",
+        ikonica = Icons.Default.Home
+    )
+    object Nivo_igra_offline: Destinacije(
+        ime="nivo_igra_offline",
+        ruta="nivo_igra_offline",
+        ikonica = Icons.Default.Home
+    )
+    object Zanr_igra_offline: Destinacije(
+        ime="zanr_igra_offline",
+        ruta="zanr_igra_offline",
+        ikonica = Icons.Default.Home
+    )
+    object Igra_offline: Destinacije(
+        ime="igra_offline",
+        ruta="igra_offline",
         ikonica = Icons.Default.Home
     )
     object Sifra_sobe_duel: Destinacije(
@@ -67,6 +87,11 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
     object Kraj_igre_igre_sam: Destinacije(
         ime="kraj_igre_igre_sam",
         ruta="kraj_igre_igre_sam",
+        ikonica = Icons.Default.Home
+    )
+    object Kraj_igre_offline: Destinacije(
+        ime="kraj_igre_offline",
+        ruta="kraj_igre_offline",
         ikonica = Icons.Default.Home
     )
     object Login: Destinacije(
