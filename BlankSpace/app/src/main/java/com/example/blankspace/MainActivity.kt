@@ -41,6 +41,10 @@ import com.example.blankspace.screens.igra_offline.Igra_offline
 import com.example.blankspace.screens.igra_offline.Kraj_igre_offline
 import com.example.blankspace.screens.igra_offline.Nivo_igra_offline
 import com.example.blankspace.screens.igra_offline.Zanr_igra_offline
+import com.example.blankspace.screens.igra_pogodi_i_pevaj.Igra_pogodiPevaj
+import com.example.blankspace.screens.igra_pogodi_i_pevaj.Kraj_pogodiPevaj
+import com.example.blankspace.screens.igra_pogodi_i_pevaj.Nivo_pogodiPevaj
+import com.example.blankspace.screens.igra_pogodi_i_pevaj.Zanr_PogodiPevaj
 import com.example.blankspace.screens.igra_sam.Duel
 import com.example.blankspace.screens.igra_sam.Igra_sam
 import com.example.blankspace.screens.igra_sam.Kraj_igre_igre_sam
@@ -193,6 +197,9 @@ fun BlankSpaceApp(){
             composable(route = Destinacije.Nivo_igra_offline.ruta) {
                 Nivo_igra_offline(navController)
             }
+            composable(route = Destinacije.Nivo_pogodiPevaj.ruta) {
+                Nivo_pogodiPevaj(navController)
+            }
             composable(route = Destinacije.Sifra_sobe_duel.ruta) {
                 Sifra_sobe_duel(navController,viewModelDuel,viewModelLogin)
             }
@@ -209,6 +216,13 @@ fun BlankSpaceApp(){
             ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
                 Zanr_igra_offline(navController,selectedNivo,databaseViewModel)
+            }
+            composable(
+                route = "${Destinacije.Zanr_pogodiPevaj.ruta}/{selectedNivo}",
+                arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
+            ) { navBackStackEntry ->
+                val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
+                Zanr_PogodiPevaj(navController,selectedNivo,viewModelIgraSam)
             }
             composable(
                 route = "${Destinacije.Igra_sam.ruta}/{selectedZanrovi}/{selectedNivo}/{runda}/{poeni}",
@@ -243,6 +257,22 @@ fun BlankSpaceApp(){
                 Igra_offline(navController, selectedZanrovi, selectedNivo,runda,poeni,databaseViewModel)
             }
             composable(
+                route = "${Destinacije.Igra_pogodiPevaj.ruta}/{selectedZanrovi}/{selectedNivo}/{runda}/{poeni}",
+                arguments = listOf(
+                    navArgument("selectedZanrovi") { type = NavType.StringType },
+                    navArgument("selectedNivo") { type = NavType.StringType },
+                    navArgument("runda") { type = NavType.IntType },
+                    navArgument("poeni") { type = NavType.IntType }// Pretpostavljamo da je `selectedNivo` String
+                )
+            ) { navBackStackEntry ->
+                val selectedZanrovi = navBackStackEntry.arguments?.getString("selectedZanrovi") ?: ""
+                val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
+                val runda=navBackStackEntry.arguments?.getInt("runda")?:0
+                val poeni=navBackStackEntry.arguments?.getInt("poeni")?:0
+
+                Igra_pogodiPevaj(navController, selectedZanrovi, selectedNivo,runda,poeni,viewModelIgraSam)
+            }
+            composable(
                 route = "${Destinacije.Kraj_igre_igre_sam.ruta}/{poeni}",
                 arguments = listOf(navArgument("poeni") { type = NavType.IntType }  // Pretpostavljamo da je `selectedNivo` String
                 )
@@ -257,6 +287,14 @@ fun BlankSpaceApp(){
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
                 Kraj_igre_offline(navController,poeni,databaseViewModel)
+            }
+            composable(
+                route = "${Destinacije.Kraj_pogodiPevaj.ruta}/{poeni}",
+                arguments = listOf(navArgument("poeni") { type = NavType.IntType }  // Pretpostavljamo da je `selectedNivo` String
+                )
+            ) { navBackStackEntry ->
+                val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
+                Kraj_pogodiPevaj(navController, poeni, viewModelLogin, viewModelIgraSam)
             }
             composable(route = Destinacije.Login.ruta) {
                 userType=""

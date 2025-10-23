@@ -29,7 +29,7 @@ class IgraSamViewModel @Inject constructor(
     val uiStateKI: StateFlow<UiStateKrajIgre> = _uiStateKI
 
     private val _isAudioPlaying = MutableStateFlow(false)
-    private var mediaPlayer:MediaPlayer?=null
+    //private var mediaPlayer:MediaPlayer?=null
 
     private val _IgraSamLista= MutableStateFlow(IgraSamLista())
     val IgraSamLista:StateFlow<IgraSamLista> = _IgraSamLista
@@ -64,45 +64,72 @@ class IgraSamViewModel @Inject constructor(
     }
 
     // Funkcija za preuzimanje MP3 fajla
-    fun downloadAudio(url: String,context: Context) {
+    private var mediaPlayer: MediaPlayer? = null
+
+    // Funkcija za preuzimanje MP3 fajla i puštanje
+    fun downloadAudio(url: String, context: Context) {
         viewModelScope.launch {
             try {
-                val audioReq =AudioRequest(url)
-                val respose =repository.getAudio(audioReq)
-                playAudioFromUrl(respose.audio_url)
+                // Uvek prvo zaustavi prethodnu pesmu
+                stopAudio()
+
+                val audioReq = AudioRequest(url)
+                val response = repository.getAudio(audioReq)
+
+                // Kada dobiješ novi URL, pusti ga
+                playAudioFromUrl(response.audio_url)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Greška pri preuzimanju MP3 fajla: ${e.localizedMessage}")
+                _uiState.value = _uiState.value.copy(
+                    error = "Greška pri preuzimanju MP3 fajla: ${e.localizedMessage}"
+                )
             }
         }
     }
+
     private fun playAudioFromUrl(url: String) {
         try {
+            // Uveri se da nema starih MediaPlayer instanci
+            stopAudio()
+
             mediaPlayer = MediaPlayer().apply {
-                setDataSource(url)  // Postavljamo URL kao izvor
-                prepare()            // Pripremamo mediaPlayer
-                start()              // Počinjemo reprodukciju
+                setDataSource(url)
+                setOnPreparedListener { start() }
+                setOnCompletionListener {
+                    _isAudioPlaying.value = false
+                    Log.d("Audio", "Audio playback completed.")
+                }
+                setOnErrorListener { _, what, extra ->
+                    Log.e("Audio", "MediaPlayer error: what=$what, extra=$extra")
+                    stopAudio()
+                    true
+                }
+                prepareAsync() // ✅ koristi async pripremu
             }
-            // Opcionalno, postavimo listener za završetak reprodukcije
-            mediaPlayer?.setOnCompletionListener {
-                Log.d("Audio", "Audio playback completed.")
-            }
+
+            _isAudioPlaying.value = true
 
         } catch (e: Exception) {
             Log.e("Audio", "Error while playing audio: ${e.localizedMessage}")
         }
     }
+
     fun stopAudio() {
-        mediaPlayer?.let {
-            try {
-                it.stop()  // Zaustavlja reprodukciju
-                it.release()  // Oslobađa resurse
-                _isAudioPlaying.value = false  // Postavljamo stanje da je audio zaustavljen
-                Log.d("Audio", "Audio playback stopped.")
-            } catch (e: Exception) {
-                Log.e("Audio", "Error while stopping audio: ${e.localizedMessage}")
+        try {
+            mediaPlayer?.let { player ->
+                if (player.isPlaying) {
+                    player.stop()
+                }
+                player.reset()
+                player.release()
             }
+        } catch (e: Exception) {
+            Log.e("Audio", "Error while stopping audio: ${e.localizedMessage}")
+        } finally {
+            mediaPlayer = null
+            _isAudioPlaying.value = false
         }
     }
+
 }
 
 data class UiStateI(

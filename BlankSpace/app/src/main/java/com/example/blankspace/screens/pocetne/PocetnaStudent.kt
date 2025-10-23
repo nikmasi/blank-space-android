@@ -38,7 +38,8 @@ fun PocetnaStudent(modifier: Modifier = Modifier,navController: NavController,vi
             isLoggedIn = isLoggedIn,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
-            onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) }
+            onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },
+            onGameSing = {navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta)}
         )
     }
 }

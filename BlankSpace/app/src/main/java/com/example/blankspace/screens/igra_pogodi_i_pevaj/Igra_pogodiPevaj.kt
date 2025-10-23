@@ -1,5 +1,4 @@
-package com.example.blankspace.screens.igra_offline
-
+package com.example.blankspace.screens.igra_pogodi_i_pevaj
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -45,9 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,16 +58,13 @@ import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.theme.LIGTH_BLUE
 import com.example.blankspace.ui.theme.TEXT_COLOR
-import com.example.blankspace.viewModels.DatabaseViewModel
-import com.example.blankspace.viewModels.IgraOfflineLista
 import com.example.blankspace.viewModels.IgraSamLista
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
-import com.example.blankspace.viewModels.UiStateIgraOffline
 import kotlinx.coroutines.delay
 
 @Composable
-fun Igra_offline(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,databaseViewModel: DatabaseViewModel) {
+fun Igra_pogodiPevaj(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
     Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
@@ -74,59 +72,79 @@ fun Igra_offline(navController: NavController, selectedZanrovi: String, selected
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
         val selectedZanroviList = selectedZanrovi.split(",").map { it.trim() }
 
-        Igra_offline_mainCard(navController, selectedZanroviList, selectedNivoList,selectedZanrovi,selectedNivo,runda,poeni,databaseViewModel)
+        Igra_pogodiPevaj_mainCard(navController, selectedZanroviList, selectedNivoList,selectedZanrovi,selectedNivo,runda,poeni,viewModelIgraSam)
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Igra_offline_mainCard(navController: NavController, selectedZanrovi: List<String>, selectedNivo: List<String>,sZ:String,sN:String,runda:Int,poeni:Int,databaseViewModel: DatabaseViewModel) {
+fun Igra_pogodiPevaj_mainCard(navController: NavController, selectedZanrovi: List<String>, selectedNivo: List<String>,sZ:String,sN:String,runda:Int,poeni:Int,viewModel: IgraSamViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val uiState by databaseViewModel.uiState.collectAsState()
-    val igraOfflineLista by databaseViewModel.IgraOfflineLista.collectAsState()
+    val igraSamLista by viewModel.IgraSamLista.collectAsState()
 
     val count = remember { mutableStateOf(0) }
     val isAudioP = remember { mutableStateOf(false) }
     var crta= remember { mutableStateOf("") }
 
-    TimerEffect(count, navController, sZ, sN, runda, poeni)
-    FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, databaseViewModel, context, igraOfflineLista)
+    TimerEffect(count, navController, sZ, sN, uiState, runda, poeni)
+    FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
 
-    LaunchedEffect(databaseViewModel.uiState.value.igraoffline?.crtice) {
-        crta.value = databaseViewModel.uiState.value.igraoffline?.crtice ?: ""
+    LaunchedEffect(viewModel.uiState.value.igrasam?.crtice) {
+
+        crta.value = viewModel.uiState.value.igrasam?.crtice ?: ""
     }
+    LaunchedEffect(uiState.igrasam?.zvuk) {
+        val zvukUrl = uiState.igrasam?.zvuk
+        if (zvukUrl != null) {
+            viewModel.stopAudio() // prekini prethodni zvuk da ne seče
+            viewModel.downloadAudio(zvukUrl, context)
+            isAudioP.value = true
+        }
+        crta.value = uiState.igrasam?.crtice ?: ""
+    }
+
 
     Surface(
         color = Color.White,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.7f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .fillMaxHeight(0.7f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                DisplayContentIgraOffline(uiState, crta)
+
+                LoadingStateIgraSam(uiState)
+                DisplayContentIgraSam(uiState, crta)
                 Spacer(modifier = Modifier.height(22.dp))
 
-                UserInputSectionIgraOffline(uiState, context, navController, sZ, sN, runda, poeni, isAudioP, count,databaseViewModel)
+                UserInputSectionIgraSam(uiState, context, navController, sZ, sN, runda, poeni, isAudioP, count,viewModel)
                 Spacer(modifier = Modifier.height(22.dp))
 
-                HelpButtonsSectionIgraOffline(crta, uiState, context)
+                HelpButtonsSectionIgraSam(crta, uiState, context)
             }
 
             // Dodavanje plave trake na dnu
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .background(LIGTH_BLUE).height(40.dp)
+                    .background(LIGTH_BLUE)
+                    .height(40.dp)
             ){
                 Column {
                     Spacer(modifier=Modifier.padding(top=10.dp))
                     Row{
                         Spacer(modifier = Modifier.padding(start = 30.dp))
-                        Text(text = "Runda: ${uiState.igraoffline?.runda} ")
+                        Text(text = "Runda: ${uiState.igrasam?.runda} ")
                         Spacer(modifier = Modifier.padding(start = 5.dp))
                         Text(text = "Vreme: ")
                         Text(text=" ${count.value}",color=
@@ -153,6 +171,7 @@ fun TimerEffect(
     navController: NavController,
     sZ: String,
     sN: String,
+    uiState: UiStateI,
     runda: Int,
     poeni: Int
 ) {
@@ -161,7 +180,10 @@ fun TimerEffect(
             delay(1000)  // pauza -1 sekunda
             count.value += 1  // count+1
         }
-        navController.navigate(Destinacije.Igra_offline.ruta+"/"+sZ+"/"+sN+"/"+ (runda+1).toString()+"/"+(poeni).toString())
+
+        navController.navigate(Destinacije.Igra_pogodiPevaj.ruta+"/"+sZ+"/"+sN+"/"+ (runda+1).toString()+"/"+(poeni).toString()){
+            popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+        }
     }
 }
 
@@ -171,16 +193,16 @@ fun FetchDataEffect(
     selectedNivo: List<String>,
     runda: Int,
     poeni: Int,
-    viewModel: DatabaseViewModel,
+    viewModel: IgraSamViewModel,
     context: Context,
-    igraOfflineLista: IgraOfflineLista
+    igraSamLista: IgraSamLista
 ) {
     LaunchedEffect(key1 = selectedZanrovi, key2 = selectedNivo) {
         if (!selectedZanrovi.isNullOrEmpty()) {
-           // val url = BASE_URL+"get_audio/"
+            val url = BASE_URL+"get_audio/"
             //viewModel.downloadAudio(url, context)
-            igraOfflineLista.igraOfflineLista?.let {
-                viewModel.fetchIgraOfflineData(selectedZanrovi, selectedNivo.toString(),runda,poeni,
+            igraSamLista.igraSamLista?.let {
+                viewModel.fetchIgraSamData(selectedZanrovi, selectedNivo.toString(),runda,poeni,
                     it,context)
             }
         }
@@ -188,8 +210,19 @@ fun FetchDataEffect(
 }
 
 @Composable
-fun DisplayContentIgraOffline(uiState: UiStateIgraOffline, crta: MutableState<String>) {
-    uiState.igraoffline?.let { igrasam ->
+fun LoadingStateIgraSam(uiState: UiStateI) {
+    if (uiState.isRefreshing) {
+        CircularProgressIndicator()
+    } else {
+        uiState.error?.let {
+            Text(text = "Greška: $it", color = Color.Red)
+        }
+    }
+}
+
+@Composable
+fun DisplayContentIgraSam(uiState: UiStateI, crta: MutableState<String>) {
+    uiState.igrasam?.let { igrasam ->
         var flag by remember { mutableStateOf(false) }
         igrasam.stihpoznat.forEach { stih ->
             flag = stih.length > 36
@@ -208,8 +241,8 @@ fun DisplayContentIgraOffline(uiState: UiStateIgraOffline, crta: MutableState<St
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserInputSectionIgraOffline(
-    uiState: UiStateIgraOffline,
+fun UserInputSectionIgraSam(
+    uiState: UiStateI,
     context: Context,
     navController: NavController,
     sZ: String,
@@ -218,8 +251,9 @@ fun UserInputSectionIgraOffline(
     poeni: Int,
     isAudioP: MutableState<Boolean>,
     count: MutableState<Int>,
-    viewModel: DatabaseViewModel
+    viewModel: IgraSamViewModel
 ) {
+
     var odgovor by remember { mutableStateOf("") }
 
     var isListening by remember { mutableStateOf(false) }
@@ -230,13 +264,16 @@ fun UserInputSectionIgraOffline(
     // RecognitionListener koji hvata događaje prepoznavanja
     val recognitionListener = remember {
         object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) { // Možeš staviti neki log ili UI indikator
+            override fun onReadyForSpeech(params: Bundle?) {
+                // Možeš staviti neki log ili UI indikator
             }
 
-            override fun onBeginningOfSpeech() { // Korisnik počeo da govori
+            override fun onBeginningOfSpeech() {
+                // Korisnik počeo da govori
             }
 
-            override fun onRmsChanged(rmsdB: Float) { // Možeš iskoristiti za vizualni indikator jačine glasa
+            override fun onRmsChanged(rmsdB: Float) {
+                // Možeš iskoristiti za vizualni indikator jačine glasa
             }
 
             override fun onBufferReceived(buffer: ByteArray?) {}
@@ -272,14 +309,18 @@ fun UserInputSectionIgraOffline(
     LaunchedEffect(Unit) {
         speechRecognizer.setRecognitionListener(recognitionListener)
     }
-
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = odgovor,
         onValueChange = { odgovor = it },
         label = { Text("odgovor", color = TEXT_COLOR) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 15.dp, end = 15.dp),
+            .padding(start = 15.dp, end = 15.dp)
+            .onFocusChanged {
+                // Kad neko pokuša da klikne na polje — skloni fokus
+                if (it.isFocused) focusManager.clearFocus()
+            },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color(0xFFFF69B4),
             unfocusedBorderColor = Color.Gray
@@ -301,24 +342,17 @@ fun UserInputSectionIgraOffline(
     Row {
         Button(
             onClick = {
+                viewModel.stopAudio()
                 // Provera dozvole
                 if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
                     return@Button
                 }
 
-                val pm = context.packageManager
-                val activities = pm.queryIntentActivities(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0)
-                if (activities.isEmpty()) {
-                    Toast.makeText(context, "Nema dostupnog prepoznavanja govora", Toast.LENGTH_SHORT).show()
-                }
-
-
                 if (!isListening) {
                     val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
-                        putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true) // 🔹 traži offline recognition
                     }
                     speechRecognizer.startListening(intent)
                     isListening = true
@@ -336,12 +370,12 @@ fun UserInputSectionIgraOffline(
         ) {
             Text(if (isListening) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
         }
-
+        /*
         Button(
             onClick = {
                 if (!isAudioP.value) {
-                    uiState.igraoffline?.zvuk?.let { zvukUrl ->
-                       // viewModel.downloadAudio(zvukUrl, context)
+                    uiState.igrasam?.zvuk?.let { zvukUrl ->
+                        viewModel.downloadAudio(zvukUrl, context)
                     }
                     isAudioP.value=true
                 }
@@ -352,25 +386,29 @@ fun UserInputSectionIgraOffline(
             )
         ) {
             Text(text = "Pusti", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
-        }
+        }*/
         Spacer(modifier = Modifier.height(1.dp))
 
         Button(
             onClick = {
-                if (uiState.igraoffline != null) {
+                if (uiState.igrasam != null) {
                     val cleanedAnswer = odgovor.toLowerCase()
                         .replace("ć", "c")
                         .replace("đ", "dj")
                         .replace("ž", "z")
                         .replace("č", "c")
                         .replace("š", "s")
-                    if (cleanedAnswer == uiState.igraoffline!!.tacno.toLowerCase()) {
+                    if (cleanedAnswer == uiState.igrasam!!.tacno.toLowerCase()) {
                         Toast.makeText(context, "Tacan odgovor!", Toast.LENGTH_SHORT).show()
-                        //viewModel.stopAudio()
-                        if (uiState.igraoffline?.runda!! < 7) {
-                            navController.navigate(Destinacije.Igra_offline.ruta + "/$sZ/$sN/${uiState.igraoffline?.runda!!}/${poeni + 10}")
+                        viewModel.stopAudio()
+                        if (uiState.igrasam?.runda!! < 7) {
+                            navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/${poeni + 10}"){
+                                popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                            }
                         } else {
-                            navController.navigate(Destinacije.Kraj_igre_offline.ruta + "/$poeni")
+                            navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni"){
+                                popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                            }
                         }
                     } else {
                         Toast.makeText(context, "Netacan odgovor", Toast.LENGTH_SHORT).show()
@@ -391,11 +429,15 @@ fun UserInputSectionIgraOffline(
 
         Button(
             onClick = {
-                //viewModel.stopAudio()
-                if (uiState.igraoffline?.runda!! < 7) {
-                    navController.navigate(Destinacije.Igra_offline.ruta + "/$sZ/$sN/${uiState.igraoffline?.runda!!}/$poeni")
+                viewModel.stopAudio()
+                if (uiState.igrasam?.runda!! < 7) {
+                    navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/$poeni"){
+                        popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                    }
                 } else {
-                    navController.navigate(Destinacije.Kraj_igre_offline.ruta + "/$poeni")
+                    navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni"){
+                        popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -410,7 +452,7 @@ fun UserInputSectionIgraOffline(
 }
 
 @Composable
-fun HelpButtonsSectionIgraOffline(crta: MutableState<String>, uiState: UiStateIgraOffline, context: Context) {
+fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, context: Context) {
     Row {
         Text(
             text = "Pomoć ",
@@ -424,7 +466,7 @@ fun HelpButtonsSectionIgraOffline(crta: MutableState<String>, uiState: UiStateIg
         val cn2= LocalContext.current
         OutlinedButton(
             onClick = {
-                val i=uiState.igraoffline?.izvodjac
+                val i=uiState.igrasam?.izvodjac
 
                 Toast.makeText(cn2, "" +i, Toast.LENGTH_SHORT).show()
             },
@@ -443,7 +485,7 @@ fun HelpButtonsSectionIgraOffline(crta: MutableState<String>, uiState: UiStateIg
 
         OutlinedButton(
             onClick = {
-                Toast.makeText(context, uiState.igraoffline?.pesma, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, uiState.igrasam?.pesma, Toast.LENGTH_LONG).show()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White,
@@ -461,7 +503,7 @@ fun HelpButtonsSectionIgraOffline(crta: MutableState<String>, uiState: UiStateIg
         OutlinedButton(
             onClick = {
                 if (crta.value[0].toString()=="_"){
-                    val words = uiState.igraoffline?.tacno?.split(" ")
+                    val words = uiState.igrasam?.tacno?.split(" ")
 
 
                     val firstLetters = words?.joinToString(" ") {

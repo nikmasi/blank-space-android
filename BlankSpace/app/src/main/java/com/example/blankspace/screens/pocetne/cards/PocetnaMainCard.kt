@@ -26,7 +26,8 @@ fun PocetnaMainCard(
     onSuggestArtistClick: (() -> Unit)? = null,
     onSuggestSongClick: (() -> Unit)? = null,
     onSearchAndSuggestClick: (() -> Unit)? = null,
-
+    onGameSing: (() -> Unit)? = null,
+    onGameChallenge: (() -> Unit)? = null
 ) {
     Surface(
         color = Color.White,
@@ -69,6 +70,12 @@ fun PocetnaMainCard(
 
             onSearchAndSuggestClick?.let {
                 SmallButton(onClick = it, text = "Pretraži i predloži", style = MaterialTheme.typography.bodyMedium)
+            }
+            onGameSing?.let{
+                SmallButton(onClick = it, text = "Pogodi i pevaj", style = MaterialTheme.typography.bodyMedium)
+            }
+            onGameChallenge?.let{
+                SmallButton(onClick = it, text = "Challenge", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

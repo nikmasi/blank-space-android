@@ -40,7 +40,8 @@ fun PocetnaMaster(modifier: Modifier = Modifier,navController: NavController,vie
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
             onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },
             onSuggestSongClick = { navController.navigate(Destinacije.PredlaganjePesme.ruta) },
-            onSearchAndSuggestClick = { navController.navigate(Destinacije.PretragaPredlaganje.ruta) }
+            onSearchAndSuggestClick = { navController.navigate(Destinacije.PretragaPredlaganje.ruta) },
+            onGameSing = {navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta)}
         )
     }
 }
