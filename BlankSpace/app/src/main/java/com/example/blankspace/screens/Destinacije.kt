@@ -78,9 +78,19 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="nivo_pogodiPevaj",
         ikonica = Icons.Default.Home
     )
+    object Nivo_challenge: Destinacije(
+        ime="nivo_challenge",
+        ruta="nivo_challenge",
+        ikonica = Icons.Default.Home
+    )
     object Zanr_pogodiPevaj: Destinacije(
         ime="zanr_pogodiPevaj",
         ruta="zanr_pogodiPevaj",
+        ikonica = Icons.Default.Home
+    )
+    object Zanr_challenge: Destinacije(
+        ime="zanr_challenge",
+        ruta="zanr_challenge",
         ikonica = Icons.Default.Home
     )
     object Sifra_sobe_duel: Destinacije(
@@ -98,7 +108,11 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="igra_sam/{selectedZanrovi}",
         ikonica = Icons.Default.Home
     )
-
+    object Igra_challenge : Destinacije(
+        ime="igra_challenge",
+        ruta="igra_challenge/{selectedZanrovi}",
+        ikonica = Icons.Default.Home
+    )
     object Kraj_igre_igre_sam: Destinacije(
         ime="kraj_igre_igre_sam",
         ruta="kraj_igre_igre_sam",
@@ -114,7 +128,11 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="kraj_pogodiPevaj",
         ikonica = Icons.Default.Home
     )
-
+    object Kraj_challenge: Destinacije(
+        ime="kraj_challenge",
+        ruta="kraj_challenge",
+        ikonica = Icons.Default.Home
+    )
     object Login: Destinacije(
         ime="login",
         ruta="login",

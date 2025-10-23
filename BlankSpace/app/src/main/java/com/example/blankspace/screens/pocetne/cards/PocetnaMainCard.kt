@@ -34,7 +34,7 @@ fun PocetnaMainCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.85f),
+            .fillMaxHeight(0.94f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(

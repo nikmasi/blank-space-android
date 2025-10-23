@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.igra_pogodi_i_pevaj
+package com.example.blankspace.screens.igra_challenge
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -44,11 +44,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,7 +62,7 @@ import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
 
 @Composable
-fun Igra_pogodiPevaj(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
+fun Igra_challenge(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
     Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
@@ -72,18 +70,18 @@ fun Igra_pogodiPevaj(navController: NavController, selectedZanrovi: String, sele
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
         val selectedZanroviList = selectedZanrovi.split(",").map { it.trim() }
 
-        Igra_pogodiPevaj_mainCard(navController, selectedZanroviList, selectedNivoList,selectedZanrovi,selectedNivo,runda,poeni,viewModelIgraSam)
+        Igra_challenge_mainCard(navController, selectedZanroviList, selectedNivoList,selectedZanrovi,selectedNivo,runda,poeni,viewModelIgraSam)
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Igra_pogodiPevaj_mainCard(navController: NavController, selectedZanrovi: List<String>, selectedNivo: List<String>,sZ:String,sN:String,runda:Int,poeni:Int,viewModel: IgraSamViewModel) {
+fun Igra_challenge_mainCard(navController: NavController, selectedZanrovi: List<String>, selectedNivo: List<String>,sZ:String,sN:String,runda:Int,poeni:Int,viewModel: IgraSamViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val igraSamLista by viewModel.IgraSamLista.collectAsState()
 
-    val count = remember { mutableStateOf(0) }
+    val count = remember { mutableStateOf(runda) }
     val isAudioP = remember { mutableStateOf(false) }
     var crta= remember { mutableStateOf("") }
 
@@ -91,17 +89,7 @@ fun Igra_pogodiPevaj_mainCard(navController: NavController, selectedZanrovi: Lis
     FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
 
     LaunchedEffect(viewModel.uiState.value.igrasam?.crtice) {
-
         crta.value = viewModel.uiState.value.igrasam?.crtice ?: ""
-    }
-    LaunchedEffect(uiState.igrasam?.zvuk) {
-        val zvukUrl = uiState.igrasam?.zvuk
-        if (zvukUrl != null) {
-            viewModel.stopAudio() // prekini prethodni zvuk da ne seče
-            viewModel.downloadAudio(zvukUrl, context)
-            isAudioP.value = true
-        }
-        crta.value = uiState.igrasam?.crtice ?: ""
     }
 
     Surface(
@@ -143,8 +131,8 @@ fun Igra_pogodiPevaj_mainCard(navController: NavController, selectedZanrovi: Lis
                     Spacer(modifier=Modifier.padding(top=10.dp))
                     Row{
                         Spacer(modifier = Modifier.padding(start = 30.dp))
-                        Text(text = "Runda: ${uiState.igrasam?.runda} ")
-                        Spacer(modifier = Modifier.padding(start = 5.dp))
+
+                        //Spacer(modifier = Modifier.padding(start = 5.dp))
                         Text(text = "Vreme: ")
                         Text(text=" ${count.value}",color=
                         if(count.value>=50)Color.Red else
@@ -174,15 +162,13 @@ fun TimerEffect(
     runda: Int,
     poeni: Int
 ) {
-    LaunchedEffect(Unit) {
-        while (count.value < 60) {
-            delay(1000)  // pauza -1 sekunda
-            count.value += 1  // count+1
+    LaunchedEffect(key1 = runda) {  // ključ: samo ako se runda menja
+        count.value = runda
+        while (count.value > 0) {
+            delay(1000)
+            count.value -= 1
         }
-
-        navController.navigate(Destinacije.Igra_pogodiPevaj.ruta+"/"+sZ+"/"+sN+"/"+ (runda+1).toString()+"/"+(poeni).toString()){
-            popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-        }
+        navController.navigate(Destinacije.Kraj_challenge.ruta + "/$poeni")
     }
 }
 
@@ -252,7 +238,6 @@ fun UserInputSectionIgraSam(
     count: MutableState<Int>,
     viewModel: IgraSamViewModel
 ) {
-
     var odgovor by remember { mutableStateOf("") }
 
     var isListening by remember { mutableStateOf(false) }
@@ -308,18 +293,14 @@ fun UserInputSectionIgraSam(
     LaunchedEffect(Unit) {
         speechRecognizer.setRecognitionListener(recognitionListener)
     }
-    val focusManager = LocalFocusManager.current
+
     OutlinedTextField(
         value = odgovor,
         onValueChange = { odgovor = it },
         label = { Text("odgovor", color = TEXT_COLOR) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 15.dp, end = 15.dp)
-            .onFocusChanged {
-                // Kad neko pokuša da klikne na polje — skloni fokus
-                if (it.isFocused) focusManager.clearFocus()
-            },
+            .padding(start = 15.dp, end = 15.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color(0xFFFF69B4),
             unfocusedBorderColor = Color.Gray
@@ -341,7 +322,6 @@ fun UserInputSectionIgraSam(
     Row {
         Button(
             onClick = {
-                viewModel.stopAudio()
                 // Provera dozvole
                 if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
@@ -369,7 +349,7 @@ fun UserInputSectionIgraSam(
         ) {
             Text(if (isListening) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
         }
-        /*
+
         Button(
             onClick = {
                 if (!isAudioP.value) {
@@ -385,7 +365,7 @@ fun UserInputSectionIgraSam(
             )
         ) {
             Text(text = "Pusti", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
-        }*/
+        }
         Spacer(modifier = Modifier.height(1.dp))
 
         Button(
@@ -400,14 +380,10 @@ fun UserInputSectionIgraSam(
                     if (cleanedAnswer == uiState.igrasam!!.tacno.toLowerCase()) {
                         Toast.makeText(context, "Tacan odgovor!", Toast.LENGTH_SHORT).show()
                         viewModel.stopAudio()
-                        if (uiState.igrasam?.runda!! < 7) {
-                            navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/${poeni + 10}"){
-                                popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                            }
+                        if (count.value >0) {
+                            navController.navigate(Destinacije.Igra_challenge.ruta + "/$sZ/$sN/${count.value}/${poeni + 10}")
                         } else {
-                            navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni"){
-                                popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                            }
+                            navController.navigate(Destinacije.Kraj_challenge.ruta + "/$poeni")
                         }
                     } else {
                         Toast.makeText(context, "Netacan odgovor", Toast.LENGTH_SHORT).show()
@@ -429,14 +405,10 @@ fun UserInputSectionIgraSam(
         Button(
             onClick = {
                 viewModel.stopAudio()
-                if (uiState.igrasam?.runda!! < 7) {
-                    navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/$poeni"){
-                        popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                    }
+                if (count.value > 0) {
+                    navController.navigate(Destinacije.Igra_challenge.ruta + "/$sZ/$sN/${count.value}/$poeni")
                 } else {
-                    navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni"){
-                        popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                    }
+                    navController.navigate(Destinacije.Kraj_challenge.ruta + "/$poeni")
                 }
             },
             colors = ButtonDefaults.buttonColors(
