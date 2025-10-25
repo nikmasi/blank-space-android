@@ -3,6 +3,7 @@ package com.example.blankspace.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.retrofit.models.DodajZanrResponse
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredloziPesamaOdbijRequest
@@ -11,6 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -84,6 +87,35 @@ class PredloziViewModel @Inject constructor(
         _uiStatePesmaPredlozi.value= PesmaPredlozi(id,pesma,izvodjac,zanr,korisnik)
     }
 
+    private val _uiStatePredlog = MutableStateFlow(UiStatePredlog())
+    val uiStatePredlog: StateFlow<UiStatePredlog> = _uiStatePredlog
+
+    fun dodajZanrSaFajlom(zanr: String, izvodjac: String, nazivPesme: String, nepoznatiStihovi: String,
+                          poznatiStihovi: String, nivo: String, audioFile: RequestBody
+    ) {
+        viewModelScope.launch {
+            val audioPart = MultipartBody.Part.createFormData(
+                name = "audio",
+                filename = "$nazivPesme - $nivo.mp3",
+                body = audioFile
+            )
+            _uiStatePredlog.value = _uiStatePredlog.value.copy(isRefreshing = true)
+            try {
+                // val request = DodajZanrRequest(zanr,izvodjac,nazivPesme,nepoznatiStihovi,poznatiStihovi,nivo,audioPart)
+                val response = repository.dodajZanr(zanr, izvodjac, nazivPesme,
+                    nepoznatiStihovi, poznatiStihovi, nivo,
+                    audioPart)
+                _uiStatePredlog.value = UiStatePredlog(predlog = response, isRefreshing = false)
+            } catch (e: Exception) {
+                _uiStatePredlog.value =
+                    UiStatePredlog(predlog = null, isRefreshing = false, error = e.localizedMessage)
+            }
+        }
+    }
+    fun resetDodajZanr() {
+        _uiStatePredlog.value = _uiStatePredlog.value.copy(predlog = null)
+    }
+
 }
 
 data class UiStatePredloziIzv(
@@ -112,4 +144,10 @@ data class PesmaPredlozi(
     val izvodjac: String?=null,
     val zanr: String?=null,
     val korisnik:String?=null
+)
+
+data class UiStatePredlog(
+    val predlog: DodajZanrResponse?=null,
+    val isRefreshing: Boolean = false,
+    val error: String? = null
 )

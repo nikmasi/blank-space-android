@@ -174,9 +174,10 @@ fun PredloziIzvodjaca_mainCard(navController:NavController,viewModelPredlozi:Pre
                                     val buttonStyle = MaterialTheme.typography.bodyMedium
 
                                     SmallButton(onClick = {
-                                        viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,item.ime_izvodjaca,
-                                            item.zan_naziv,item.kor_ime)
-                                        navController.navigate(Destinacije.PesmaPodaci.ruta)
+                                        //viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,item.ime_izvodjaca,
+                                          //  item.zan_naziv,item.kor_ime)
+                                        viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
+                                        navController.navigate(Destinacije.PesmaPodaci.ruta+"/"+item.zan_naziv+"/"+item.ime_izvodjaca)
                                     }, text = "Prihvati", style = buttonStyle)
 
                                     SmallButton(onClick = {

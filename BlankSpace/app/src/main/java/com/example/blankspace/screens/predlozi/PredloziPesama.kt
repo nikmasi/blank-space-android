@@ -193,7 +193,8 @@ fun ItemPredloziPesama(
             val buttonStyle = MaterialTheme.typography.bodyMedium
 
             SmallButton(onClick = {
-                navController.navigate(Destinacije.PesmaPodaci2.ruta)
+                viewModel.odbijPredlogPesme(item.id)
+                navController.navigate(Destinacije.PesmaPodaci2.ruta+"/"+item.zan_naziv+"/"+item.izv_ime+"/"+item.naziv_pesme)
             }, text = "Prihvati", style = buttonStyle)
 
             SmallButton(onClick = {

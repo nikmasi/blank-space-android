@@ -3,6 +3,8 @@ package com.example.blankspace.screens.dodavanje
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -32,12 +34,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
@@ -45,46 +49,58 @@ import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
+import kotlinx.coroutines.delay
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
-fun PesmaPodaci2(navController: NavController,viewModel: PredloziViewModel){
+fun PesmaPodaci2(navController: NavController,viewModel: PredloziViewModel,zanr:String,izvodjac:String,pesma:String){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        PesmaPodaci2_mainCard(navController,viewModel)
+        PesmaPodaci2_mainCard(navController,viewModel,zanr,izvodjac,pesma)
     }
 }
 
 @Composable
-fun PesmaPodaci2_mainCard(navController: NavController, viewModel: PredloziViewModel) {
+fun PesmaPodaci2_mainCard(navController: NavController, viewModel: PredloziViewModel,zanr:String,izvodjac:String,pesma:String) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-
     var selectedIzvodjac by remember { mutableStateOf("") }
+    var selectedMp3Uri by remember { mutableStateOf<Uri?>(null) }
+    val uiStatePredlog by viewModel.uiStatePredlog.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        snapshotFlow { uiStatePredlog.predlog }
+            .collect { response ->
+                response?.let {
+                    Toast.makeText(context, it.odgovor, Toast.LENGTH_SHORT).show()
+                    delay(3000)
+                    navController.navigate(Destinacije.PocetnaAdmin.ruta) {
+                        popUpTo(0) // Ovo čisti ceo stack
+                        launchSingleTop = true
+                    }
+                    viewModel.resetDodajZanr()
+                }
+            }
+    }
 
     Surface(
         color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.7f),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.7f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(22.dp))
-
             HeadlineText("Podaci o pesmi")
 
             var nepoznati_stihovi by remember { mutableStateOf("") }
             var poznati_stihovi by remember { mutableStateOf("") }
             var nivo by remember { mutableStateOf("") }
-
 
             OutlinedTextFieldInput(
                 value = nepoznati_stihovi,
@@ -155,48 +171,36 @@ fun PesmaPodaci2_mainCard(navController: NavController, viewModel: PredloziViewM
                 color = TEXT_COLOR
             )
 
-            val filePickerLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.GetContent(),
-                onResult = { uri: Uri? ->
-                    if (uri != null) {
-                        // Ovdje se može obraditi odabrani fajl
-                        val filePath = getFilePath(context, uri)
-
-                        // Proveravamo da li je fajl MP3
-                        if (filePath?.endsWith(".mp3") == true) {
-                            // Učitaj MP3 fajl
-                            println("MP3 file selected: $filePath")
-                        } else {
-                            println("Selected file is not an MP3 file.")
-                        }
-                    }
-                }
-            )
-
-            // Sekcija sa stilizovanim dugmetom za izbor fajla
-            Column(modifier = Modifier.padding(16.dp)) {
-                Button(
-                    onClick = {
-                        // Otvorite dijalog za odabir fajla
-                        filePickerLauncher.launch("audio/mp3")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFADD8E6))
-                ) {
-                    Text("Choose MP3 File", color = Color.White)
-                }
+            FilePicker { uri ->
+                selectedMp3Uri =uri
             }
 
             Spacer(modifier = Modifier.height(22.dp))
 
             SmallButton(onClick = {
-                //navController.navigate(Destinacije.PesmaPodaciD.ruta)
+                selectedMp3Uri?.let { uri ->
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val requestBody = inputStream?.readBytes()?.let { bytes ->
+                        bytes.toRequestBody("audio/mpeg".toMediaType())
+                    }
+
+
+                    if (requestBody != null) {
+
+                        viewModel.dodajZanrSaFajlom(
+                            zanr = zanr,
+                            izvodjac = izvodjac,
+                            nazivPesme = pesma,
+                            nepoznatiStihovi = nepoznati_stihovi,
+                            poznatiStihovi = poznati_stihovi,
+                            nivo = selectedDifficulty.toString(),
+                            audioFile = requestBody
+                        )
+                    } else {
+                        println("Neuspešno otvaranje MP3 fajla.")
+                    }
+                }
             }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
-

@@ -468,11 +468,29 @@ fun BlankSpaceApp(){
             composable(route = Destinacije.PredloziPesme.ruta){
                 PredloziPesama(navController,viewModelPredlozi)
             }
-            composable(route = Destinacije.PesmaPodaci.ruta){
-                PesmaPodaci(navController,viewModelPredlozi)
+            composable(route = "${Destinacije.PesmaPodaci.ruta}/{zanr}/{izvodjac}",
+                arguments = listOf(
+                    navArgument("zanr") { type = NavType.StringType },
+                    navArgument("izvodjac") { type = NavType.StringType }
+                )
+                ) { navBackStackEntry ->
+                val zanr=navBackStackEntry.arguments?.getString("zanr")?:""
+                val izvodjac=navBackStackEntry.arguments?.getString("izvodjac")?:""
+
+                PesmaPodaci(navController,viewModelPredlozi,zanr,izvodjac)
             }
-            composable(route = Destinacije.PesmaPodaci2.ruta){
-                PesmaPodaci2(navController,viewModelPredlozi)
+            composable(route = "${Destinacije.PesmaPodaci2.ruta}/{zanr}/{izvodjac}/{pesma}",
+                arguments = listOf(
+                    navArgument("zanr") { type = NavType.StringType },
+                    navArgument("izvodjac") { type = NavType.StringType },
+                    navArgument("pesma") { type = NavType.StringType }
+                )
+                ) { navBackStackEntry ->
+                val zanr=navBackStackEntry.arguments?.getString("zanr")?:""
+                val izvodjac=navBackStackEntry.arguments?.getString("izvodjac")?:""
+                val pesma=navBackStackEntry.arguments?.getString("pesma")?:""
+
+                PesmaPodaci2(navController,viewModelPredlozi,zanr,izvodjac,pesma)
             }
             composable(route = Destinacije.NazivZanra.ruta){
                 NazivZanra(navController, viewModelDodavanje)

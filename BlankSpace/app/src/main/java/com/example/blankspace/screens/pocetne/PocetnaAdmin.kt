@@ -126,5 +126,5 @@ fun AdminSuggestionButtons(navController: NavController) {
 
     SmallButton(onClick = {
         navController.navigate(Destinacije.PredloziPesme.ruta)
-    }, text = "Predloži pesmu", style = buttonStyle)
+    }, text = "Predlozi pesama", style = buttonStyle)
 }

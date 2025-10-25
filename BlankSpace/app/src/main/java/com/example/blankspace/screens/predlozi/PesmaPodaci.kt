@@ -3,6 +3,7 @@ package com.example.blankspace.screens.dodavanje
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -32,12 +33,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
@@ -46,39 +49,49 @@ import com.example.blankspace.ui.components.BodyLargeText
 import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
-fun PesmaPodaci(navController: NavController,viewModel: PredloziViewModel){
+fun PesmaPodaci(navController: NavController,viewModel: PredloziViewModel,zanr:String,izvodjac:String){
     Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +16.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        PesmaPodaci_mainCard(navController,viewModel)
+        PesmaPodaci_mainCard(navController,viewModel,zanr,izvodjac)
     }
 }
 
 @Composable
-fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewModel) {
+fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewModel,zanr:String,izvodjac:String) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-
     var selectedIzvodjac by remember { mutableStateOf("") }
-
     var selectedMp3Uri by remember { mutableStateOf<Uri?>(null) }
+    val uiStatePredlog by viewModel.uiStatePredlog.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        snapshotFlow { uiStatePredlog.predlog }
+            .collect { response ->
+                response?.let {
+                    Toast.makeText(context, it.odgovor, Toast.LENGTH_SHORT).show()
+                    delay(3000)
+                    navController.navigate(Destinacije.PocetnaAdmin.ruta) {
+                        popUpTo(0) // Ovo čisti ceo stack
+                        launchSingleTop = true
+                    }
+                    viewModel.resetDodajZanr()
+                }
+            }
+    }
 
     Surface(
         color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.7f),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.7f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -172,40 +185,22 @@ fun PesmaPodaci_mainCard(navController: NavController, viewModel: PredloziViewMo
                     }
 
                     if (requestBody != null) {
-                        /*viewModel.dodajZanrSaFajlom(
+                        viewModel.dodajZanrSaFajlom(
                             zanr = zanr,
                             izvodjac = izvodjac,
                             nazivPesme = naziv_pesme,
                             nepoznatiStihovi = nepoznati_stihovi,
                             poznatiStihovi = poznati_stihovi,
-                            nivo = nivo,
+                            nivo = selectedDifficulty.toString(),
                             audioFile = requestBody
-                        )*/
+                        )
                     } else {
                         println("Neuspešno otvaranje MP3 fajla.")
                     }
                 }
             }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
 
-
-
             Spacer(modifier = Modifier.height(22.dp))
-
-            SmallButton(onClick = {
-                //navController.navigate(Destinacije.PesmaPodaciD.ruta)
-            }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
         }
     }
-}
-
-// Funkcija koja konvertuje Uri u putanju fajla, van Composable-a
-fun getFilePath(context: Context, uri: Uri): String? {
-    val cursor = context.contentResolver.query(uri, null, null, null, null)
-    cursor?.let {
-        if (it.moveToFirst()) {
-            val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            return it.getString(index)
-        }
-    }
-    return null
 }
