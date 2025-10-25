@@ -19,7 +19,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+        ndk {
+            // 🔹 Ako targetiraš samo 64-bitne uređaje
+            abiFilters += listOf("arm64-v8a")
+        }
     }
+
+
 
     buildTypes {
         release {

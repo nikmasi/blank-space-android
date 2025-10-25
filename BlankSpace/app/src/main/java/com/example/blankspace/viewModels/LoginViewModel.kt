@@ -96,7 +96,6 @@ class LoginViewModel @Inject constructor(
         _ime.value= Ime(ime=_uiState.value.login?.ime)
         _uiState.value = _uiState.value.copy(login = null)
 
-        //fetchLogin("","")
     }
 
     fun setKorisnik(UIStateR:UiStateR)= viewModelScope.launch {

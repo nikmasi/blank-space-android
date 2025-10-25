@@ -3,6 +3,9 @@ package com.example.blankspace.screens.igra_pogodi_i_pevaj
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -41,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,12 +60,24 @@ import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.SpeechRecognitionHandler
 import com.example.blankspace.ui.theme.LIGTH_BLUE
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.IgraSamLista
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
+import com.example.blankspace.whisper.WhisperHelper
+import com.example.blankspace.whisper.WhisperRecognizer
+import com.example.blankspace.whisper.transcribeAudioWhisper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 @Composable
 fun Igra_pogodiPevaj(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
@@ -252,66 +268,19 @@ fun UserInputSectionIgraSam(
     count: MutableState<Int>,
     viewModel: IgraSamViewModel
 ) {
+    val odgovor = remember { mutableStateOf("") }
+    val isListening = remember { mutableStateOf(false) }
 
-    var odgovor by remember { mutableStateOf("") }
+    val speechRecognizer = SpeechRecognitionHandler(
+        context = context,
+        odgovor = odgovor,
+        isListening = isListening
+    )
 
-    var isListening by remember { mutableStateOf(false) }
-    val speechRecognizer = remember {
-        SpeechRecognizer.createSpeechRecognizer(context)
-    }
-
-    // RecognitionListener koji hvata događaje prepoznavanja
-    val recognitionListener = remember {
-        object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {
-                // Možeš staviti neki log ili UI indikator
-            }
-
-            override fun onBeginningOfSpeech() {
-                // Korisnik počeo da govori
-            }
-
-            override fun onRmsChanged(rmsdB: Float) {
-                // Možeš iskoristiti za vizualni indikator jačine glasa
-            }
-
-            override fun onBufferReceived(buffer: ByteArray?) {}
-
-            override fun onEndOfSpeech() {
-                // Korisnik je završio govor
-                isListening = false
-            }
-
-            override fun onError(error: Int) {
-                isListening = false
-                // Možeš prikazati grešku, na primer Toast
-                Toast.makeText(context, "Greška prilikom prepoznavanja govora: $error", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onResults(results: Bundle?) {
-                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                    odgovor = matches[0] // Prvi rezultat
-                }
-                isListening = false
-            }
-
-            override fun onPartialResults(partialResults: Bundle?) {
-                // Opcionalno: delimični rezultati
-            }
-
-            override fun onEvent(eventType: Int, params: Bundle?) {}
-        }
-    }
-
-    // Postavljanje listenera jednom
-    LaunchedEffect(Unit) {
-        speechRecognizer.setRecognitionListener(recognitionListener)
-    }
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        value = odgovor,
-        onValueChange = { odgovor = it },
+        value = odgovor.value,
+        onValueChange = { odgovor.value = it },
         label = { Text("odgovor", color = TEXT_COLOR) },
         modifier = Modifier
             .fillMaxWidth()
@@ -337,38 +306,87 @@ fun UserInputSectionIgraSam(
             Toast.makeText(context, "Dozvola za mikrofon je potrebna.", Toast.LENGTH_SHORT).show()
         }
     }
+    var mediaRecorder: MediaRecorder? = null
+    var audioFilePath: String = ""
+    var isRecording = false
+
+    /*
+    fun startRecording(context: Context) {
+        audioFilePath = context.filesDir.absolutePath + "/recorded_audio.wav"
+
+        mediaRecorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4) // ili WAV, ali MPEG_4 je jednostavnije
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFile(audioFilePath)
+            prepare()
+            start()
+        }
+
+        isRecording = true
+    }
+
+    fun stopRecording(): String {
+        mediaRecorder?.apply {
+            stop()
+            release()
+        }
+        mediaRecorder = null
+        isRecording = false
+        return audioFilePath
+    }*/
+
+
 
     Row {
         Button(
             onClick = {
                 viewModel.stopAudio()
-                // Provera dozvole
-                if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
                     return@Button
                 }
 
-                if (!isListening) {
+                if (!isListening.value) {
                     val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
                     }
                     speechRecognizer.startListening(intent)
-                    isListening = true
-
+                    isListening.value = true
                 } else {
                     speechRecognizer.stopListening()
-                    isListening = false
-
+                    isListening.value = false
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isListening) Color.Red else Color(0xFFFF69B4),
+                containerColor = if (isListening.value) Color.Red else Color(0xFFFF69B4),
                 contentColor = Color.White
             )
         ) {
-            Text(if (isListening) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
+            Text(if (isListening.value) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
         }
+
+
+        /*
+        val coroutineScope = rememberCoroutineScope()
+
+        Button(onClick = {
+            coroutineScope.launch {
+                val path = recordAudioToWav(context, durationSec = 5) // snimaj 5 sekundi
+                val tekst = withContext(Dispatchers.IO) {
+                    transcribeAudioWhisper(path) // tvoja funkcija koja koristi FloatArray
+                }
+                odgovor = tekst
+                Log.d("Whisper",odgovor.toString())
+
+                Log.d("Whisper",tekst.toString())
+            }
+        }) {
+            Text("Govori / Snimi 5s")
+        }*/
+
         /*
         Button(
             onClick = {
@@ -391,7 +409,7 @@ fun UserInputSectionIgraSam(
         Button(
             onClick = {
                 if (uiState.igrasam != null) {
-                    val cleanedAnswer = odgovor.toLowerCase()
+                    val cleanedAnswer = odgovor.value.toLowerCase()
                         .replace("ć", "c")
                         .replace("đ", "dj")
                         .replace("ž", "z")

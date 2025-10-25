@@ -1,0 +1,24 @@
+cmake_minimum_required(VERSION 3.10)
+project(whisper_android)
+
+# Dodaj Whisper C/C++ fajlove i JNI bridge
+add_library(
+    whisper
+    SHARED
+    whisper_wrapper.cpp
+    whisper.cpp           # originalni Whisper kod
+    ggml.c                # deo Whisper projekta
+)
+
+# Poveži sa Android log bibliotekom (za __android_log_print)
+find_library(log-lib log)
+
+target_link_libraries(
+    whisper
+    ${log-lib}
+)
+
+# Opcionalno, ako imaš dodatne putanje do include fajlova
+target_include_directories(whisper PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)

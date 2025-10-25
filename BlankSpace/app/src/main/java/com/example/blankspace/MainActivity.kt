@@ -95,16 +95,86 @@ import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
+import com.example.blankspace.whisper.WhisperRecognizer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
+// Primer Kotlin koda (ovo bi trebalo da se nalazi u MainActivity ili nekoj util klasi)
+
+fun copyAssetToInternalStorage(context: Context, assetName: String): String {
+    val file = File(context.filesDir, assetName)
+    if (file.exists()) {
+        // Model je već kopiran, vratite putanju
+        return file.absolutePath
+    }
+
+    try {
+        context.assets.open(assetName).use { inputStream ->
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        // Vratite apsolutnu putanju do kopiranog fajla
+        return file.absolutePath
+    } catch (e: IOException) {
+        e.printStackTrace()
+        // Opcionalno, bacite izuzetak ili logujte ozbiljnu grešku
+        return ""
+    }
+}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
+
+        try {
+            val recognizer = WhisperRecognizer()
+            Log.d("Whisper", "Biblioteka učitana uspešno.")
+
+            // 1. Definicija modela i kopiranje u interni storage
+            val modelAssetName = "ggml-tiny.bin"
+            val absolutePath = copyAssetToInternalStorage(this, modelAssetName)
+
+            if (absolutePath.isNotEmpty()) {
+                // 2. Poziv JNI-ja sa APSOLUTNOM PUTANJOM
+                val ctxPointer = recognizer.initContext(absolutePath)
+
+                Log.d("Whisper", "Pozvan initContext sa putanjom: $absolutePath")
+                Log.d("Whisper", "Vraćen kontekst pointer: $ctxPointer")
+
+                if (ctxPointer != 0L) {
+                    // 🎉 USPEH! Kontekst je učitan.
+                    Log.i("Whisper", "Whisper kontekst uspešno učitan! Pointer: $ctxPointer")
+
+                    // OVDE BI TREBALO DA SE NASTAVI SA TRANSSKRIPCIJOM (recognizer.transcribe(...))
+
+                    // Važno: Kontekst se obično oslobađa na kraju rada (npr. u onDestroy ili kada se završi transkripcija),
+                    // ali za brzo testiranje, možete ga odmah osloboditi:
+                    recognizer.freeContext(ctxPointer)
+                    Log.d("Whisper", "Whisper kontekst oslobođen.")
+
+                } else {
+                    // 🛑 Greška iz C++: Model nije pronađen na putanji, neispravan format ili nema memorije.
+                    Log.e("Whisper", "Inicijalizacija C++ konteksta NIJE uspela. Vraćen pointer 0L.")
+                }
+            } else {
+                // 🛑 Greška iz Kotlina: Fajl nije pronađen u assets-u ili je kopiranje neuspelo.
+                Log.e("Whisper", "Kopiranje modela iz assets-a na interno skladište nije uspelo.")
+            }
+
+        } catch (e: UnsatisfiedLinkError) {
+            Log.e("Whisper", "KRITIČNA GREŠKA: libwhisper.so nije pronađena ili JNI funkcije nisu mapirane.", e)
+        }
+
         setContent {
             BlankSpaceTheme {
                 BlankSpaceApp()
@@ -161,6 +231,7 @@ fun BlankSpaceApp(){
         bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
         val padding = innerPadding
+
         NavHost(
             navController = navController,
             startDestination = Destinacije.UcitavanjeEkrana.ruta
@@ -244,7 +315,7 @@ fun BlankSpaceApp(){
                     navArgument("selectedZanrovi") { type = NavType.StringType },
                     navArgument("selectedNivo") { type = NavType.StringType },
                     navArgument("runda") { type = NavType.IntType },
-                    navArgument("poeni") { type = NavType.IntType }// Pretpostavljamo da je `selectedNivo` String
+                    navArgument("poeni") { type = NavType.IntType }
                 )
             ) { navBackStackEntry ->
                 val selectedZanrovi = navBackStackEntry.arguments?.getString("selectedZanrovi") ?: ""
@@ -471,5 +542,6 @@ fun BlankSpaceApp(){
                 Kraj_duela(navController,viewModelDuel)
             }
         }
+
     }
 }

@@ -22,9 +22,7 @@ class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private
     val allPesme = roomDao.getPesme()
     val allStihov = roomDao.getStihovi()
 
-    suspend fun insert(zanr: ZanrEntity) {
-        roomDao.insert(zanr)
-    }
+    suspend fun insert(zanr: ZanrEntity) { roomDao.insert(zanr) }
 
     fun Zanr.toEntity(): ZanrEntity {
         return ZanrEntity(id = this.id, naziv = this.naziv)
@@ -111,6 +109,10 @@ class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private
 
     suspend fun getIzvodjacPoId(id:Int):IzvodjacEntity{
         return roomDao.getIzvodjacPoId(id)
+    }
+
+    suspend fun getStihoviPoTeziniIZanrovima(tezina: String,zanrovi:List<Int>):List<StihoviEntity>{
+        return roomDao.getStihoviPoTeziniIZanrovima(tezina,zanrovi)
     }
 
 }

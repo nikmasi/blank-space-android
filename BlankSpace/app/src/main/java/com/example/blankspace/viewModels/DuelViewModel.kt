@@ -52,7 +52,6 @@ class DuelViewModel @Inject constructor(
             val response = repository.generisiSifru(request)
             _uiStateSifSobe.value = UiStateSifSobe(sifraResponse = response, isRefreshing = false)
 
-            // ✨ NEW LINE: Save the generated code to trigger the polling
             response.sifra?.let { upisiSifruSobe(it) }
 
         }catch (e: Exception) {

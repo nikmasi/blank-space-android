@@ -30,7 +30,6 @@ class DatabaseViewModel @Inject constructor(
         myRoomRepository.insert(word)
     }
 
-
     fun loadZanrovi() {
         viewModelScope.launch {
             val fromApi = myRoomRepository.fetchZanroviFromApi()
@@ -83,8 +82,12 @@ class DatabaseViewModel @Inject constructor(
             val intList = zanrovi.map { it.toInt() }
 
             // Filtriraj stihove po težini i žanru
-            val sviStihovi = myRoomRepository.getStihoviPoTezini(mapTezinaToNivo(tezina))
+            //val sviStihovi = myRoomRepository.getStihoviPoTezini(mapTezinaToNivo(tezina))
+            //val filtrirani = sviStihovi.filter { it.pesId !in listaBilo }
+
+            val sviStihovi = myRoomRepository.getStihoviPoTeziniIZanrovima(mapTezinaToNivo(tezina), intList)
             val filtrirani = sviStihovi.filter { it.pesId !in listaBilo }
+
 
             Log.d("Nasu filtrirani",filtrirani.toString())
             if (filtrirani.isEmpty()) {

@@ -21,7 +21,6 @@ import com.example.blankspace.viewModels.LoginViewModel
 @Composable
 fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, viewModelLogin: LoginViewModel) {
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
-
     @Composable
     fun createButton(label: String, onClick: () -> Unit) {
         TextButton(onClick = onClick) {
@@ -33,16 +32,10 @@ fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, view
         title = { Text("Blank Space") },
         actions = {
             if (Destinacije.Pocetna.ruta == currentRoute) {
-                createButton("Početna") {
-                    navController.navigate(Destinacije.Pocetna.ruta)
-                }
-                createButton("Uloguj se") {
-                    navController.navigate(Destinacije.Login.ruta)
-                }
+                createButton("Početna") { navController.navigate(Destinacije.Pocetna.ruta) }
+                createButton("Uloguj se") { navController.navigate(Destinacije.Login.ruta) }
             }
-            else if(Destinacije.Login.ruta==currentRoute){
-
-            }
+            else if(Destinacije.Login.ruta==currentRoute){ }
             else if(Destinacije.PravilaIgre.ruta==currentRoute){
                 createButton("Početna") {
                     if(uiStateLogin.login?.access!=null){
@@ -52,12 +45,9 @@ fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, view
                                 "B" -> navController.navigate(Destinacije.PocetnaBrucos.ruta)
                                 "M" -> navController.navigate(Destinacije.PocetnaMaster.ruta)
                                 "A" -> navController.navigate(Destinacije.PocetnaAdmin.ruta)
-
                             }
                         }
-                    }else{
-                        navController.navigate(Destinacije.Pocetna.ruta)
-                    }
+                    }else{ navController.navigate(Destinacije.Pocetna.ruta) }
                 }
             }
             else if (Destinacije.Login.ruta != currentRoute || Destinacije.Registracija.ruta != currentRoute ||
@@ -70,12 +60,9 @@ fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, view
                     //navController.navigate(Destinacije.Login.ruta)
                 }
             }
-            createButton("Pravila igre") {
-                navController.navigate(Destinacije.PravilaIgre.ruta)
-            }
+            createButton("Pravila igre") { navController.navigate(Destinacije.PravilaIgre.ruta) }
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = Color(0xFFADD8E6)
-        )
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFFADD8E6))
     )
 }
+

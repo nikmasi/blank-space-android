@@ -230,8 +230,7 @@ fun UserInputSectionIgraOffline(
     // RecognitionListener koji hvata događaje prepoznavanja
     val recognitionListener = remember {
         object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) { // Možeš staviti neki log ili UI indikator
-            }
+            override fun onReadyForSpeech(params: Bundle?) {}
 
             override fun onBeginningOfSpeech() { // Korisnik počeo da govori
             }
@@ -241,14 +240,12 @@ fun UserInputSectionIgraOffline(
 
             override fun onBufferReceived(buffer: ByteArray?) {}
 
-            override fun onEndOfSpeech() {
-                // Korisnik je završio govor
+            override fun onEndOfSpeech() { // Korisnik je završio govor
                 isListening = false
             }
 
             override fun onError(error: Int) {
-                isListening = false
-                // Možeš prikazati grešku, na primer Toast
+                isListening = false // Možeš prikazati grešku, na primer Toast
                 Toast.makeText(context, "Greška prilikom prepoznavanja govora: $error", Toast.LENGTH_SHORT).show()
             }
 
@@ -260,8 +257,7 @@ fun UserInputSectionIgraOffline(
                 isListening = false
             }
 
-            override fun onPartialResults(partialResults: Bundle?) {
-                // Opcionalno: delimični rezultati
+            override fun onPartialResults(partialResults: Bundle?) { // Opcionalno: delimični rezultati
             }
 
             override fun onEvent(eventType: Int, params: Bundle?) {}
@@ -318,7 +314,12 @@ fun UserInputSectionIgraOffline(
                     val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
+                        //putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+
                         putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true) // 🔹 traži offline recognition
+                        putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 3000)  // 3 sekunde tišine pre timeouta
+                        putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 3000)  // minimalno trajanje govora
+                        putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 3000)
                     }
                     speechRecognizer.startListening(intent)
                     isListening = true

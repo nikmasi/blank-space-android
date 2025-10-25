@@ -23,27 +23,18 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
                 "master" -> listaMaster
                 else -> emptyList()
             }
-            NavigationBar(
-                containerColor = Color(0xFFF0DAE7) // pozadina navigacije
-            ) {
+            NavigationBar(containerColor = Color(0xFFF0DAE7)) {
                 navigationList.forEach { navDestination ->
                     NavigationBarItem(
                         icon = {
-                            Icon(
-                                imageVector = navDestination.ikonica,
-                                contentDescription = null,
-                            )
+                            Icon(imageVector = navDestination.ikonica, contentDescription = null,)
                         },
                         label = { Text(text = navDestination.ruta) },
                         selected = currentRoute == navDestination.ruta,
-                        onClick = {
-                            navController.navigate(navDestination.ruta)
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.DarkGray, // boja ikone kada je stavka selektovana
-                            unselectedIconColor = Color.Gray, // boja ikone kada stavka nije selektovana
-                            selectedTextColor = Color.DarkGray, // boja teksta kada je stavka selektovana
-                            unselectedTextColor = Color.Gray // boja teksta kada stavka nije selektovana
+                        onClick = { navController.navigate(navDestination.ruta) },
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = Color.DarkGray,
+                            unselectedIconColor = Color.Gray, selectedTextColor = Color.DarkGray,
+                            unselectedTextColor = Color.Gray
                         )
                     )
                 }
@@ -51,3 +42,5 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
         }
     }
 }
+
+

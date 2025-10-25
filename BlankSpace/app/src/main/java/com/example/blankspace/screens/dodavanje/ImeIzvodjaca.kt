@@ -97,7 +97,7 @@ fun HandleProveraPostojanjaResponse(
 ) {
     LaunchedEffect(uiState.proveraDaLiPostoji?.odgovor) {
         val odgovor = uiState.proveraDaLiPostoji?.odgovor
-        if (!odgovor.isNullOrEmpty()) {
+        if (!odgovor.isNullOrEmpty() && odgovor!="") {
             if (odgovor.contains("U bazi vec postoji izvodjac sa imenom:")) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
