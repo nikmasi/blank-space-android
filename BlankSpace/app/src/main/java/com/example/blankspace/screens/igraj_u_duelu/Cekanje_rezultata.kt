@@ -36,22 +36,22 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
-fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,poeni: Int){
+fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,poeni: Int,sifra:Int){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        Cekanje_rezultata_mainCard(navController,viewModelDuel,poeni)
+        Cekanje_rezultata_mainCard(navController,viewModelDuel,poeni,sifra)
     }
 }
 
 @Composable
-fun Cekanje_rezultata_mainCard(navController: NavController,viewModelDuel:DuelViewModel,poeni:Int) {
+fun Cekanje_rezultata_mainCard(navController: NavController,viewModelDuel:DuelViewModel,poeni:Int,sifra:Int) {
     val context = LocalContext.current
     val uiStateCekanjeRezultata by viewModelDuel.uiStateCekanjeRezultata.collectAsState()
     val uiStateD by viewModelDuel.uiState.collectAsState()
 
     HandleCekanjeRezultataResponse(viewModelDuel,poeni,uiStateD)
-    HandleCekanjeRezultataOdgovorResponse(navController,context, viewModelDuel,poeni,uiStateCekanjeRezultata)
+    HandleCekanjeRezultataOdgovorResponse(navController,context, viewModelDuel,poeni,uiStateCekanjeRezultata,sifra)
 
     Surface(
         color = Color.White,
@@ -94,7 +94,8 @@ fun HandleCekanjeRezultataOdgovorResponse(
     context: Context,
     viewModelDuel: DuelViewModel,
     poeni: Int,
-    uiStateCekanjeRezultata: UiStateCekanjeRezultata
+    uiStateCekanjeRezultata: UiStateCekanjeRezultata,
+    sifra:Int
 ){
     LaunchedEffect(uiStateCekanjeRezultata.cekanjeRezultata?.odgovor) {
         val odgovor = uiStateCekanjeRezultata.cekanjeRezultata?.odgovor
@@ -109,7 +110,7 @@ fun HandleCekanjeRezultataOdgovorResponse(
                 viewModelDuel.fetchCekanjeRezultata(poeni,viewModelDuel.sifraSobe.value.sifra,
                     it.rundePoeni,viewModelDuel.redniBroj.value.redniBroj)
             }
-            navController.navigate(Destinacije.Kraj_duela.ruta)
+            navController.navigate(Destinacije.Kraj_duela.ruta+"/"+sifra)
         }
 
     }

@@ -149,6 +149,15 @@ data class PredlaganjeIzvodjacaResponse(
     val odgovor:String?
 )
 
+data class PredlaganjePretraziRequest(
+    val naziv: String,
+    val korisnicko_ime: String
+)
+
+data class PredlaganjePretraziResponse(
+    val odgovor:String?
+)
+
 data class PredlaganjePesmeRequset(
     val pesma: String,
     val izvodjac: String,
@@ -318,11 +327,11 @@ data class KrajDuelaRequest(
     val upisuj:String
 )
 data class KrajDuelaResponse(
-    val poeni:Int,
+    val poeni:List<Int>,
     val poeni_runde:List<List<Int>>,
     val igrac1:String,
     val igrac2:String,
-    val ulogovan:String
+    val ulogovan:Boolean
 )
 
 data class UklanjanjeKorisnikaRequest(

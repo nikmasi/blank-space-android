@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziRequest
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziResponse
 import com.example.blankspace.data.retrofit.models.WebScrapperRequest
 import com.example.blankspace.data.retrofit.models.WebScrapperResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +39,21 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
         }
     }
 
+    private val _uiStatePretrazi = MutableStateFlow(UiStatePretrazi())
+    val uiStatePretrazi : StateFlow<UiStatePretrazi> = _uiStatePretrazi
+
+    fun fetchPredlaganjePretrazi(korisnicko_ime: String, naziv:String) = viewModelScope.launch {
+        _uiState.value = _uiState.value.copy(isRefreshing = true)
+        try {
+            val request = PredlaganjePretraziRequest(naziv,korisnicko_ime)
+            val response = repository.predlaganje_pretrazi(request)
+            _uiStatePretrazi.value = UiStatePretrazi(predlaganjePretrazi = response, isRefreshing = false)
+        } catch (e: Exception) {
+            _uiStatePretrazi.value =
+                UiStatePretrazi(predlaganjePretrazi = null, isRefreshing = false, error = e.localizedMessage)
+        }
+    }
+
     fun fetchPretragaPredlaganje(korisnicko_ime: String, ime:String, reci:String) = viewModelScope.launch {
         _uiStateWebScrapper.value = _uiStateWebScrapper.value.copy(isRefreshing = true)
         try {
@@ -53,6 +70,12 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
 
 data class UiStatePI(
     val predlaganjeIzvodjaca: PredlaganjeIzvodjacaResponse?=null,
+    val isRefreshing: Boolean = false,
+    val error: String? = null
+)
+
+data class UiStatePretrazi(
+    val predlaganjePretrazi: PredlaganjePretraziResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null
 )

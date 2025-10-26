@@ -84,7 +84,9 @@ fun Generisi_sifru_sobe_mainCard(navController: NavController,viewModelDuel:Duel
 
             Spacer(modifier = Modifier.height(42.dp))
 
-            SmallButton(onClick = {},
+            SmallButton(onClick = {
+                navController.navigate(Destinacije.Login.ruta)
+            },
                 text = "Odustani", style = MaterialTheme.typography.bodyMedium)
         }
     }
@@ -128,7 +130,7 @@ fun HandleSifraResponse(
                 }
                 viewModelDuel.upisiRedniBroj(1)
                 viewModelDuel.upisiSifruSobe(sifraSobe.sifra)
-                navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0)
+                navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0+"/"+sifraSobe.sifra.toInt())
                 break
             }
         }

@@ -43,16 +43,16 @@ import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DuelViewModel
 
 @Composable
-fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel){
+fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel,sifra:Int){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        Kraj_duela_mainCard(navController,viewModelDuel)
+        Kraj_duela_mainCard(navController,viewModelDuel,sifra)
     }
 }
 
 @Composable
-fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel) {
+fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel,sifra: Int) {
     val context = LocalContext.current
     val uiStateStigaoIgrac by viewModelDuel.uiStateStigaoIgrac.collectAsState()
     val uiStateSifra by viewModelDuel.uiStateSifSobe.collectAsState()
@@ -60,18 +60,17 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
     val uiStateKraj by viewModelDuel.uiStateKrajDuela.collectAsState()
 
     LaunchedEffect(Unit) {
-        uiState.duel?.poeni?.let { uiStateSifra.sifraResponse?.sifra?.let { it1 ->
-            viewModelDuel.fetchKrajDuela(it,
-                it1,uiState.duel!!.rundePoeni,0,"true")
-    }}}
+        uiState.duel?.poeni?.let {
+            viewModelDuel.fetchKrajDuela(
+                it,
+                sifra,uiState.duel!!.rundePoeni,0,"true")
+        }
+    }
 
 
     Surface(
         color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.8f),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.8f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
@@ -81,15 +80,12 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val uiStateDuel by viewModelDuel.uiStateSifSobe.collectAsState()
             HeadlineText("Rezultat")
 
             Spacer(modifier = Modifier.height(34.dp))
 
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
+                modifier = Modifier.fillMaxWidth().background(Color.White),
                 shape = MaterialTheme.shapes.medium,
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White,
@@ -101,18 +97,12 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                         .padding(16.dp).border(3.dp, TEXT_COLOR, RoundedCornerShape(3.dp))
                         .background(Color(0xFFF0DAE7))
                 ) {
-                    // LazyColumn sa naizmeničnim redovima boja
-
                     val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
                     val igrac1 = uiStateKraj.krajDuela?.igrac1 ?: "Igrač 1"
                     val igrac2 = uiStateKraj.krajDuela?.igrac2 ?: "Igrač 2"
 
-// Naslov red
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFF0DAE7))
-                            .padding(12.dp),
+                        modifier = Modifier.fillMaxWidth().background(Color(0xFFF0DAE7)).padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = "Runda", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
@@ -120,10 +110,7 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                         Text(text = igrac2, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                     }
 
-// Lista rundi sa poenima
-                    LazyColumn(
-                        contentPadding = PaddingValues(vertical = 8.dp)
-                    ) {
+                    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp)) {
                         itemsIndexed(runde) { index, poeni ->
                             val backgroundColor = if (index % 2 == 0) Color(0xFFF0DAE7) else Color(0xFFADD8E6)
                             Row(
@@ -139,7 +126,6 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                             }
                         }
 
-                        // Red za ukupno
                         item {
                             val ukupno1 = runde.sumOf { it[0] }
                             val ukupno2 = runde.sumOf { it[1] }
@@ -150,7 +136,7 @@ fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel
                                     .padding(12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "Ukupno", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                                Text(text = "∑", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                                 Text(text = "$ukupno1", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                                 Text(text = "$ukupno2", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
                             }

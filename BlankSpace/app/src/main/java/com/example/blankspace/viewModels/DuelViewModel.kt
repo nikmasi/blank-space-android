@@ -70,10 +70,11 @@ class DuelViewModel @Inject constructor(
         }
     }
 
-    fun dodeli(uiStateProveriSifru: UiStateProveriSifru){
+    fun dodeli(uiStateProveriSifru: UiStateProveriSifru,sifra: Int){
         _uiStateSifSobe.value = _uiStateSifSobe.value.copy(isRefreshing = true)
         _uiStateSifSobe.value = UiStateSifSobe(sifraResponse =
-        uiStateProveriSifru.proveriSifru?.let { GenerisiSifruResponse(1, it.stihovi) }, isRefreshing = false)
+        uiStateProveriSifru.proveriSifru?.let
+        { GenerisiSifruResponse(sifra, it.stihovi) }, isRefreshing = false)
     }
 
     fun stigaoIgrac(sifra: Int)= viewModelScope.launch {
@@ -185,6 +186,7 @@ class DuelViewModel @Inject constructor(
         try {
             val request = KrajDuelaRequest(rundaPoeni,poeni,soba,redniBroj,upisuj)
             val response = repository.krajDuela(request)
+            Log.d("SIFF333",response.toString())
 
             _uiStateKrajDuela.value = UiStateKrajDuela(poeni_runde = response.poeni_runde, krajDuela = response, isRefreshing = false)
         } catch (e: Exception) {

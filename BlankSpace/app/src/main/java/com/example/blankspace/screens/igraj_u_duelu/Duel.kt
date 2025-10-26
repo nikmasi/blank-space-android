@@ -48,18 +48,18 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun Duel(navController: NavController,runda:Int,poeni:Int,viewModel: DuelViewModel) {
+fun Duel(navController: NavController,runda:Int,poeni:Int,viewModel: DuelViewModel,sifra:Int) {
     Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
         BgCard2()
         Spacer(Modifier.padding(top = 22.dp))
-        Duel_mainCard(navController,runda,poeni,viewModel)
+        Duel_mainCard(navController,runda,poeni,viewModel,sifra)
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: DuelViewModel) {
+fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: DuelViewModel,sifra: Int) {
     val uiState by viewModel.uiState.collectAsState()
     val uiStateSifra by viewModel.uiStateSifSobe.collectAsState()
     val uiStateProveriSifru by viewModel.uiStateProveriSifru.collectAsState()
@@ -81,7 +81,7 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                 it, uiState.duel!!.rundePoeni,context)
         }
 
-        navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+poeni)
+        navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+poeni+"/"+sifra)
     }
 
     LaunchedEffect(viewModel.uiState.value.duel?.crtice) {
@@ -174,11 +174,11 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                                         viewModel.fetchDuel(uiState.duel?.runda!!,poeni,
                                             it, uiState.duel!!.rundePoeni,context)
                                     }
-                                    navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+(poeni+10).toString())
+                                    navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+(poeni+10).toString()+"/"+sifra)
                                 }else {
                                     viewModel.fetchCekanjeRezultata(poeni,viewModel.sifraSobe.value.sifra,
                                         uiState.duel!!.rundePoeni,viewModel.redniBroj.value.redniBroj)
-                                    navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}")
+                                    navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}/${sifra}")
 
                                 }
                             } else {
@@ -202,9 +202,9 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                                 viewModel.fetchDuel(uiState.duel?.runda!!,poeni,
                                     it, uiState.duel!!.rundePoeni,context)
                             }
-                            navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+poeni)
+                            navController.navigate(Destinacije.Duel.ruta+"/"+ uiState.duel?.runda!!+"/"+poeni+"/"+sifra)
                         }else {
-                            navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}")
+                            navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}/${sifra}")
 
                         }
                     },text = "Dalje", style = MaterialTheme.typography.bodyMedium)

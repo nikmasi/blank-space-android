@@ -1,6 +1,7 @@
 package com.example.blankspace.screens.igraj_u_duelu
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,10 +57,7 @@ fun Sifra_sobe_duel_mainCard(navController: NavController,viewModelDuel:DuelView
 
     Surface(
         color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.6f),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.6f),
         shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
     ) {
         Column(
@@ -87,18 +85,19 @@ fun HandleProveriSifruResponse(
     viewModelDuel: DuelViewModel,
     sifra:String
 ){
+    Log.d("SIFFFFRA",sifra)
     LaunchedEffect(uiStateProveriSifru.proveriSifru?.error) {
         val odgovor = uiStateProveriSifru.proveriSifru?.error
         if (!odgovor.isNullOrEmpty()) {
             if(odgovor=="NE"){
                 uiStateProveriSifru.proveriSifru?.stihovi?.let {
-                    viewModelDuel.dodeli(uiStateProveriSifru)
+                    viewModelDuel.dodeli(uiStateProveriSifru,sifra.toInt())
                     viewModelDuel.fetchDuel(1,0,
                         it, emptyList(), context)
                 }
                 viewModelDuel.upisiSifruSobe(sifra.toInt())
-                viewModelDuel.upisiRedniBroj(redniBroj = 2)
-                navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0)
+                viewModelDuel.upisiRedniBroj(redniBroj = 1)
+                navController.navigate(Destinacije.Duel.ruta + "/" + 1 + "/" + 0+"/"+sifra.toInt())
             }
             return@LaunchedEffect
         }

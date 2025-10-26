@@ -104,77 +104,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-// Primer Kotlin koda (ovo bi trebalo da se nalazi u MainActivity ili nekoj util klasi)
-
-fun copyAssetToInternalStorage(context: Context, assetName: String): String {
-    val file = File(context.filesDir, assetName)
-    if (file.exists()) {
-        // Model je već kopiran, vratite putanju
-        return file.absolutePath
-    }
-
-    try {
-        context.assets.open(assetName).use { inputStream ->
-            FileOutputStream(file).use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-        // Vratite apsolutnu putanju do kopiranog fajla
-        return file.absolutePath
-    } catch (e: IOException) {
-        e.printStackTrace()
-        // Opcionalno, bacite izuzetak ili logujte ozbiljnu grešku
-        return ""
-    }
-}
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-
-
-        try {
-            val recognizer = WhisperRecognizer()
-            Log.d("Whisper", "Biblioteka učitana uspešno.")
-
-            // 1. Definicija modela i kopiranje u interni storage
-            val modelAssetName = "ggml-tiny.bin"
-            val absolutePath = copyAssetToInternalStorage(this, modelAssetName)
-
-            if (absolutePath.isNotEmpty()) {
-                // 2. Poziv JNI-ja sa APSOLUTNOM PUTANJOM
-                val ctxPointer = recognizer.initContext(absolutePath)
-
-                Log.d("Whisper", "Pozvan initContext sa putanjom: $absolutePath")
-                Log.d("Whisper", "Vraćen kontekst pointer: $ctxPointer")
-
-                if (ctxPointer != 0L) {
-                    // 🎉 USPEH! Kontekst je učitan.
-                    Log.i("Whisper", "Whisper kontekst uspešno učitan! Pointer: $ctxPointer")
-
-                    // OVDE BI TREBALO DA SE NASTAVI SA TRANSSKRIPCIJOM (recognizer.transcribe(...))
-
-                    // Važno: Kontekst se obično oslobađa na kraju rada (npr. u onDestroy ili kada se završi transkripcija),
-                    // ali za brzo testiranje, možete ga odmah osloboditi:
-                    recognizer.freeContext(ctxPointer)
-                    Log.d("Whisper", "Whisper kontekst oslobođen.")
-
-                } else {
-                    // 🛑 Greška iz C++: Model nije pronađen na putanji, neispravan format ili nema memorije.
-                    Log.e("Whisper", "Inicijalizacija C++ konteksta NIJE uspela. Vraćen pointer 0L.")
-                }
-            } else {
-                // 🛑 Greška iz Kotlina: Fajl nije pronađen u assets-u ili je kopiranje neuspelo.
-                Log.e("Whisper", "Kopiranje modela iz assets-a na interno skladište nije uspelo.")
-            }
-
-        } catch (e: UnsatisfiedLinkError) {
-            Log.e("Whisper", "KRITIČNA GREŠKA: libwhisper.so nije pronađena ili JNI funkcije nisu mapirane.", e)
-        }
-
         setContent {
             BlankSpaceTheme {
                 BlankSpaceApp()
@@ -536,28 +470,40 @@ fun BlankSpaceApp(){
                 Generisi_sifru_sobe(navController,viewModelDuel)
             }
             composable(
-                route = "${Destinacije.Duel.ruta}/{runda}/{poeni}",
+                route = "${Destinacije.Duel.ruta}/{runda}/{poeni}/{sifra}",
                 arguments = listOf(
                     navArgument("runda") { type = NavType.IntType },
-                    navArgument("poeni") { type = NavType.IntType }
+                    navArgument("poeni") { type = NavType.IntType },
+                    navArgument("sifra") { type = NavType.IntType }
                 )
             ) { navBackStackEntry ->
                 val runda=navBackStackEntry.arguments?.getInt("runda")?:0
                 val poeni=navBackStackEntry.arguments?.getInt("poeni")?:0
+                val sifra=navBackStackEntry.arguments?.getInt("sifra")?:0
 
-                Duel(navController,runda,poeni,viewModelDuel)
+                Duel(navController,runda,poeni,viewModelDuel,sifra)
             }
-            composable(route = "${Destinacije.Cekanje_rezultata.ruta}/{poeni}",
+            composable(route = "${Destinacije.Cekanje_rezultata.ruta}/{poeni}/{sifra}",
                     arguments = listOf(
 
-                navArgument("poeni") { type = NavType.IntType }
+                navArgument("poeni") { type = NavType.IntType },
+                        navArgument("sifra") { type = NavType.IntType }
             )){
                 navBackStackEntry ->
                 val poeni=navBackStackEntry.arguments?.getInt("poeni")?:0
-                Cekanje_rezultata(navController,viewModelDuel,poeni)
+
+                val sifra=navBackStackEntry.arguments?.getInt("sifra")?:0
+                Cekanje_rezultata(navController,viewModelDuel,poeni,sifra)
             }
-            composable(route = Destinacije.Kraj_duela.ruta){
-                Kraj_duela(navController,viewModelDuel)
+            composable(
+                route = "${Destinacije.Kraj_duela.ruta}/{sifra}",
+                arguments = listOf(
+                    navArgument("sifra") { type = NavType.IntType }
+                )
+                ) { navBackStackEntry ->
+                val sifra=navBackStackEntry.arguments?.getInt("sifra")?:0
+
+                Kraj_duela(navController,viewModelDuel,sifra)
             }
         }
 

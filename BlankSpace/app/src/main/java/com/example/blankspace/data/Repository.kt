@@ -32,6 +32,8 @@ import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeResponse
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziRequest
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziResponse
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredloziPesamaOdbijRequest
@@ -100,6 +102,10 @@ class Repository @Inject constructor(
 
     suspend fun predlaganje_pesme(@Body predlaganjePesmeRequset: PredlaganjePesmeRequset):
             PredlaganjePesmeResponse = Api.predlaganje_pesme(predlaganjePesmeRequset)
+
+    suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
+            PredlaganjePretraziResponse = Api.predlaganje_pretrazi(predlaganjePretraziRequest)
+
 
     suspend fun getIzvodjaciZanra(@Body request: Zanr): List<IzvodjaciZanra> = Api.getIzvodjaciZanra(request)
 

@@ -31,6 +31,8 @@ import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeResponse
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziRequest
+import com.example.blankspace.data.retrofit.models.PredlaganjePretraziResponse
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredloziPesamaOdbijRequest
@@ -69,8 +71,8 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-const val BASE_URL = "http://10.76.100.178:8000/"
-//const val BASE_URL = "http://10.0.2.2:8000/"
+//const val BASE_URL = "http://10.76.100.178:8000/"
+const val BASE_URL = "http://10.0.2.2:8000/"
 const val BASE_URL_LOCALHOST ="http://127.0.0.1:8000/"
 
 interface Api {
@@ -110,6 +112,10 @@ interface Api {
     @POST("predlaganje_izvodjaca_android/")
     suspend fun predlaganje_izvodjaca(@Body predlaganjeIzvodjacaRequset: PredlaganjeIzvodjacaRequset):
             PredlaganjeIzvodjacaResponse
+
+    @POST("predlaganje_pretrazi_android/")
+    suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
+            PredlaganjePretraziResponse
 
     @POST("predlaganje_pesme_android/")
     suspend fun predlaganje_pesme(@Body predlaganjePesmeRequset: PredlaganjePesmeRequset):
