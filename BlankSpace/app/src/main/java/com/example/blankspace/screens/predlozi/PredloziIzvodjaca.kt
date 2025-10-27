@@ -1,13 +1,13 @@
 package com.example.blankspace.screens.uklanjanje
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,181 +15,204 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.components.SmallButton
-import com.example.blankspace.ui.theme.TEXT_COLOR
-import com.example.blankspace.ui.theme.TopAppBarHeight
 import com.example.blankspace.viewModels.PredloziViewModel
+import com.example.blankspace.viewModels.UiStatePredloziIzv
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val AccentGreen = Color(0xFF66BB6A)
+private val AccentRed = Color(0xFFEF5350)
+private val CardContainerColor = Color(0xFFF0DAE7)
+private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable
-fun PredloziIzvodjaca(navController: NavController,viewModelPredlozi:PredloziViewModel) {
-    Box(modifier = Modifier.fillMaxSize().padding(top= TopAppBarHeight +12.dp)) {
+fun PredloziIzvodjaca(navController: NavController, viewModelPredlozi: PredloziViewModel) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        PredloziIzvodjaca_mainCard(navController,viewModelPredlozi)
+        PredloziIzvodjaca_mainCard(
+            navController = navController,
+            viewModelPredlozi = viewModelPredlozi,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
 @Composable
-fun PredloziIzvodjaca_mainCard(navController:NavController,viewModelPredlozi:PredloziViewModel) {
+fun PredloziIzvodjaca_mainCard(navController: NavController, viewModelPredlozi: PredloziViewModel, modifier: Modifier) {
+    val context = LocalContext.current
+    val uiState by viewModelPredlozi.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModelPredlozi.fetchPredloziIzvodjaca()
+    }
+
+    Spacer(modifier = Modifier.height(30.dp))
+
     Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.95f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor,
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.75f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
-        val context= LocalContext.current
-
-        LaunchedEffect(Unit) {
-            viewModelPredlozi.fetchPredloziIzvodjaca()
-        }
-
-        val uiState by viewModelPredlozi.uiState.collectAsState()
-        LaunchedEffect(uiState.predloziIzvodjaca) {
-            //val odgovor = uiState.predloziIzvodjaca[0].odgovor
-            /*
-            if (!odgovor.isNullOrEmpty()) {
-                if (odgovor.contains("Nema novih predloga")) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, odgovor, Toast.LENGTH_LONG).show()
-                    }
-                    return@LaunchedEffect
-                }
-            }*/
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 12.dp),
+                .padding(horizontal = 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Predlozi izvođača",
-                style = MaterialTheme.typography.headlineSmall,
-                color = TEXT_COLOR
+            PredloziIzvodjacaHeader()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PredloziIzvodjacaListaStyled(
+                uiState = uiState,
+                onAccept = { item ->
+
+                    viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,
+                        item.ime_izvodjaca,item.zan_naziv,item.kor_ime)
+                    navController.navigate("${Destinacije.PesmaPodaci.ruta}/${item.zan_naziv}/${item.ime_izvodjaca}")
+                },
+                onReject = { id ->
+                    viewModelPredlozi.odbijPredlogIzvodjaca(id)
+                }
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            // Profil Card
-            Card(
+        }
+    }
+}
+
+
+@Composable
+fun PredloziIzvodjacaHeader() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Predlozi Izvođača",
+            color = PrimaryDark,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 28.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Pregledajte predloge korisnika. Prihvatite za dodavanje pesme ili odbijte.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = PrimaryDark.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun PredloziIzvodjacaListaStyled(
+    uiState: UiStatePredloziIzv,
+    onAccept: (PredloziIzvodjacaResponse) -> Unit,
+    onReject: (Int) -> Unit
+) {
+    when {
+        uiState.isRefreshing -> {
+            CircularProgressIndicator(color = AccentPink)
+        }
+        uiState.error != null -> {
+            Text(text = "Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
+        }
+        uiState.predloziIzvodjaca.isEmpty() -> {
+            Text(
+                text = "Nema novih predloga izvođača.",
+                color = PrimaryDark.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+        else -> {
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White,
-                    contentColor = Color.White
-                )
+                    .fillMaxHeight(1f)
+                    .padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp).border(3.dp, TEXT_COLOR, RoundedCornerShape(3.dp))
-                        .background(Color(0xFFF0DAE7))
-                ) {
-                    // LazyColumn sa naizmeničnim redovima boja
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFF0DAE7))
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Izvođač",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Žanr"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Korisnik"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Prihvati?"// poslednje aktivnosti"
-                            ,style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Ukloni?",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                    }
-                    LazyColumn(
-                        contentPadding = PaddingValues(vertical = 8.dp)
-                    ) {
-
-                        itemsIndexed(uiState.predloziIzvodjaca) { index, item->
-                            val backgroundColor =
-                                if (index % 2 == 1) {
-                                    Color(0xFFF0DAE7)
-                                } else {
-                                    Color(0xFFADD8E6)
-                                }
-                            Column {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(backgroundColor)
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = item.ime_izvodjaca,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
-                                Text(
-                                    text = item.zan_naziv,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
-                                Text(
-                                    text = item.kor_ime,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
-
-                            }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(backgroundColor)
-                                        .padding(12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    val buttonStyle = MaterialTheme.typography.bodyMedium
-
-                                    SmallButton(onClick = {
-                                        //viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,item.ime_izvodjaca,
-                                          //  item.zan_naziv,item.kor_ime)
-                                        viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
-                                        navController.navigate(Destinacije.PesmaPodaci.ruta+"/"+item.zan_naziv+"/"+item.ime_izvodjaca)
-                                    }, text = "Prihvati", style = buttonStyle)
-
-                                    SmallButton(onClick = {
-                                        viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
-                                    }, text = "Odbij", style = buttonStyle)
-                                }
-                            }
-                        }
-                    }
+                items(uiState.predloziIzvodjaca) { item ->
+                    PredlogIzvodjacaCard(item = item, onAccept = onAccept, onReject = onReject)
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun PredlogIzvodjacaCard(
+    item: PredloziIzvodjacaResponse,
+    onAccept: (PredloziIzvodjacaResponse) -> Unit,
+    onReject: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(16.dp))
+            .border(1.dp, PrimaryDark.copy(alpha = 0.1f), RoundedCornerShape(16.dp)),
+        colors = CardDefaults.cardColors(containerColor = LightBackground)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Izvođač:", color = PrimaryDark.copy(alpha = 0.6f), fontSize = 12.sp)
+                    Text(text = item.ime_izvodjaca, color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                }
+                Spacer(Modifier.width(8.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Žanr:", color = PrimaryDark.copy(alpha = 0.6f), fontSize = 12.sp)
+                    Text(text = item.zan_naziv, color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                }
+                Spacer(Modifier.width(8.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Predložio:", color = PrimaryDark.copy(alpha = 0.6f), fontSize = 12.sp)
+                    Text(text = item.kor_ime, color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                }
+            }
+
+            Divider(modifier = Modifier.padding(vertical = 10.dp), color = PrimaryDark.copy(alpha = 0.1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                // Dugme Prihvati
+                Button(
+                    onClick = { onAccept(item) },
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentGreen, contentColor = Color.White),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.weight(1f).padding(end = 6.dp)
+                ) {
+                    Text("Prihvati", fontWeight = FontWeight.Bold)
+                }
+
+                Button(
+                    onClick = { onReject(item.id) },
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentRed, contentColor = Color.White),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.weight(1f).padding(start = 6.dp)
+                ) {
+                    Text("Odbij", fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
 }

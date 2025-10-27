@@ -143,7 +143,6 @@ fun IzvodjacInputField(value: String, onValueChange: (String) -> Unit, label: St
     )
 }
 
-// **MODIFIKOVANO**: Stilizovano dugme (kao na autorizaciji)
 @Composable
 fun IzvodjacButton(onClick: () -> Unit, text: String) {
     var pressed by remember { mutableStateOf(false) }
