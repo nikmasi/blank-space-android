@@ -37,7 +37,6 @@ fun checkLoginState(viewModel: LoginViewModel,navController: NavController){
     LaunchedEffect(loginState.login) {
         if (loginState.login == null) {
             navController.navigate(Destinacije.Login.ruta) {
-                // Očisti stek
                 popUpTo(Destinacije.Pocetna.ruta) { inclusive = true }
             }
         }
