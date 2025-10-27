@@ -1,83 +1,80 @@
 package com.example.blankspace.screens.autorizacija
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.MyButton
-import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.UiStateZL
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
+
 @Composable
-fun ZaboravljenaLozinka(navController: NavController,viewModel: ZaboravljenaLozinkaViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+fun ZaboravljenaLozinka(navController: NavController, viewModel: ZaboravljenaLozinkaViewModel) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        Spacer(Modifier.padding(top = 22.dp))
-        ZaboravljenaLozinka_mainCard(navController, viewModel)
+
+        ZaboravljenaLozinka_mainCard(
+            navController = navController,
+            viewModel = viewModel,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
 @Composable
-fun ZaboravljenaLozinka_mainCard(navController: NavController,viewModel: ZaboravljenaLozinkaViewModel) {
+fun ZaboravljenaLozinka_mainCard(navController: NavController, viewModel: ZaboravljenaLozinkaViewModel, modifier: Modifier) {
     val uiState by viewModel.uiState.collectAsState()
     val context= LocalContext.current
 
     HandleForgotPasswordResponse(uiState, context, navController)
 
     Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.6f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor,
+        modifier = modifier
+            .fillMaxWidth(0.8f)
+            .fillMaxHeight(0.45f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            HeadlineText("Zaboravljena lozinka")
-            Spacer(modifier = Modifier.height(42.dp))
+            ForgotPasswordHeader()
+
+            Text(
+                text = "Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = PrimaryDark.copy(alpha = 0.8f),
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
             var username by remember { mutableStateOf("") }
 
             ForgotPasswordField(username = username, onValueChange = { username = it })
-            Spacer(modifier = Modifier.height(22.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             ResetPasswordButton(username = username, context = context, viewModel = viewModel)
         }
@@ -106,24 +103,68 @@ fun HandleForgotPasswordResponse(
 }
 
 @Composable
+fun ForgotPasswordHeader() {
+    Text(
+        text = "Zaboravljena lozinka",
+        color = PrimaryDark,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 28.sp,
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+}
+
+@Composable
 fun ForgotPasswordField(username: String, onValueChange: (String) -> Unit) {
-    OutlinedTextFieldInput(
+    OutlinedTextField(
         value = username,
         onValueChange = onValueChange,
-        label = "Korisničko ime"
+        label = { Text("Korisničko ime", color = PrimaryDark) },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = AccentPink,
+            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
+            cursorColor = AccentPink,
+            focusedTextColor = PrimaryDark,
+            unfocusedTextColor = PrimaryDark
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
 @Composable
 fun ResetPasswordButton(username: String, context: android.content.Context, viewModel: ZaboravljenaLozinkaViewModel) {
-    MyButton(
+    var pressed by remember { mutableStateOf(false) }
+    val elevation = if (pressed) 2.dp else 8.dp
+
+    Button(
         onClick = {
-            if (username.isEmpty()) {
-                Toast.makeText(context, "Niste uneli podatak!", Toast.LENGTH_SHORT).show()
+            if (username.isBlank()) {
+                Toast.makeText(context, "Niste uneli korisničko ime!", Toast.LENGTH_SHORT).show()
             } else {
+                pressed = true
                 viewModel.fetchZaboravljenaLozinka(username)
             }
         },
-        text = "Postavi pitanje"
-    )
+        colors = ButtonDefaults.buttonColors(
+            containerColor = AccentPink,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .shadow(elevation, RoundedCornerShape(16.dp))
+    ) {
+        Text(
+            text = "Postavi pitanje",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+    LaunchedEffect(pressed) {
+        if (pressed) {
+            delay(100)
+            pressed = false
+        }
+    }
 }

@@ -38,7 +38,7 @@ import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.igra_sam.ZanrIgreHeader
+import com.example.blankspace.screens.igra_pogodi_i_pevaj.ZanrIgreHeader
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
