@@ -5,157 +5,191 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.ui.components.SmallButton
-import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
+private val LightBackground = Color(0xFFF7F7F7)
+
+
 @Composable
-fun PesmaPodaciD(navController: NavController,viewModel: DodavanjeViewModel,zanr:String,izvodjac:String){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+fun PesmaPodaciD(navController: NavController, viewModel: DodavanjeViewModel, zanr: String, izvodjac: String){
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        Spacer(Modifier.padding(top = 22.dp))
-        PesmaPodaciD_mainCard(navController,viewModel,zanr,izvodjac)
+        PesmaPodaciD_mainCard(
+            navController = navController,
+            viewModel = viewModel,
+            zanr = zanr,
+            izvodjac = izvodjac,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
 @Composable
-fun PesmaPodaciD_mainCard(navController: NavController,viewModel: DodavanjeViewModel,zanr:String,izvodjac:String){
+fun PesmaPodaciD_mainCard(navController: NavController,viewModel: DodavanjeViewModel,zanr:String,izvodjac:String, modifier: Modifier){
     val uiState by viewModel.uiStateDodajZanr.collectAsState()
     val context = LocalContext.current
     var selectedMp3Uri by remember { mutableStateOf<Uri?>(null) }
+
+    var naziv_pesme by remember { mutableStateOf("") }
+    var nepoznati_stihovi by remember { mutableStateOf("") }
+    var poznati_stihovi by remember { mutableStateOf("") }
+    var nivo by remember { mutableStateOf("normal") }
 
     LaunchedEffect(key1 = true) {
         snapshotFlow { uiState.dodajZanr }
             .collect { response ->
                 response?.let {
-                    Toast.makeText(context, it.odgovor, Toast.LENGTH_SHORT).show()
-                    delay(3000)
-                    navController.navigate(Destinacije.PocetnaAdmin.ruta) {
-                        popUpTo(0) // Ovo čisti ceo stack
-                        launchSingleTop = true
+                    Toast.makeText(context, it.odgovor, Toast.LENGTH_LONG).show()
+                    if (it.odgovor.contains("Uspešno")) {
+                        delay(1000)
+                        navController.navigate(Destinacije.PocetnaAdmin.ruta) {
+                            popUpTo(Destinacije.PocetnaAdmin.ruta) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
-
-
-                    // resetuj state posle obrade da se ne ponavlja
                     viewModel.resetDodajZanr()
                 }
             }
     }
 
+    Spacer(modifier = Modifier.height(28.dp))
 
     Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.7f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor,
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.80f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(22.dp))
-            HeadlineText("Podaci o pesmi")
+            item { SongDetailsHeader(zanr, izvodjac) }
 
-            var naziv_pesme by remember { mutableStateOf("") }
-            var nepoznati_stihovi by remember { mutableStateOf("") }
-            var poznati_stihovi by remember { mutableStateOf("") }
-            var nivo by remember { mutableStateOf("") }
+            item {
+                SongDetailsInputs(
+                    nazivPesme = naziv_pesme,
+                    nepoznatiStihovi = nepoznati_stihovi,
+                    poznatiStihovi = poznati_stihovi,
+                    onNazivPesmeChange = { naziv_pesme = it },
+                    onNepoznatiStihoviChange = { nepoznati_stihovi = it },
+                    onPoznatiStihoviChange = { poznati_stihovi = it }
+                )
+            }
 
-            SongDetailsInputs(
-                nazivPesme = naziv_pesme,
-                nepoznatiStihovi = nepoznati_stihovi,
-                poznatiStihovi = poznati_stihovi,
-                onNazivPesmeChange = { naziv_pesme = it },
-                onNepoznatiStihoviChange = { nepoznati_stihovi = it },
-                onPoznatiStihoviChange = { poznati_stihovi = it }
-            )
+            item { DifficultyLevelSelectorStyled(nivo = nivo, onNivoChange = { nivo = it }) }
 
-            DifficultyLevelSelector(nivo = nivo, onNivoChange = { nivo = it })
-
-            Text(
-                text = "Dodaj zvuk",
-                style = MaterialTheme.typography.bodyLarge,
-                color = TEXT_COLOR
-            )
-
-            FilePicker { uri ->
-                selectedMp3Uri = uri
+            item {
+                FilePickerStyled(selectedMp3Uri) { uri ->
+                    selectedMp3Uri = uri
+                }
             }
 
 
-            Spacer(modifier = Modifier.height(22.dp))
+            item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            SmallButton(onClick = {
-                selectedMp3Uri?.let { uri ->
-                    val inputStream = context.contentResolver.openInputStream(uri)
-                    val requestBody = inputStream?.readBytes()?.let { bytes ->
-                        bytes.toRequestBody("audio/mpeg".toMediaType())
-                    }
+            item {
+
+                val AccentPink = Color(0xFFEC8FB7)
+
+                var pressed by remember { mutableStateOf(false) }
+                val elevation = if (pressed) 2.dp else 8.dp
+
+                Button(
+                    onClick = {
+                        if (naziv_pesme.isBlank() || nepoznati_stihovi.isBlank() || poznati_stihovi.isBlank() || nivo.isBlank() || selectedMp3Uri == null) {
+                            Toast.makeText(context, "Morate uneti sve podatke i odabrati MP3 fajl!", Toast.LENGTH_LONG).show()
+                            return@Button
+                        }
+
+                        pressed = true
+
+                        selectedMp3Uri?.let { uri ->
+                            val inputStream = context.contentResolver.openInputStream(uri)
+                            val requestBody = inputStream?.readBytes()?.let { bytes ->
+                                bytes.toRequestBody("audio/mpeg".toMediaType())
+                            }
 
 
-                    if (requestBody != null) {
-                        viewModel.dodajZanrSaFajlom(
-                            zanr = zanr,
-                            izvodjac = izvodjac,
-                            nazivPesme = naziv_pesme,
-                            nepoznatiStihovi = nepoznati_stihovi,
-                            poznatiStihovi = poznati_stihovi,
-                            nivo = nivo,
-                            audioFile = requestBody
-                        )
-                    } else {
-                        println("Neuspešno otvaranje MP3 fajla.")
+                            if (requestBody != null) {
+                                viewModel.dodajZanrSaFajlom(
+                                    zanr = zanr,
+                                    izvodjac = izvodjac,
+                                    nazivPesme = naziv_pesme,
+                                    nepoznatiStihovi = nepoznati_stihovi,
+                                    poznatiStihovi = poznati_stihovi,
+                                    nivo = nivo,
+                                    audioFile = requestBody
+                                )
+                            } else {
+                                Toast.makeText(context, "Neuspešno čitanje MP3 fajla.", Toast.LENGTH_SHORT).show()
+                                println("Neuspešno otvaranje MP3 fajla.")
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AccentPink,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .shadow(elevation, RoundedCornerShape(16.dp))
+                ) {
+                    Text(
+                        text = "Dodaj pesmu",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                LaunchedEffect(pressed) {
+                    if (pressed) {
+                        delay(100)
+                        pressed = false
                     }
                 }
-            }, text = "Dodaj pesmu", style = MaterialTheme.typography.bodyMedium)
 
+            }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
 }
+
 
 @Composable
 fun SongDetailsInputs(
@@ -166,55 +200,145 @@ fun SongDetailsInputs(
     onNepoznatiStihoviChange: (String) -> Unit,
     onPoznatiStihoviChange: (String) -> Unit
 ) {
-    OutlinedTextFieldInput(
-        value = nazivPesme,
-        onValueChange = onNazivPesmeChange,
-        label = "Naziv pesme"
-    )
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        OutlinedTextFieldInput(
+            value = nazivPesme,
+            onValueChange = onNazivPesmeChange,
+            label = "Naziv pesme"
+        )
+        OutlinedTextFieldInput(
+            value = nepoznatiStihovi,
+            onValueChange = onNepoznatiStihoviChange,
+            label = "Nepoznati stihovi"
+        )
 
-    OutlinedTextFieldInput(
-        value = nepoznatiStihovi,
-        onValueChange = onNepoznatiStihoviChange,
-        label = "Nepoznati stihovi"
-    )
-
-    OutlinedTextFieldInput(
-        value = poznatiStihovi,
-        onValueChange = onPoznatiStihoviChange,
-        label = "Poznati stihovi"
-    )
-}
-
-@Composable
-fun DifficultyLevelSelector(nivo: String, onNivoChange: (String) -> Unit) {
-    Text(
-        text = "Nivo",
-        style = MaterialTheme.typography.bodyLarge,
-        color = TEXT_COLOR
-    )
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 8.dp)
-    ) {
-        DifficultyRadioButton("easy", nivo, onNivoChange)
-        DifficultyRadioButton("normal", nivo, onNivoChange)
-        DifficultyRadioButton("hard", nivo, onNivoChange)
+        OutlinedTextFieldInput(
+            value = poznatiStihovi,
+            onValueChange = onPoznatiStihoviChange,
+            label = "Poznati stihovi"
+        )
     }
 }
 
 @Composable
-fun DifficultyRadioButton(value: String, selectedValue: String, onValueChange: (String) -> Unit) {
+fun FilePickerStyled(selectedMp3Uri: Uri?, onFileSelected: (Uri) -> Unit) {
+    val context = LocalContext.current
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                val type = context.contentResolver.getType(uri)
+                if (type == "audio/mpeg" || uri.toString().endsWith(".mp3")) {
+                    onFileSelected(uri)
+                } else {
+                    Toast.makeText(context, "Molimo odaberite MP3 fajl (audio/mpeg).", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    )
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Audio fajl (.mp3)",
+            color = PrimaryDark,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Button(
+            onClick = { filePickerLauncher.launch("audio/mpeg") },
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(48.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PrimaryDark.copy(alpha = 0.9f),
+                contentColor = Color.White
+            )
+        ) {
+            Text("Izaberite MP3 fajl", fontWeight = FontWeight.Bold)
+        }
+
+        if (selectedMp3Uri != null) {
+            Text(
+                text = "Izabran: ...${selectedMp3Uri.path?.takeLast(30)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = PrimaryDark.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+        // Originalni poziv komponente FilePicker bi išao ovde:
+        // FilePicker { uri -> selectedMp3Uri = uri }
+        // implementirano  sa Button/Launcher logikom.
+    }
+}
+
+@Composable
+fun SongDetailsHeader(zanr: String, izvodjac: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Dodavanje Pesme",
+            color = PrimaryDark,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 32.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+            text = "Žanr: $zanr | Izvođač: $izvodjac",
+            style = MaterialTheme.typography.titleSmall,
+            color = AccentPink,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun DifficultyLevelSelectorStyled(nivo: String, onNivoChange: (String) -> Unit) {
+    Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Nivo težine",
+            color = PrimaryDark,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            DifficultyRadioButtonStyled("easy", nivo, onNivoChange)
+            DifficultyRadioButtonStyled("normal", nivo, onNivoChange)
+            DifficultyRadioButtonStyled("hard", nivo, onNivoChange)
+        }
+    }
+}
+
+@Composable
+fun DifficultyRadioButtonStyled(value: String, selectedValue: String, onValueChange: (String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable { onValueChange(value) }
     ) {
         RadioButton(
             selected = selectedValue == value,
-            onClick = { onValueChange(value) }
+            onClick = { onValueChange(value) },
+            colors = RadioButtonDefaults.colors(
+                selectedColor = AccentPink,
+                unselectedColor = PrimaryDark.copy(alpha = 0.5f)
+            )
         )
-        Text(value.capitalize(), color = if (selectedValue == value) Color.Black else Color.Gray)
+        Text(
+            value.capitalize(),
+            color = PrimaryDark,
+            fontWeight = if (selectedValue == value) FontWeight.Bold else FontWeight.Normal
+        )
     }
 }
 

@@ -1,111 +1,213 @@
 package com.example.blankspace.screens.predlaganje
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DodavanjeViewModel
+import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
+import kotlinx.coroutines.delay
+
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
 
 @Composable
-fun IzborZanra(navController: NavController,viewModel: DodavanjeViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+fun IzborZanra(navController: NavController, viewModel: DodavanjeViewModel) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        Spacer(Modifier.padding(top = 22.dp))
-        IzborZanra_mainCard(navController,viewModel)
+        IzborZanra_mainCard(
+            navController = navController,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
 @Composable
-fun IzborZanra_mainCard(navController: NavController,viewModel: DodavanjeViewModel) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-
-
+fun IzborZanra_mainCard(navController: NavController, modifier: Modifier) {
     val viewModelZanr: ZanrViewModel = hiltViewModel()
     val uiStateZanr by viewModelZanr.uiState.collectAsState()
+    val context = LocalContext.current
+
+    var selectedZanr by remember { mutableStateOf<String?>(null) }
 
     Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.6f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor,
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.7f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.height(22.dp))
-            HeadlineText("Kojem žanru pripada izvođač?")
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ZanrIzborHeader()
+                Spacer(modifier = Modifier.height(16.dp))
 
-            var selectedZanr by remember { mutableStateOf("") }
+                ZanroviList(uiStateZanr, selectedZanr) { selectedName ->
+                    selectedZanr = selectedName
+                }
+            }
 
-            if (uiState.isRefreshing) {
-                CircularProgressIndicator()
-            } else {
-                if (uiState.error != null) {
-                    Text(text = "Greška: ${uiState.error}", color = Color.Red)
-                } else {
-                    uiStateZanr.zanrovi.forEach { zanr ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth().padding(start = 53.dp)
-                                .clickable {  }
-                        ) {
-                            RadioButton(
-                                selected = selectedZanr == zanr.naziv.toString(),
-                                onClick = { selectedZanr = zanr.naziv }
+            ZanrIzborButton(onClick = {
+
+                navController.navigate(Destinacije.ImeIzvodjaca.ruta + "/${selectedZanr ?: ""}")
+
+            }, selectedZanr = selectedZanr)
+        }
+    }
+}
+
+
+@Composable
+fun ZanrIzborHeader() {
+    Text(
+        text = "Izbor Žanra",
+        color = PrimaryDark,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 28.sp,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+    Text(
+        text = "Odaberite žanr kojem pripada novi izvođač.",
+        style = MaterialTheme.typography.bodyMedium,
+        color = PrimaryDark.copy(alpha = 0.8f),
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+}
+
+
+private val LightBackground = Color(0xFFF7F7F7)
+
+@Composable
+fun ZanroviList(uiStateZanr: UiStateZ, selectedZanr: String?, onSelect: (String) -> Unit) {
+    when {
+        uiStateZanr.isRefreshing -> {
+            CircularProgressIndicator(color = AccentPink)
+        }
+        uiStateZanr.error != null -> {
+            Text(text = "Greška: ${uiStateZanr.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
+        }
+        uiStateZanr.zanrovi.isEmpty() -> {
+            Text(
+                text = "Nema dostupnih žanrova.",
+                color = PrimaryDark.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+        else -> {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight(0.8f)
+                    .padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiStateZanr.zanrovi) { zanr ->
+                    val isSelected = selectedZanr == zanr.naziv
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(if (isSelected) 4.dp else 2.dp, RoundedCornerShape(12.dp))
+                            .background(
+                                color = LightBackground,
+                                shape = RoundedCornerShape(12.dp)
                             )
-                            Text(text = zanr.naziv,color= TEXT_COLOR)
+                            .border(
+                                width = if (isSelected) 2.dp else 1.dp,
+                                color = if (isSelected) AccentPink else PrimaryDark.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable { onSelect(zanr.naziv) }
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    ) {
+                        Text(
+                            text = zanr.naziv,
+                            color = PrimaryDark,
+                            fontSize = 18.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
+                        )
+
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = "Izabrano",
+                                tint = AccentPink,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.size(24.dp))
                         }
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(22.dp))
+        }
+    }
+}
 
-            SmallButton(onClick = {
-                navController.navigate(Destinacije.ImeIzvodjaca.ruta+"/"+selectedZanr)
-            },text = "Dalje", style = MaterialTheme.typography.bodyMedium)
+@Composable
+fun ZanrIzborButton(onClick: () -> Unit, selectedZanr: String?) {
+    var pressed by remember { mutableStateOf(false) }
+    val elevation = if (pressed) 2.dp else 8.dp
+
+    val buttonText = if (selectedZanr == null) "Dalje" else "Dalje"
+
+    Button(
+        onClick = {
+            pressed = true
+            onClick()
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = AccentPink,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .shadow(elevation, RoundedCornerShape(16.dp))
+    ) {
+        Text(
+            text = buttonText,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+    LaunchedEffect(pressed) {
+        if (pressed) {
+            delay(100)
+            pressed = false
         }
     }
 }
