@@ -30,6 +30,7 @@ class LoginViewModel @Inject constructor(
         const val KEY_USERNAME = "korisnicko_ime"
         const val KEY_PASSWORD = "lozinka"
         const val KEY_USER_TYPE = "tip_korisnika"
+        private const val KEY_NOTIFICATION_TIME = "notification_time"
     }
 
 
@@ -38,6 +39,17 @@ class LoginViewModel @Inject constructor(
 
     private var _ime = MutableStateFlow(Ime())
     val ime:StateFlow<Ime> = _ime
+
+    private var _uiStateNotifikacija = MutableStateFlow(UiStateNotifikacija())
+    val uiStateNotifikacija: StateFlow<UiStateNotifikacija> = _uiStateNotifikacija
+
+
+    fun setNotificationTime(hour: Int, minute: Int) {
+        val vreme = String.format("%02d:%02d", hour, minute)
+        _uiStateNotifikacija.value = _uiStateNotifikacija.value.copy(vreme = vreme)
+    }
+
+
 
     private val sharedPreferences = EncryptedSharedPreferences.create(
         "auth_prefs",
@@ -132,3 +144,6 @@ data class Ime(
     val ime:String?=""
 )
 
+data class UiStateNotifikacija(
+    var vreme:String=""
+)

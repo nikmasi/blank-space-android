@@ -33,12 +33,11 @@ class AdminStatistikaViewModel @Inject constructor(
     fun fetchAdminStatistika() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            //val request = UklanjanjeKorisnikaRequest()
-            //val response = repository.uklanjanjeKorisnika(request)
+            val response = repository.getStatistika()
             //_uiState.value = AdminStatistikaUiState(informacije = response, isRefreshing = false)
 
             _uiState.value =
-                AdminStatistikaUiState(informacije = null, isRefreshing = false)
+                AdminStatistikaUiState(informacije = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
                 AdminStatistikaUiState(informacije = null, isRefreshing = false, error = e.localizedMessage)

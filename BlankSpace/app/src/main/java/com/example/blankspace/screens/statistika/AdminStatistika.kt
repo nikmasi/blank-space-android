@@ -54,7 +54,7 @@ fun AdminStatistika_mainCard(navController: NavController, viewModel: AdminStati
     Surface(
         color = CardContainerColor,
         modifier = modifier
-            .fillMaxWidth(0.9f)
+            .fillMaxWidth(0.92f)
             .fillMaxHeight(0.8f)
             .shadow(16.dp, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp)
@@ -113,9 +113,9 @@ fun GlavniPodaciCard(uiState: AdminStatistikaUiState) {
         Divider(color = PrimaryDark.copy(alpha = 0.1f))
         StatistikaRed("Ukupno pesama u bazi:", uiState.informacije?.ukupnoPesama.toString())
         Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        StatistikaRed("Ukupno predloga pesama na čekanju:", uiState.informacije?.ukupnoPredlogaPesamaNaCekanju.toString())
+        StatistikaRed("Ukupno predloga pesama:", uiState.informacije?.ukupnoPredlogaPesamaNaCekanju.toString())
         Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        StatistikaRed("Ukupno predloga izvodjaca na čekanju:",
+        StatistikaRed("Ukupno predloga izvodjaca:",
             uiState.informacije?.ukupnoPredlogaIzvodjacaNaCekanju.toString())
 
     }
@@ -124,10 +124,13 @@ fun GlavniPodaciCard(uiState: AdminStatistikaUiState) {
 @Composable
 fun KorisniciStatistikaCard(uiState: AdminStatistikaUiState) {
     StatistikaKard(title = "Korisnička Aktivnost", titleColor = PrimaryDark) {
-        StatistikaRed("Korisnicko ime korisnika sa najvise licnih poena:",
-            uiState.informacije?.korisnikSaNajviseLicnihPoenaIme ?: "Nema podataka")
-        StatistikaRed("Korisnicko ime korisnika sa najvise rang poena:",
-            uiState.informacije?.korisnikSaNajviseLicnihPoenaIme?.toString() ?: "Nema podataka", isValueLeft = false, valueColor = HighlightColor)
+        StatistikaRed("Korisnik sa najvise licnih poena:",
+            uiState.informacije?.korisnikSaNajviseLicnihPoenaIme + ", "+
+                    uiState.informacije?.korisnikSaNajviseLicnihPoenaPoeni.toString())
+        StatistikaRed("Korisnik sa najvise rang poena:",
+            uiState.informacije?.korisnikSaNajviseRangPoenimaIme + ", "+
+            uiState.informacije?.korisnikSaNajviseRangPoenimaPoeni.toString() ?: "Nema podataka"
+            , isValueLeft = false, valueColor = HighlightColor)
         Divider(color = PrimaryDark.copy(alpha = 0.1f))
         //StatistikaRed("Prosečan rezultat po igri:", String.format("%.2f", uiState.averageScore), valueColor = HighlightColor)
         //Divider(color = PrimaryDark.copy(alpha = 0.1f))
