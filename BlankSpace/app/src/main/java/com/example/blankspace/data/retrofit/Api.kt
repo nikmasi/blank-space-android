@@ -27,6 +27,7 @@ import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Pesma
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
+import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeRequset
@@ -71,7 +72,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-const val BASE_URL = "http://10.76.100.178:8000/"
+const val BASE_URL = "http://172.26.51.178:8000/"
 //const val BASE_URL = "http://10.0.2.2:8000/"
 const val BASE_URL_LOCALHOST ="http://127.0.0.1:8000/"
 
@@ -204,5 +205,8 @@ interface Api {
 
     @POST("kraj_duela_android/")
     suspend fun krajDuela(@Body request: KrajDuelaRequest):KrajDuelaResponse
+
+    @GET("pesme_po_izvodjacima_android/")
+    suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse>
 }
 

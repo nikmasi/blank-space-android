@@ -28,6 +28,7 @@ import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Pesma
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
+import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjePesmeRequset
@@ -177,4 +178,7 @@ class Repository @Inject constructor(
         = Api.cekanjeRezultata(request)
 
     suspend fun krajDuela(@Body request: KrajDuelaRequest): KrajDuelaResponse = Api.krajDuela(request)
+
+
+    suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse> = Api.getPesmePoIzvodjacima()
 }

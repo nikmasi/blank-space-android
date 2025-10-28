@@ -292,6 +292,31 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="cekanje_rezultata",
         ikonica = Icons.Default.FavoriteBorder
     )
+    object SadrzajZanrova:Destinacije(
+        ime="sadrzaj_zanrova",
+        ruta="sadrzaj_zanrova",
+        ikonica = Icons.Default.FavoriteBorder
+    )
+    object SadrzajKorisnici:Destinacije(
+        ime="sadrzaj_korisnici",
+        ruta="sadrzaj_korisnici",
+        ikonica = Icons.Default.FavoriteBorder
+    )
+    object SadrzajIzvodjaci:Destinacije(
+        ime="sadrzaj_izvodjaci",
+        ruta="sadrzaj_izvodjaci",
+        ikonica = Icons.Default.FavoriteBorder
+    )
+    object SadrzajPesme:Destinacije(
+        ime="sadrzaj_pesme",
+        ruta="sadrzaj_pesme",
+        ikonica = Icons.Default.FavoriteBorder
+    )
+    object AdminStatistika:Destinacije(
+        ime="admin_statistika",
+        ruta="admin_statistika",
+        ikonica = Icons.Default.FavoriteBorder
+    )
 }
 
 val listaBrucos = listOf(

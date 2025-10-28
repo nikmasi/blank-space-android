@@ -71,6 +71,22 @@ fun PocetnaAdmin_mainCard(navController:NavController, viewModelLogin:LoginViewM
 
             item {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    SectionTitle("Statistika")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AdminStatistikaButtons(navController)
+                }
+            }
+
+            item {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    SectionTitle("Pregled Sadržaja")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AdminContentButtons(navController)
+                }
+            }
+
+            item {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     SectionTitle("Dodavanje Sadržaja")
                     Spacer(modifier = Modifier.height(8.dp))
                     AdminActionButtons(navController)
@@ -159,6 +175,25 @@ fun AdminActionButton(onClick: () -> Unit, text: String) {
             delay(100)
             pressed = false
         }
+    }
+}
+
+@Composable
+fun AdminStatistikaButtons(navController: NavController) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AdminActionButton(onClick = { navController.navigate(Destinacije.AdminStatistika.ruta) }, text = "Statistika")
+        //AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajKorisnici.ruta) }, text = "Pregled korisnika")
+        //AdminActionButton(onClick = { navController.navigate(Destinacije.IzborZanra2.ruta) }, text = "Dodaj pesmu")
+    }
+}
+
+@Composable
+fun AdminContentButtons(navController: NavController) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajZanrova.ruta) }, text = "Pregled žanrova")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajKorisnici.ruta) }, text = "Pregled korisnika")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajIzvodjaci.ruta) }, text = "Pregled izvodjaca")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajPesme.ruta) }, text = "Pregled pesama")
     }
 }
 

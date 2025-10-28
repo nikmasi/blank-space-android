@@ -387,3 +387,20 @@ data class DodajZanrRequest(
 data class DodajZanrResponse(
     val odgovor: String
 )
+
+data class StatistikaResponse(
+    val ukupnoKorisnika:Int,
+    val ukupnoPesama:Int,
+    val ukupnoPredlogaPesamaNaCekanju:Int,
+    val ukupnoPredlogaIzvodjacaNaCekanju:Int,
+    val korisnikSaNajviseLicnihPoenaIme:String,
+    val korisnikSaNajviseLicnihPoenaPoeni:Int,
+    val korisnikSaNajviseRangPoenimaIme:String,
+    val korisnikSaNajviseRangPoenimaPoeni:Int,
+    val brojDuela:Int
+)
+
+data class PesmePoIzvodjacimaResponse(
+    val naziv:String,
+    val ime_izvodjaca:String
+)

@@ -75,6 +75,11 @@ import com.example.blankspace.screens.predlaganje.PredlaganjePesme
 import com.example.blankspace.screens.predlaganje.PretragaPredlaganje
 import com.example.blankspace.screens.profil_rang_pravila.MojProfil
 import com.example.blankspace.screens.profil_rang_pravila.PravilaIgre
+import com.example.blankspace.screens.sadrzaj.SadrzajIzvodjaci
+import com.example.blankspace.screens.sadrzaj.SadrzajKorisnici
+import com.example.blankspace.screens.sadrzaj.SadrzajPesme
+import com.example.blankspace.screens.sadrzaj.SadrzajZanrova
+import com.example.blankspace.screens.statistika.AdminStatistika
 import com.example.blankspace.screens.uklanjanje.IzborIzvodjacaUklanjanjePesme
 import com.example.blankspace.screens.uklanjanje.IzborZanraUklanjanjeIzvodjaca
 import com.example.blankspace.screens.uklanjanje.IzborZanraUklanjanjePesme
@@ -87,6 +92,7 @@ import com.example.blankspace.screens.uklanjanje.UklanjanjeZanra
 import com.example.blankspace.ui.bars.BlankSpaceBottomBar
 import com.example.blankspace.ui.bars.BlankSpaceTopAppBar
 import com.example.blankspace.ui.theme.BlankSpaceTheme
+import com.example.blankspace.viewModels.AdminStatistikaViewModel
 import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.DuelViewModel
@@ -150,6 +156,8 @@ fun BlankSpaceApp(){
     val viewModelZaboravljenaLozinka: ZaboravljenaLozinkaViewModel = hiltViewModel()
     val viewModelLogin: LoginViewModel = hiltViewModel()
     val viewModelPredlozi: PredloziViewModel = hiltViewModel()
+
+    val viewModelAdminStatistika: AdminStatistikaViewModel = hiltViewModel()
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
 
     val databaseViewModel: DatabaseViewModel = viewModel()
@@ -504,6 +512,22 @@ fun BlankSpaceApp(){
                 val sifra=navBackStackEntry.arguments?.getInt("sifra")?:0
 
                 Kraj_duela(navController,viewModelDuel,sifra)
+            }
+
+            composable(route = Destinacije.SadrzajZanrova.ruta) {
+                SadrzajZanrova(navController)
+            }
+            composable(route = Destinacije.SadrzajKorisnici.ruta) {
+                SadrzajKorisnici(navController)
+            }
+            composable(route = Destinacije.SadrzajIzvodjaci.ruta) {
+                SadrzajIzvodjaci(navController)
+            }
+            composable(route = Destinacije.SadrzajPesme.ruta) {
+                SadrzajPesme(navController)
+            }
+            composable(route = Destinacije.AdminStatistika.ruta){
+                AdminStatistika(navController,viewModelAdminStatistika)
             }
         }
 

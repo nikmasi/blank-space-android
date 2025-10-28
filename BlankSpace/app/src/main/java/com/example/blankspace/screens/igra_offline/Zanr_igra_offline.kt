@@ -39,7 +39,7 @@ import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.data.room.ZanrEntity
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.igra_sam.ZanrIgreHeader
+import com.example.blankspace.screens.igra_sam.ZanrIgreHeaderStyled
 import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateZ
@@ -77,7 +77,7 @@ fun Zanr_igra_offline_mainCard(navController: NavController,selectedNivo: String
         ) {
 
             Spacer(modifier = Modifier.height(22.dp))
-            ZanrIgreHeader()
+            ZanrIgreHeaderStyled()
             Spacer(modifier = Modifier.height(22.dp))
 
 
