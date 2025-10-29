@@ -252,7 +252,7 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
                 text = timeState.value,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = ProfileAccentColor 
+                color = ProfileAccentColor
             )
         }
     }

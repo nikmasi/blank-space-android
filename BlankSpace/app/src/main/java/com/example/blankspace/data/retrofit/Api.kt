@@ -15,6 +15,8 @@ import com.example.blankspace.data.retrofit.models.IgraSamResponse
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.IzvodjaciZanra
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
+import com.example.blankspace.data.retrofit.models.KorisnikPregledRequest
+import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
 import com.example.blankspace.data.retrofit.models.KrajDuelaRequest
 import com.example.blankspace.data.retrofit.models.KrajDuelaResponse
 import com.example.blankspace.data.retrofit.models.KrajIgreRequest
@@ -212,5 +214,8 @@ interface Api {
 
     @GET("statistika_android/")
     suspend fun getStatistika():StatistikaResponse
+
+    @POST("pregledKorisnik_android/")
+    suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest):KorisnikPregledResponse
 }
 

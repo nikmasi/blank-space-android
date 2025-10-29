@@ -184,7 +184,7 @@ class DuelViewModel @Inject constructor(
     fun fetchKrajDuela(poeni:Int,soba:Int,rundaPoeni:List<Int>,redniBroj: Int,upisuj:String) = viewModelScope.launch {
         _uiStateKrajDuela.value = _uiStateKrajDuela.value.copy(isRefreshing = true)
         try {
-            val request = KrajDuelaRequest(rundaPoeni,poeni,soba,redniBroj,upisuj)
+            val request = KrajDuelaRequest(rundaPoeni,poeni*10,soba,redniBroj,upisuj)
             val response = repository.krajDuela(request)
             Log.d("SIFF333",response.toString())
 

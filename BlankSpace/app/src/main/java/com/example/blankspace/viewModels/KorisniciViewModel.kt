@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
+import com.example.blankspace.data.retrofit.models.KorisnikPregledRequest
+import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,10 +50,32 @@ class KorisniciViewModel @Inject constructor(
             _uiState.value = UiStateK(korisnici = emptyList(), isRefreshing = false, error = e.localizedMessage)
         }
     }
+
+    //UiStateKorisnikPregled
+
+    private val _uiStateKorisnikPregled = MutableStateFlow(UiStateKorisnikPregled())
+    val uiStateKorisnikPregled: StateFlow<UiStateKorisnikPregled> = _uiStateKorisnikPregled
+
+    fun fetchInformacijeKorisnikPregled(ime:String) = viewModelScope.launch {
+        _uiStateKorisnikPregled.value = _uiStateKorisnikPregled.value.copy(isRefreshing = true)
+        try {
+            val request = KorisnikPregledRequest(ime)
+            val response = repository.getPregledKorisnik(request)
+            _uiStateKorisnikPregled.value = UiStateKorisnikPregled(informacije = response, isRefreshing = false)
+        } catch (e: Exception) {
+            _uiStateKorisnikPregled.value = UiStateKorisnikPregled(informacije = null, isRefreshing = false, error = e.localizedMessage)
+        }
+    }
 }
 
 data class UiStateK(
     val korisnici: List<KorisniciResponse> = emptyList(),
+    val isRefreshing: Boolean = false,
+    val error: String? = null
+)
+
+data class UiStateKorisnikPregled(
+    val informacije: KorisnikPregledResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null
 )

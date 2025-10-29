@@ -16,6 +16,8 @@ import com.example.blankspace.data.retrofit.models.IgraSamResponse
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.IzvodjaciZanra
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
+import com.example.blankspace.data.retrofit.models.KorisnikPregledRequest
+import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
 import com.example.blankspace.data.retrofit.models.KrajDuelaRequest
 import com.example.blankspace.data.retrofit.models.KrajDuelaResponse
 import com.example.blankspace.data.retrofit.models.KrajIgreRequest
@@ -183,4 +185,6 @@ class Repository @Inject constructor(
     suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse> = Api.getPesmePoIzvodjacima()
 
     suspend fun getStatistika():StatistikaResponse = Api.getStatistika()
+
+    suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest): KorisnikPregledResponse = Api.getPregledKorisnik(requst)
 }

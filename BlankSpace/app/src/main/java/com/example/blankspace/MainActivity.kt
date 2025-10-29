@@ -1,6 +1,7 @@
 package com.example.blankspace
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -9,15 +10,23 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource.Companion.SideEffect
+import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -80,6 +89,7 @@ import com.example.blankspace.screens.sadrzaj.SadrzajKorisnici
 import com.example.blankspace.screens.sadrzaj.SadrzajPesme
 import com.example.blankspace.screens.sadrzaj.SadrzajZanrova
 import com.example.blankspace.screens.statistika.AdminStatistika
+import com.example.blankspace.screens.takmicenje.KorisnikPregled
 import com.example.blankspace.screens.uklanjanje.IzborIzvodjacaUklanjanjePesme
 import com.example.blankspace.screens.uklanjanje.IzborZanraUklanjanjeIzvodjaca
 import com.example.blankspace.screens.uklanjanje.IzborZanraUklanjanjePesme
@@ -97,6 +107,7 @@ import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.DuelViewModel
 import com.example.blankspace.viewModels.IgraSamViewModel
+import com.example.blankspace.viewModels.KorisniciViewModel
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UklanjanjeViewModel
@@ -156,6 +167,7 @@ fun BlankSpaceApp(){
     val viewModelZaboravljenaLozinka: ZaboravljenaLozinkaViewModel = hiltViewModel()
     val viewModelLogin: LoginViewModel = hiltViewModel()
     val viewModelPredlozi: PredloziViewModel = hiltViewModel()
+    val viewModelKorisnici: KorisniciViewModel = hiltViewModel()
 
     val viewModelAdminStatistika: AdminStatistikaViewModel = hiltViewModel()
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
@@ -166,10 +178,21 @@ fun BlankSpaceApp(){
 
     var userType by remember{ mutableStateOf("") }
 
+    val view = LocalView.current
+    val bottomBarColor = Color(0xFFF0DAE7) // ista boja kao tvoj LightPink
+
+    // Postavi system navigation bar boju
+    if (!view.isInEditMode) {
+        val window = (view.context as Activity).window
+        SideEffect {
+            window.navigationBarColor = bottomBarColor.toArgb()
+        }
+    }
+
     Scaffold(
         topBar = {
             if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta)
-                BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin) },
+                BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin)},
         bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
         val padding = innerPadding
@@ -528,6 +551,9 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.AdminStatistika.ruta){
                 AdminStatistika(navController,viewModelAdminStatistika)
+            }
+            composable(route = Destinacije.KorisnikPregled.ruta){
+                KorisnikPregled(navController,viewModelKorisnici,viewModelLogin)
             }
         }
 

@@ -1,5 +1,7 @@
 package com.example.blankspace.ui.bars
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -7,6 +9,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -34,7 +37,8 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
             // Koristimo svetlo roze boju sa malom transparentnošću
             NavigationBar(
                 containerColor = LightPink.copy(alpha = 0.9f),
-                tonalElevation = 0.dp // Uklanjamo senku da se bolje slaže sa gradijentom
+                tonalElevation = 0.dp,
+                modifier = Modifier.fillMaxWidth().height(100.dp),
             ) {
                 navigationList.forEach { navDestination ->
                     NavigationBarItem(

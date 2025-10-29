@@ -69,7 +69,7 @@ fun BlankSpaceTopAppBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(100.dp)
             .background(Color.Transparent) // TopAppBar će imati transparent container
     ) {
         // Blur pozadina sa gradijentom

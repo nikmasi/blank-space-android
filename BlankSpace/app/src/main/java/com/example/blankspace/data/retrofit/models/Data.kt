@@ -404,3 +404,35 @@ data class PesmePoIzvodjacimaResponse(
     val naziv:String,
     val ime_izvodjaca:String
 )
+
+data class KorisnikPregledRequest(
+    val ime: String
+)
+
+data class Protivnik(
+    val ime: String,
+    val brojMeceva:Int,
+    val procenatPobede:Int
+)
+
+data class Mecevi(
+    val ime: String,
+    val brojPoenaProtivnika:Int,
+    val brojPoenaMoj:Int
+)
+
+data class PesmeMeceva(
+    val naziv: String,
+    val izvodjac: String,
+    val brojPojavljivanja:Int
+)
+
+data class KorisnikPregledResponse(
+    val ukupnoDuela:Int,
+    val ukupnoPobeda:Int,
+    val ukupnoPoraza:Int,
+    val ukupnoNereseno:Int,
+    val protivnici: List<Protivnik>,
+    val mecevi: List<Mecevi>,
+    val pesmeMeceva: List<PesmeMeceva>
+)

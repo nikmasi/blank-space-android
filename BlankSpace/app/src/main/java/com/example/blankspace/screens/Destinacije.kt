@@ -2,6 +2,7 @@ package com.example.blankspace.screens
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
@@ -317,22 +318,30 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="admin_statistika",
         ikonica = Icons.Default.FavoriteBorder
     )
+    object KorisnikPregled:Destinacije(
+        ime="korisnik_pregled",
+        ruta="korisnik_pregled",
+        ikonica = Icons.Default.Clear
+    )
 }
 
 val listaBrucos = listOf(
     Destinacije.PocetnaBrucos,
     Destinacije.RangLista,
-    Destinacije.MojProfil
+    Destinacije.MojProfil,
+    Destinacije.KorisnikPregled
 )
 
 val listaStudent = listOf(
     Destinacije.PocetnaStudent,
     Destinacije.RangLista,
-    Destinacije.MojProfil
+    Destinacije.MojProfil,
+    Destinacije.KorisnikPregled
 )
 
 val listaMaster = listOf(
     Destinacije.PocetnaMaster,
     Destinacije.RangLista,
-    Destinacije.MojProfil
+    Destinacije.MojProfil,
+    Destinacije.KorisnikPregled
 )
