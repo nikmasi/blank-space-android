@@ -103,7 +103,7 @@ fun PocetnaAdmin_mainCard(navController:NavController, viewModelLogin:LoginViewM
 
             item {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    SectionTitle("Pregled Sugestija")
+                    SectionTitle("Pregled Predloga")
                     Spacer(modifier = Modifier.height(8.dp))
                     AdminSuggestionButtons(navController)
                 }
@@ -194,6 +194,8 @@ fun AdminContentButtons(navController: NavController) {
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajKorisnici.ruta) }, text = "Pregled korisnika")
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajIzvodjaci.ruta) }, text = "Pregled izvodjaca")
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajPesme.ruta) }, text = "Pregled pesama")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajStihovi.ruta) }, text = "Pregled stihova")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajStihovi.ruta) }, text = "Pregled soba")
     }
 }
 

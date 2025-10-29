@@ -12,41 +12,21 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,37 +34,71 @@ import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.theme.LIGTH_BLUE
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.IgraSamLista
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
 
+// --- BOJE (Koristimo jasne definicije za rozi stil) ---
+private val PrimaryDark = Color(0xFF49006B) // Tamno ljubičasta/Bordo
+private val AccentPink = Color(0xFFEC8FB7) // Akcent roza
+private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za karticu
+private val InfoBarColor = Color(0xFFE0BBE4) // Svetlija ljubičasta/roza za donju traku
+private val TextMain = PrimaryDark
+private val TextAccent = AccentPink
+private val TimeWarningColor = Color(0xFFD32F2F) // Crvena za upozorenje
+
+// ODRŽAVANJE ORIGINALNIH NAZIVA BOJA ZA KOMPATIBILNOST SA VAŠIM FAJLOM
+val LIGTH_BLUE = InfoBarColor // Prilagođavanje
+val TEXT_COLOR = PrimaryDark // Prilagođavanje
+
+// --- GLAVNE KOMPONENTE ---
+
 @Composable
-fun Igra_sam(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
+fun Igra_sam(navController: NavController, selectedZanrovi: String, selectedNivo: String, runda: Int, poeni: Int, viewModelIgraSam: IgraSamViewModel) {
     Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
         BgCard2()
-        Spacer(Modifier.padding(top = 22.dp))
 
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
         val selectedZanroviList = selectedZanrovi.split(",").map { it.trim() }
 
-        Igra_sam_mainCard(navController, selectedZanroviList, selectedNivoList,selectedZanrovi,selectedNivo,runda,poeni,viewModelIgraSam)
+        // Kartica je centralizovana ovde
+        Igra_sam_mainCard(
+            navController,
+            selectedZanroviList,
+            selectedNivoList,
+            selectedZanrovi,
+            selectedNivo,
+            runda,
+            poeni,
+            viewModelIgraSam,
+            modifier = Modifier.align(Alignment.Center) // Centriranje
+        )
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Igra_sam_mainCard(navController: NavController, selectedZanrovi: List<String>, selectedNivo: List<String>,sZ:String,sN:String,runda:Int,poeni:Int,viewModel: IgraSamViewModel) {
+fun Igra_sam_mainCard(
+    navController: NavController,
+    selectedZanrovi: List<String>,
+    selectedNivo: List<String>,
+    sZ: String,
+    sN: String,
+    runda: Int,
+    poeni: Int,
+    viewModel: IgraSamViewModel,
+    modifier: Modifier = Modifier
+) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val igraSamLista by viewModel.IgraSamLista.collectAsState()
 
     val count = remember { mutableStateOf(0) }
     val isAudioP = remember { mutableStateOf(false) }
-    var crta= remember { mutableStateOf("") }
+    var crta = remember { mutableStateOf("") }
 
+    // Ispravka Logike tajmera
     TimerEffect(count, navController, sZ, sN, uiState, runda, poeni)
     FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
 
@@ -93,64 +107,50 @@ fun Igra_sam_mainCard(navController: NavController, selectedZanrovi: List<String
     }
 
     Surface(
-        color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .fillMaxHeight(0.7f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor, // ROZA BOJA
+        modifier = modifier // Koristi modifier za centriranje
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.75f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)), // Dodatna senka
+        shape = RoundedCornerShape(24.dp) // Zaobljeni uglovi
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(horizontal = 24.dp, vertical = 24.dp), // Povećan padding
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                LoadingStateIgraSam(uiState)
-                DisplayContentIgraSam(uiState, crta)
-                Spacer(modifier = Modifier.height(22.dp))
+                // Gornji deo: Runda, Učitavanje i Sadržaj
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Runda ${uiState.igrasam?.runda ?: runda}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextAccent // Roza akcent boja
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LoadingStateIgraSam(uiState)
+                    DisplayContentIgraSam(uiState, crta)
+                }
 
-                UserInputSectionIgraSam(uiState, context, navController, sZ, sN, runda, poeni, isAudioP, count,viewModel)
-                Spacer(modifier = Modifier.height(22.dp))
-
-                HelpButtonsSectionIgraSam(crta, uiState, context)
-            }
-
-            // Dodavanje plave trake na dnu
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(LIGTH_BLUE)
-                    .height(40.dp)
-            ){
-                Column {
-                    Spacer(modifier=Modifier.padding(top=10.dp))
-                    Row{
-                        Spacer(modifier = Modifier.padding(start = 30.dp))
-                        Text(text = "Runda: ${uiState.igrasam?.runda} ")
-                        Spacer(modifier = Modifier.padding(start = 5.dp))
-                        Text(text = "Vreme: ")
-                        Text(text=" ${count.value}",color=
-                        if(count.value>=50)Color.Red else
-                            TEXT_COLOR)
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(end=30.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Text(text = "\uD834\uDD1E")  // Violinijski ključ
-                            Text(text = " ${poeni} ")
-                        }
-
-                    }
+                // Srednji deo: Unos i Dugmad
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    UserInputSectionIgraSam(uiState, context, navController, sZ, sN, runda, poeni, isAudioP, count, viewModel)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    HelpButtonsSectionIgraSam(crta, uiState, context)
                 }
             }
+
+            // Donja Info Traka
+            BottomInfoBar(runda = uiState.igrasam?.runda ?: runda, poeni = poeni, count = count.value)
         }
     }
 }
+
+// --- EFEKTI I PRIKAZI ---
 
 @Composable
 fun TimerEffect(
@@ -162,12 +162,22 @@ fun TimerEffect(
     runda: Int,
     poeni: Int
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(runda) { // OGRANIČAVAMO NA RUNDU DA SE NE RESETUJE NA SVAKOM RECOMPOSITION-U
+        count.value = 0 // Resetovanje tajmera pri novoj rundi
         while (count.value < 60) {
-            delay(1000)  // pauza -1 sekunda
-            count.value += 1  // count+1
+            delay(1000)
+            count.value += 1
         }
-        navController.navigate(Destinacije.Igra_sam.ruta+"/"+sZ+"/"+sN+"/"+ (runda+1).toString()+"/"+(poeni).toString())
+
+        // Navigacija tek nakon isteka vremena
+        //if (uiState.igrasam?.runda == runda) {
+            val nextRunda = runda + 1
+            if (nextRunda < 7) {
+                navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/$nextRunda/$poeni")
+            } else {
+                navController.navigate(Destinacije.Kraj_igre_igre_sam.ruta + "/$poeni")
+            }
+        //}
     }
 }
 
@@ -181,10 +191,8 @@ fun FetchDataEffect(
     context: Context,
     igraSamLista: IgraSamLista
 ) {
-    LaunchedEffect(key1 = selectedZanrovi, key2 = selectedNivo) {
+    LaunchedEffect(key1 = selectedZanrovi, key2 = selectedNivo, key3 = runda) { // Dodata runda
         if (!selectedZanrovi.isNullOrEmpty()) {
-            val url = BASE_URL+"get_audio/"
-            //viewModel.downloadAudio(url, context)
             igraSamLista.igraSamLista?.let {
                 viewModel.fetchIgraSamData(selectedZanrovi, selectedNivo.toString(),runda,poeni,
                     it,context)
@@ -196,10 +204,10 @@ fun FetchDataEffect(
 @Composable
 fun LoadingStateIgraSam(uiState: UiStateI) {
     if (uiState.isRefreshing) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = TextAccent)
     } else {
         uiState.error?.let {
-            Text(text = "Greška: $it", color = Color.Red)
+            Text(text = "Greška: $it", color = TimeWarningColor)
         }
     }
 }
@@ -215,13 +223,23 @@ fun DisplayContentIgraSam(uiState: UiStateI, crta: MutableState<String>) {
             Text(
                 text = stih,
                 color = TEXT_COLOR,
-                fontSize = if (flag) 12.sp else 15.sp
+                fontSize = if (flag) 14.sp else 16.sp,
+                textAlign = TextAlign.Center
             )
 
         }
-        Text("${crta.value}", color = TEXT_COLOR, fontSize = if (crta.value.length > 36) 12.sp else 15.sp)
+        Text(
+            text = "${crta.value}",
+            color = TEXT_COLOR,
+            fontSize = if (crta.value.length > 36) 16.sp else 18.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
     }
 }
+
+// --- KONTROLE I UNOS (AŽURIRANO) ---
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -238,57 +256,30 @@ fun UserInputSectionIgraSam(
     viewModel: IgraSamViewModel
 ) {
     var odgovor by remember { mutableStateOf("") }
-
     var isListening by remember { mutableStateOf(false) }
-    val speechRecognizer = remember {
-        SpeechRecognizer.createSpeechRecognizer(context)
-    }
+    val speechRecognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
 
-    // RecognitionListener koji hvata događaje prepoznavanja
     val recognitionListener = remember {
         object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {
-                // Možeš staviti neki log ili UI indikator
-            }
-
-            override fun onBeginningOfSpeech() {
-                // Korisnik počeo da govori
-            }
-
-            override fun onRmsChanged(rmsdB: Float) {
-                // Možeš iskoristiti za vizualni indikator jačine glasa
-            }
-
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
             override fun onBufferReceived(buffer: ByteArray?) {}
-
-            override fun onEndOfSpeech() {
-                // Korisnik je završio govor
-                isListening = false
-            }
-
+            override fun onEndOfSpeech() { isListening = false }
             override fun onError(error: Int) {
                 isListening = false
-                // Možeš prikazati grešku, na primer Toast
-                Toast.makeText(context, "Greška prilikom prepoznavanja govora: $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Greška: $error", Toast.LENGTH_SHORT).show()
             }
-
             override fun onResults(results: Bundle?) {
                 val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                    odgovor = matches[0] // Prvi rezultat
-                }
+                if (!matches.isNullOrEmpty()) { odgovor = matches[0] }
                 isListening = false
             }
-
-            override fun onPartialResults(partialResults: Bundle?) {
-                // Opcionalno: delimični rezultati
-            }
-
+            override fun onPartialResults(partialResults: Bundle?) {}
             override fun onEvent(eventType: Int, params: Bundle?) {}
         }
     }
 
-    // Postavljanje listenera jednom
     LaunchedEffect(Unit) {
         speechRecognizer.setRecognitionListener(recognitionListener)
     }
@@ -296,20 +287,118 @@ fun UserInputSectionIgraSam(
     OutlinedTextField(
         value = odgovor,
         onValueChange = { odgovor = it },
-        label = { Text("odgovor", color = TEXT_COLOR) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 15.dp, end = 15.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color(0xFFFF69B4),
-            unfocusedBorderColor = Color.Gray
+        label = { Text("Tvoj odgovor") },
+        modifier = Modifier.fillMaxWidth(),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = AccentPink,
+            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
+            cursorColor = AccentPink
         ),
         singleLine = true,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(12.dp)
     )
 
-    Spacer(modifier = Modifier.height(22.dp))
-    // Launcher za traženje dozvole
+    Spacer(modifier = Modifier.height(20.dp))
+
+    // RED ZA DUGMAD: Govori, Pusti, Proveri
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Govori Dugme (AŽURIRANO)
+        SpeechButton(
+            context = context,
+            speechRecognizer = speechRecognizer,
+            isListening = isListening,
+            onListeningChange = { isListening = it },
+            modifier = Modifier.weight(1.5f)
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+
+        // Pusti Dugme (AŽURIRANO)
+        ActionButton(
+            onClick = {
+                if (!isAudioP.value) {
+                    uiState.igrasam?.zvuk?.let { zvukUrl ->
+                        viewModel.downloadAudio(zvukUrl, context)
+                    }
+                    isAudioP.value = true
+                }
+            },
+            text = "Pusti",
+            icon = Icons.Default.PlayArrow,
+            modifier = Modifier.weight(1.5f)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+
+        // Proveri Dugme (AŽURIRANO)
+        ActionButton(
+            onClick = {
+                if (uiState.igrasam != null) {
+                    // Normalizacija slova (Kao u originalu)
+                    val normalize = { text: String ->
+                        text.toLowerCase()
+                            .replace("ć", "c").replace("č", "c")
+                            .replace("đ", "dj")
+                            .replace("ž", "z").replace("š", "s")
+                            .filter { it.isLetterOrDigit() || it.isWhitespace() }
+                    }
+
+                    val cleanedAnswer = normalize(odgovor)
+                    val correctTarget = normalize(uiState.igrasam!!.tacno)
+
+                    if (cleanedAnswer == correctTarget) {
+                        Toast.makeText(context, "Tačan odgovor!", Toast.LENGTH_SHORT).show()
+                        viewModel.stopAudio()
+                        val nextRunda = runda + 1 // Koristi runda argument
+                        if (nextRunda < 7) {
+                            navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/$nextRunda/${poeni + 10}")
+                        } else {
+                            navController.navigate(Destinacije.Kraj_igre_igre_sam.ruta + "/${poeni + 10}")
+                        }
+                    } else {
+                        Toast.makeText(context, "Netačan odgovor", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            text = "Proveri",
+            icon = Icons.Default.Check,
+            modifier = Modifier.weight(1.5f)
+        )
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    // Dalje/Preskoči Dugme (AŽURIRANO)
+    ActionButton(
+        onClick = {
+            viewModel.stopAudio()
+            val nextRunda = runda + 1 // Koristi runda argument
+            if (nextRunda < 7) {
+                navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/$nextRunda/$poeni")
+            } else {
+                navController.navigate(Destinacije.Kraj_igre_igre_sam.ruta + "/$poeni")
+            }
+        },
+        text = "Preskoči/Dalje",
+        icon = Icons.Default.ArrowForward,
+        containerColor = PrimaryDark.copy(alpha = 0.8f), // Tamnija boja za preskakanje
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+// --- DUGMAD I POMOĆNE KOMPONENTE ---
+
+@Composable
+fun SpeechButton(
+    context: Context,
+    speechRecognizer: SpeechRecognizer,
+    isListening: Boolean,
+    onListeningChange: (Boolean) -> Unit,
+    modifier: Modifier
+) {
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -318,181 +407,172 @@ fun UserInputSectionIgraSam(
         }
     }
 
-    Row {
-        Button(
-            onClick = {
-                // Provera dozvole
-                if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                    return@Button
+    Button(
+        onClick = {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                return@Button
+            }
+
+            if (!isListening) {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
                 }
-
-                if (!isListening) {
-                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
-                    }
-                    speechRecognizer.startListening(intent)
-                    isListening = true
-
-                } else {
-                    speechRecognizer.stopListening()
-                    isListening = false
-
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (isListening) Color.Red else Color(0xFFFF69B4),
-                contentColor = Color.White
-            )
-        ) {
-            Text(if (isListening) "Slusam" else "Govori", style = MaterialTheme.typography.bodyMedium)
-        }
-
-        Button(
-            onClick = {
-                if (!isAudioP.value) {
-                    uiState.igrasam?.zvuk?.let { zvukUrl ->
-                        viewModel.downloadAudio(zvukUrl, context)
-                    }
-                    isAudioP.value=true
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFF69B4),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Pusti", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
-        }
-        Spacer(modifier = Modifier.height(1.dp))
-
-        Button(
-            onClick = {
-                if (uiState.igrasam != null) {
-                    val cleanedAnswer = odgovor.toLowerCase()
-                        .replace("ć", "c")
-                        .replace("đ", "dj")
-                        .replace("ž", "z")
-                        .replace("č", "c")
-                        .replace("š", "s")
-                    if (cleanedAnswer == uiState.igrasam!!.tacno.toLowerCase()) {
-                        Toast.makeText(context, "Tacan odgovor!", Toast.LENGTH_SHORT).show()
-                        viewModel.stopAudio()
-                        if (uiState.igrasam?.runda!! < 7) {
-                            navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/${poeni + 10}")
-                        } else {
-                            navController.navigate(Destinacije.Kraj_igre_igre_sam.ruta + "/$poeni")
-                        }
-                    } else {
-                        Toast.makeText(context, "Netacan odgovor", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFF69B4),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Proveri", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
-        }
-
-        Spacer(modifier = Modifier.height(1.dp))
-    }
-    Row{
-
-        Button(
-            onClick = {
-                viewModel.stopAudio()
-                if (uiState.igrasam?.runda!! < 7) {
-                    navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/${uiState.igrasam?.runda!!}/$poeni")
-                } else {
-                    navController.navigate(Destinacije.Kraj_igre_igre_sam.ruta + "/$poeni")
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFF69B4),
-                contentColor = Color.White
-            )
-        ) {
-            Text(text = "Dalje", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center, color = Color.White)
-        }
-
+                speechRecognizer.startListening(intent)
+                onListeningChange(true)
+            } else {
+                speechRecognizer.stopListening()
+                onListeningChange(false)
+            }
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isListening) TimeWarningColor else AccentPink,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.height(52.dp)
+    ) {
+        Icon(Icons.Default.PlayArrow, contentDescription = if (isListening) "Slušam" else "Govori", modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(if (isListening) "Slušam" else "Govori", fontSize = 14.sp)
     }
 }
 
 @Composable
+fun ActionButton(
+    onClick: () -> Unit,
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    modifier: Modifier,
+    containerColor: Color = AccentPink,
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.height(52.dp)
+    ) {
+        Icon(icon, contentDescription = text, modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text, fontSize = 14.sp)
+    }
+}
+
+
+@Composable
 fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, context: Context) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
-            text = "Pomoć ",
+            text = "Pomoć: ",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = TEXT_COLOR,
-            modifier = Modifier.padding(top = 15.dp)
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(end = 8.dp)
         )
-        val configuration = LocalConfiguration.current
-        val isDarkMode = configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
-        val cn2= LocalContext.current
-        OutlinedButton(
-            onClick = {
-                val i=uiState.igrasam?.izvodjac
 
-                Toast.makeText(cn2, "" +i, Toast.LENGTH_SHORT).show()
+        OutlinedHelpButton(
+            onClick = {
+                val i=uiState.igrasam?.izvodjac ?: "Nema podataka"
+                Toast.makeText(context, "Izvođač: $i", Toast.LENGTH_SHORT).show()
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color.Black
-            )
-        ) {
-            Text(
-                text = "Izvođač",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = TEXT_COLOR
-            )
-        }
+            text = "Izvođač"
+        )
 
-        OutlinedButton(
+        OutlinedHelpButton(
             onClick = {
-                Toast.makeText(context, uiState.igrasam?.pesma, Toast.LENGTH_LONG).show()
+                val p = uiState.igrasam?.pesma ?: "Nema podataka"
+                Toast.makeText(context, "Pesma: $p", Toast.LENGTH_LONG).show()
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color.Black
-            )
-        ) {
-            Text(
-                text = "Pesma",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = TEXT_COLOR
-            )
-        }
+            text = "Pesma"
+        )
 
-        OutlinedButton(
+        OutlinedHelpButton(
             onClick = {
-                if (crta.value[0].toString()=="_"){
-                    val words = uiState.igrasam?.tacno?.split(" ")
-
-
-                    val firstLetters = words?.joinToString(" ") {
-                        val firstLetter = it.first()  // Uzmi prvo slovo reči
-                        val underscores = "_ ".repeat(it.length - 1)  // Ponovi crticama ostatak dužine reči
-                        "$firstLetter$underscores"  // Spoj prvo slovo sa crtama
+                if (crta.value.contains("_")){
+                    val words = uiState.igrasam?.tacno?.split(" ") ?: return@OutlinedHelpButton
+                    val newCrta = words.joinToString(" ") { word ->
+                        if (word.isNotEmpty()) {
+                            val firstLetter = word.first().toString()
+                            val underscores = "_".repeat(word.length - 1)
+                            "$firstLetter$underscores"
+                        } else ""
                     }
-                    crta.value= firstLetters?.toString()!!
-
+                    crta.value= newCrta
                 }
-
             },
+            text = "Slova"
+        )
+    }
+}
+
+@Composable
+fun OutlinedHelpButton(onClick: () -> Unit, text: String) {
+    OutlinedButton(
+        onClick = onClick,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.White,
+            contentColor = PrimaryDark
+        ),
+        shape = RoundedCornerShape(12.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+        modifier = Modifier.height(36.dp)
+    ) {
+        Text(text, fontSize = 13.sp)
+    }
+}
+
+@Composable
+fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            //.align(Alignment.BottomCenter)
+            .background(LIGTH_BLUE, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .height(IntrinsicSize.Min)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Slova",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = TEXT_COLOR
-            )
+            // Runda
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Runda: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                Text(text = "$runda", color = PrimaryDark, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+            }
+
+            // Vreme
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Vreme: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                Text(
+                    text = "$count s",
+                    color = if (count >= 50) TimeWarningColor else PrimaryDark,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 16.sp
+                )
+            }
+
+            // Poeni
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Poeni: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                Text(
+                    text = "$poeni",
+                    color = Color.Black,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 16.sp
+                )
+                Text(text = " \uD834\uDD1E", color = Color.Black) // Nota
+            }
         }
     }
 }

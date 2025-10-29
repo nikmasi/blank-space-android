@@ -405,6 +405,13 @@ data class PesmePoIzvodjacimaResponse(
     val ime_izvodjaca:String
 )
 
+data class StihoviPoPesmamaResponse(
+    val poznat_tekst: String,
+    val nepoznat_tekst: String,
+    val zvuk_ime: String,
+    val pesma:String
+)
+
 data class KorisnikPregledRequest(
     val ime: String
 )

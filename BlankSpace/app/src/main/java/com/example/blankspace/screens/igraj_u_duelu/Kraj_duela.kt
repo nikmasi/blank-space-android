@@ -15,11 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,128 +30,270 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.DuelViewModel
+
+// --- BOJE ---
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za pozadinu kartice
+private val TextMain = PrimaryDark
+private val TableHeaderBg = AccentPink.copy(alpha = 0.8f) // Roza za zaglavlje
+private val TableRowOddBg = CardContainerColor.copy(alpha = 0.7f) // Svetlo roza za neparne redove
+private val TableRowEvenBg = Color.White.copy(alpha = 0.8f) // Bela za parne redove
+private val WinnerColor = Color(0xFF4CAF50) // Zelena
+
+// --- POMOĆNE KOMPONENTE (Za konzistentnost) ---
+
+@Composable
+fun HeadlineTextCekanjeRezultata(text: String) {
+    Text(text, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = TextMain)
+}
+
+@Composable
+fun ActionButtonCekanjeRezultata(onClick: () -> Unit, text: String, modifier: Modifier, containerColor: Color = AccentPink) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.height(48.dp)
+    ) {
+        Text(text, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel,sifra:Int){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
-        Spacer(Modifier.padding(top = 22.dp))
-        Kraj_duela_mainCard(navController,viewModelDuel,sifra)
+        Kraj_duela_mainCard(
+            navController = navController,
+            viewModelDuel = viewModelDuel,
+            sifra = sifra,
+            modifier = Modifier.align(Alignment.Center) // Centriranje kartice
+        )
     }
 }
 
 @Composable
-fun Kraj_duela_mainCard(navController: NavController,viewModelDuel:DuelViewModel,sifra: Int) {
+fun Kraj_duela_mainCard(
+    navController: NavController,
+    viewModelDuel: DuelViewModel,
+    sifra: Int,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
-    val uiStateStigaoIgrac by viewModelDuel.uiStateStigaoIgrac.collectAsState()
-    val uiStateSifra by viewModelDuel.uiStateSifSobe.collectAsState()
     val uiState by viewModelDuel.uiState.collectAsState()
     val uiStateKraj by viewModelDuel.uiStateKrajDuela.collectAsState()
 
+    // Fetch podataka o kraju duela
     LaunchedEffect(Unit) {
         uiState.duel?.poeni?.let {
             viewModelDuel.fetchKrajDuela(
                 it,
-                sifra,uiState.duel!!.rundePoeni,0,"true")
+                sifra,
+                uiState.duel!!.rundePoeni,
+                uiState.duel!!.runda, // Poslati redni broj (1 ili 2)
+                "true"
+            )
         }
     }
 
 
     Surface(
-        color = Color.White,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).fillMaxHeight(0.8f),
-        shape = RoundedCornerShape(60.dp).copy(topStart = ZeroCornerSize, topEnd = ZeroCornerSize)
+        color = CardContainerColor, // Svetlo roza
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.8f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            HeadlineText("Rezultat")
+            // Naslov
+            HeadlineTextCekanjeRezultata("Rezultati duela \uD83C\uDFC6")
 
-            Spacer(modifier = Modifier.height(34.dp))
+            // Tabela rezultata
+            DuelResultsTable(uiStateKraj.krajDuela?.poeni_runde ?: emptyList(), uiStateKraj.krajDuela?.igrac1, uiStateKraj.krajDuela?.igrac2)
 
-            Card(
-                modifier = Modifier.fillMaxWidth().background(Color.White),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White,
-                    contentColor = Color.White
+            // Ukupan rezultat i pobednik
+            val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
+            val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
+            val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }
+            DisplayWinner(ukupno1, ukupno2)
+
+            // Dugmad
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                ActionButtonCekanjeRezultata(
+                    onClick = {
+                        // Resetovanje stanja za novu igru (vracanje na izbor zanra)
+                        navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
+                    },
+                    text = "Igraj ponovo",
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp).border(3.dp, TEXT_COLOR, RoundedCornerShape(3.dp))
-                        .background(Color(0xFFF0DAE7))
-                ) {
-                    val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
-                    val igrac1 = uiStateKraj.krajDuela?.igrac1 ?: "Igrač 1"
-                    val igrac2 = uiStateKraj.krajDuela?.igrac2 ?: "Igrač 2"
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth().background(Color(0xFFF0DAE7)).padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "Runda", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                        Text(text = igrac1, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                        Text(text = igrac2, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                    }
-
-                    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp)) {
-                        itemsIndexed(runde) { index, poeni ->
-                            val backgroundColor = if (index % 2 == 0) Color(0xFFF0DAE7) else Color(0xFFADD8E6)
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(backgroundColor)
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = "${index + 1}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                                Text(text = "${poeni[0]}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                                Text(text = "${poeni[1]}", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                            }
-                        }
-
-                        item {
-                            val ukupno1 = runde.sumOf { it[0] }
-                            val ukupno2 = runde.sumOf { it[1] }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Color(0xFFF0DAE7))
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = "∑", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                                Text(text = "$ukupno1", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                                Text(text = "$ukupno2", style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                            }
-                        }
-                    }
-
-                }
+                Spacer(modifier = Modifier.height(12.dp))
+                ActionButtonCekanjeRezultata(
+                    onClick = {
+                        // Čišćenje sobe i odjava
+                       // viewModelDuel.ocistiSobu(sifra)
+                        navController.navigate(Destinacije.Login.ruta)
+                    },
+                    text = "Kraj",
+                    containerColor = PrimaryDark.copy(alpha = 0.8f),
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
             }
-
-            SmallButton(onClick = {
-                navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
-            },text = "Igraj ponovo", style = MaterialTheme.typography.bodyMedium)
-
-            SmallButton(onClick = {
-                navController.navigate(Destinacije.Login.ruta)
-            },text = "Kraj", style = MaterialTheme.typography.bodyMedium)
         }
     }
+}
+
+@Composable
+fun DuelResultsTable(runde: List<List<Int>>, igrac1: String?, igrac2: String?) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = TableRowEvenBg // Boja pozadine celog bloka
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .border(2.dp, TextMain.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+        ) {
+            // Zaglavlje Tabele
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(TableHeaderBg, RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Runda", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp)
+                Text(igrac1 ?: "Igrač 1", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                Text(igrac2 ?: "Igrač 2", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+            }
+
+            // Redovi Tabele
+            LazyColumn(contentPadding = PaddingValues(vertical = 4.dp), modifier = Modifier.height(250.dp)) {
+                itemsIndexed(runde) { index, poeni ->
+                    val isIgrac1Winner = poeni.getOrElse(0) { 0 } > poeni.getOrElse(1) { 0 }
+                    val isIgrac2Winner = poeni.getOrElse(1) { 0 } > poeni.getOrElse(0) { 0 }
+
+                    val backgroundColor = if (index % 2 == 0) TableRowEvenBg else TableRowOddBg
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(backgroundColor)
+                            .padding(vertical = 8.dp, horizontal = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "${index + 1}", color = TextMain, fontSize = 14.sp)
+
+                        // Poeni Igrača 1
+                        Text(
+                            text = "${poeni.getOrElse(0) { 0 }}",
+                            fontWeight = if (isIgrac1Winner) FontWeight.ExtraBold else FontWeight.Normal,
+                            color = if (isIgrac1Winner) WinnerColor else TextMain,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        // Poeni Igrača 2
+                        Text(
+                            text = "${poeni.getOrElse(1) { 0 }}",
+                            fontWeight = if (isIgrac2Winner) FontWeight.ExtraBold else FontWeight.Normal,
+                            color = if (isIgrac2Winner) WinnerColor else TextMain,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+
+                // Ukupno Red
+                item {
+                    val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
+                    val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }
+
+                    val isIgrac1OverallWinner = ukupno1 > ukupno2
+                    val isIgrac2OverallWinner = ukupno2 > ukupno1
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(TableHeaderBg.copy(alpha = 0.9f))
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "UKUPNO", fontWeight = FontWeight.Black, color = Color.White, fontSize = 15.sp)
+                        Text(
+                            text = "$ukupno1",
+                            fontWeight = FontWeight.Black,
+                            color = if (isIgrac1OverallWinner) WinnerColor else Color.White,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "$ukupno2",
+                            fontWeight = FontWeight.Black,
+                            color = if (isIgrac2OverallWinner) WinnerColor else Color.White,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DisplayWinner(ukupno1: Int, ukupno2: Int) {
+    val winnerText = when {
+        ukupno1 > ukupno2 -> "Pobedio je Igrač 1!"
+        ukupno2 > ukupno1 -> "Pobedio je Igrač 2!"
+        else -> "Nerešeno je!"
+    }
+
+    val winnerColor = when {
+        ukupno1 != ukupno2 -> WinnerColor
+        else -> TextMain.copy(alpha = 0.7f)
+    }
+
+    Text(
+        text = winnerText,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.ExtraBold,
+        color = winnerColor,
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
 }

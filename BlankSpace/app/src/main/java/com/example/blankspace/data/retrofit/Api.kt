@@ -51,6 +51,7 @@ import com.example.blankspace.data.retrofit.models.StatistikaResponse
 import com.example.blankspace.data.retrofit.models.StigaoIgracRequest
 import com.example.blankspace.data.retrofit.models.StigaoIgracResponse
 import com.example.blankspace.data.retrofit.models.Stih
+import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
@@ -211,6 +212,9 @@ interface Api {
 
     @GET("pesme_po_izvodjacima_android/")
     suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse>
+
+    @GET("stihovi_po_pesmama_android/")
+    suspend fun getStihoviPoPesmama():List<StihoviPoPesmamaResponse>
 
     @GET("statistika_android/")
     suspend fun getStatistika():StatistikaResponse

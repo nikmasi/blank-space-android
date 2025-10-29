@@ -1,8 +1,9 @@
 package com.example.blankspace.screens.pocetne.cards
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -19,18 +20,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.ui.components.HeadlineTextWhite
-import com.example.blankspace.ui.components.MyImage
-import com.example.blankspace.ui.components.SmallButton
 import kotlinx.coroutines.delay
+
+// Uklonili smo MaxHeightForScroll jer više ne skrolujemo.
 
 @Composable
 fun PocetnaMainCard(
@@ -46,6 +44,8 @@ fun PocetnaMainCard(
     onGameSing :(()->Unit)? =null,
     onGameChallenge :(()->Unit)? =null
 ) {
+    // Uklonili smo rememberScrollState() jer više ne skrolujemo.
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +70,7 @@ fun PocetnaMainCard(
             )
         }
 
-        // 🎮 Glavni deo
+        // 🎮 Glavni deo - Kartica
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,74 +81,73 @@ fun PocetnaMainCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(24.dp), // Zadržavamo padding za celu karticu
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 HeadlineTextWhite("Izaberi režim igre")
-                Spacer(modifier = Modifier.height(24.dp))
+
+                // Smanjen Spacer
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // 🕹️ Dugme za solo mod
                 GameButton(
                     text = "Igraj sam",
-                    icon = Icons.Default.Edit,
                     onClick = onGameSoloClick
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                // Smanjen Spacer
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // ⚔️ Dugme za duel mod
                 GameButton(
                     text = "Igraj u duelu",
-                    icon = Icons.Default.MoreVert,
                     onClick = onGameDuelClick
                 )
 
+                // --- Dodatne opcije sa smanjenim razmacima ---
 
                 onGameSing?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
                         text = "Pogodi i pevaj",
-                        icon = Icons.Default.MoreVert,
                         onClick = onGameSing
                     )
                 }
 
-
                 onGameChallenge?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
                         text = "Challenge",
-                        icon = Icons.Default.MoreVert,
                         onClick = onGameChallenge
                     )
                 }
-                onSuggestSongClick?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
 
+                onSuggestSongClick?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
-                        text = "Prezlozi pesmu",
-                        icon = Icons.Default.MoreVert,
+                        text = "Predloži pesmu",
                         onClick = onSuggestSongClick
                     )
                 }
-                onSuggestArtistClick?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
 
+                onSuggestArtistClick?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
-                        text = "Prezlozi izvodjaca",
-                        icon = Icons.Default.MoreVert,
+                        text = "Predloži izvođača",
                         onClick = onSuggestArtistClick
                     )
                 }
-                onSearchAndSuggestClick?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
 
+                onSearchAndSuggestClick?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
-                        text = "Pretrazi i predlozi",
-                        icon = Icons.Default.MoreVert,
+                        text = "Pretraži i predloži",
                         onClick = onSearchAndSuggestClick
                     )
                 }
+
+                // Dodatni mali spacer na dnu kartice
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
@@ -166,7 +165,6 @@ fun PocetnaMainCard(
 @Composable
 fun GameButton(
     text: String,
-    icon: ImageVector,
     onClick: () -> Unit
 ) {
     var pressed by remember { mutableStateOf(false) }
@@ -183,7 +181,7 @@ fun GameButton(
         shape = RoundedCornerShape(50),
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(44.dp) // SMANJENA VISINA DUGMETA (sa 56.dp na 44.dp)
             .graphicsLayer {
                 scaleX = if (pressed) 0.97f else 1f
                 scaleY = if (pressed) 0.97f else 1f
@@ -192,7 +190,7 @@ fun GameButton(
     ) {
         Text(
             text = text,
-            fontSize = 18.sp,
+            fontSize = 16.sp, // SMANJEN FONT (sa 18.sp na 16.sp)
             fontWeight = FontWeight.Bold
         )
     }

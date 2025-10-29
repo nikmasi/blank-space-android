@@ -313,6 +313,11 @@ sealed class Destinacije(val ime:String, val ruta:String,val ikonica:ImageVector
         ruta="sadrzaj_pesme",
         ikonica = Icons.Default.FavoriteBorder
     )
+    object SadrzajStihovi:Destinacije(
+        ime="sadrzaj_stihovi",
+        ruta="sadrzaj_stihovi",
+        ikonica = Icons.Default.FavoriteBorder
+    )
     object AdminStatistika:Destinacije(
         ime="admin_statistika",
         ruta="admin_statistika",

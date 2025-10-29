@@ -6,6 +6,7 @@ import com.example.blankspace.data.Repository
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.StatistikaResponse
+import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaResponse
@@ -29,6 +30,9 @@ class AdminStatistikaViewModel @Inject constructor(
 
     private val _uiStatePesmePoIzvodjacima = MutableStateFlow(PesmePoIzvodjacimaUiState())
     val uiStatePesmePoIzvodjacima: StateFlow<PesmePoIzvodjacimaUiState> = _uiStatePesmePoIzvodjacima
+
+    private val _uiStateStihoviPoPesmama = MutableStateFlow(StihoviPoPesmamaUiState())
+    val uiStateStihoviPoPesmama: StateFlow<StihoviPoPesmamaUiState> = _uiStateStihoviPoPesmama
 
     fun fetchAdminStatistika() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
@@ -58,6 +62,19 @@ class AdminStatistikaViewModel @Inject constructor(
         }
     }
 
+    fun fetchStihoviPoPesmama() = viewModelScope.launch {
+        _uiStateStihoviPoPesmama.value = _uiStateStihoviPoPesmama.value.copy(isRefreshing = true)
+        try {
+
+            val response = repository.getStihoviPoPesmama()
+
+            _uiStateStihoviPoPesmama.value =
+                StihoviPoPesmamaUiState(stihoviPoPesmama = response, isRefreshing = false)
+        } catch (e: Exception) {
+            _uiStateStihoviPoPesmama.value =
+                StihoviPoPesmamaUiState(stihoviPoPesmama = null, isRefreshing = false, error = e.localizedMessage)
+        }
+    }
 
 }
 
@@ -69,6 +86,12 @@ data class AdminStatistikaUiState(
 
 data class PesmePoIzvodjacimaUiState(
     val pesmePoIzvodjacima: List<PesmePoIzvodjacimaResponse>?= emptyList(),
+    val isRefreshing: Boolean = false,
+    val error: String? = null
+)
+
+data class StihoviPoPesmamaUiState(
+    val stihoviPoPesmama: List<StihoviPoPesmamaResponse>?= emptyList(),
     val isRefreshing: Boolean = false,
     val error: String? = null
 )

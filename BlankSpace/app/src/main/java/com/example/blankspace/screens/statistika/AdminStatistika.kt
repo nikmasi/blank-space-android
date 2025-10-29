@@ -50,12 +50,12 @@ fun AdminStatistika_mainCard(navController: NavController, viewModel: AdminStati
     LaunchedEffect(Unit) {
         viewModel.fetchAdminStatistika()
     }
-    Spacer(modifier = Modifier.height(28.dp))
+    Spacer(modifier = Modifier.height(34.dp))
     Surface(
         color = CardContainerColor,
         modifier = modifier
             .fillMaxWidth(0.92f)
-            .fillMaxHeight(0.8f)
+            .fillMaxHeight(0.7f)
             .shadow(16.dp, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp)
     ) {

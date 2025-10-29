@@ -87,6 +87,7 @@ import com.example.blankspace.screens.profil_rang_pravila.PravilaIgre
 import com.example.blankspace.screens.sadrzaj.SadrzajIzvodjaci
 import com.example.blankspace.screens.sadrzaj.SadrzajKorisnici
 import com.example.blankspace.screens.sadrzaj.SadrzajPesme
+import com.example.blankspace.screens.sadrzaj.SadrzajStihovi
 import com.example.blankspace.screens.sadrzaj.SadrzajZanrova
 import com.example.blankspace.screens.statistika.AdminStatistika
 import com.example.blankspace.screens.takmicenje.KorisnikPregled
@@ -548,6 +549,9 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.SadrzajPesme.ruta) {
                 SadrzajPesme(navController)
+            }
+            composable(route = Destinacije.SadrzajStihovi.ruta) {
+                SadrzajStihovi(navController)
             }
             composable(route = Destinacije.AdminStatistika.ruta){
                 AdminStatistika(navController,viewModelAdminStatistika)

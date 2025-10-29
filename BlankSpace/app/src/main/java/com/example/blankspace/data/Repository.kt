@@ -52,6 +52,7 @@ import com.example.blankspace.data.retrofit.models.StatistikaResponse
 import com.example.blankspace.data.retrofit.models.StigaoIgracRequest
 import com.example.blankspace.data.retrofit.models.StigaoIgracResponse
 import com.example.blankspace.data.retrofit.models.Stih
+import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
@@ -183,6 +184,8 @@ class Repository @Inject constructor(
     suspend fun krajDuela(@Body request: KrajDuelaRequest): KrajDuelaResponse = Api.krajDuela(request)
 
     suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse> = Api.getPesmePoIzvodjacima()
+
+    suspend fun getStihoviPoPesmama():List<StihoviPoPesmamaResponse> = Api.getStihoviPoPesmama()
 
     suspend fun getStatistika():StatistikaResponse = Api.getStatistika()
 
