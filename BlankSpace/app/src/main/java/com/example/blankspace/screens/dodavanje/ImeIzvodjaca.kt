@@ -71,7 +71,6 @@ fun ImeIzvodjaca_mainCard(navController: NavController, viewModel: DodavanjeView
                 label = "Ime izvođača"
             )
 
-            // Smanjen razmak
             Spacer(modifier = Modifier.height(8.dp))
 
             IzvodjacButton(onClick = {

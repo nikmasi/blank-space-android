@@ -26,24 +26,18 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.UiStateL
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
-// Boje za usklađivanje
-private val PrimaryDark = Color(0xFF49006B)       // Tamno ljubičasta/Magenta
-private val AccentPink = Color(0xFFEC8FB7)       // Roze za naglašavanje/Dugmad
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roze (za karticu)
-
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
 private val CustomTopPadding = 40.dp
 
 
 @Composable
 fun Login(navController: NavController, viewModelLogin: LoginViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
-        BgCard2() // Pozadina sa gradijentom
-
-        // Centriranje kartice unutar Box-a
+        BgCard2()
         Login_mainCard(
             navController = navController,
             viewModel = viewModelLogin,
@@ -71,12 +65,10 @@ fun Login_mainCard(navController: NavController, viewModel: LoginViewModel, modi
                 .fillMaxSize()
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center // Ostavljamo Center da se sve centrira vertikalno
+            verticalArrangement = Arrangement.Center
         ) {
             LoginImage()
             LoginHeader()
-
-            // Smanjen razmak
             Spacer(modifier = Modifier.height(12.dp))
 
             var username by remember { mutableStateOf("") }
@@ -84,20 +76,16 @@ fun Login_mainCard(navController: NavController, viewModel: LoginViewModel, modi
 
             LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
 
-            // Smanjen razmak između polja i dugmeta
             Spacer(modifier = Modifier.height(12.dp))
 
             LoginButton(username, password, viewModel, context)
 
-            // Razmak iznad dividera
             Spacer(modifier = Modifier.height(24.dp))
 
             DividerWithIconModern()
 
-            // Sekcija za navigaciju
             Spacer(modifier = Modifier.height(24.dp))
 
-            // OVDE JE BILO POTREBNO CENTRIRANJE
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ForgotPassword(navController)
                 Spacer(modifier = Modifier.height(12.dp))
@@ -107,8 +95,6 @@ fun Login_mainCard(navController: NavController, viewModel: LoginViewModel, modi
     }
     HandleLoginResponse(uiState = uiState, context = context, navController = navController)
 }
-
-// ... (HandleLoginResponse ostaje isto)
 
 @Composable
 fun HandleLoginResponse(uiState: UiStateL, context: android.content.Context, navController: NavController) {
@@ -159,7 +145,6 @@ fun LoginImage() {
     )
 }
 
-// **MODIFIKOVANO**: Smanjen razmak između input polja
 @Composable
 fun LoginFields(username: String, password: String, onUsernameChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
     OutlinedTextField(
@@ -176,7 +161,6 @@ fun LoginFields(username: String, password: String, onUsernameChange: (String) -
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth()
     )
-    // Smanjen razmak između dva input polja
     Spacer(modifier = Modifier.height(8.dp))
     OutlinedTextField(
         value = password,
@@ -195,7 +179,6 @@ fun LoginFields(username: String, password: String, onUsernameChange: (String) -
     )
 }
 
-// ... (LoginButton ostaje isto)
 @Composable
 fun LoginButton(username: String, password: String, viewModel: LoginViewModel, context: android.content.Context) {
     var pressed by remember { mutableStateOf(false) }
@@ -212,7 +195,7 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
             }
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink, // Roza boja
+            containerColor = AccentPink,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(16.dp),
@@ -227,7 +210,6 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
             fontWeight = FontWeight.Bold
         )
     }
-    // Kratak bounce efekat
     LaunchedEffect(pressed) {
         if (pressed) {
             delay(100)
@@ -236,7 +218,6 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
     }
 }
 
-// ... (DividerWithIconModern ostaje isto)
 @Composable
 fun DividerWithIconModern() {
     Row(
@@ -262,8 +243,6 @@ fun DividerWithIconModern() {
     }
 }
 
-
-// ... (ClickableTextStyled ostaje isto)
 @Composable
 fun ClickableTextStyled(text: String, navController: NavController, destination: String) {
     val color by animateColorAsState(
@@ -276,15 +255,12 @@ fun ClickableTextStyled(text: String, navController: NavController, destination:
         color = color,
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp,
-        modifier = Modifier
-            .clickable { navController.navigate(destination) }
+        modifier = Modifier.clickable { navController.navigate(destination) }
     )
 }
 
-// **MODIFIKOVANO**: Centriranje lozinke
 @Composable
 fun ForgotPassword(navController: NavController) {
-    // Uklonjen Row i zamena za Text unutar Column koja je centrirana u Login_mainCard
     ClickableTextStyled(
         text = "Zaboravili ste lozinku?",
         navController = navController,
@@ -292,11 +268,10 @@ fun ForgotPassword(navController: NavController) {
     )
 }
 
-// **MODIFIKOVANO**: Centriranje Registracije i Gosta
 @Composable
 fun SignUpNavigation(navController: NavController) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(verticalAlignment = Alignment.CenterVertically) { // Centriranje unutar Row
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 "Još nemate nalog? ",
                 style = MaterialTheme.typography.bodyMedium,

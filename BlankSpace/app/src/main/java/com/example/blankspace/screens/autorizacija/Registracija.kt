@@ -3,7 +3,6 @@ package com.example.blankspace.screens.autorizacija
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,9 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -26,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
@@ -36,9 +32,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-private val PrimaryDark = Color(0xFF49006B)       // Tamno ljubičasta/Magenta
-private val AccentPink = Color(0xFFEC8FB7)       // Roze za dugmad
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roze (za karticu)
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
 
 @Composable
 fun Registracija(navController: NavController, viewModelLogin: LoginViewModel) {
@@ -60,7 +56,7 @@ fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginVie
     val context = LocalContext.current
 
     HandleRegistrationResponse(uiStateRegistracija, context, navController, viewModelLogin)
-
+    Spacer(modifier = Modifier.height(19.dp))
     Surface(
         color = CardContainerColor,
         modifier = modifier
@@ -71,11 +67,9 @@ fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginVie
     ) {
         Spacer(modifier = Modifier.height(19.dp))
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp), // Veći padding
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically), // Razmak između elemenata
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             item { RegistrationHeader() }
@@ -115,7 +109,6 @@ fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginVie
                     DividerWithIconModernReg()
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Navigacija
                     LoginNavigation(navController)
                 }
             }
@@ -157,16 +150,6 @@ fun RegistrationHeader() {
         fontSize = 32.sp,
         modifier = Modifier.padding(bottom = 16.dp)
     )
-    /*
-    Image(
-        painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-        contentDescription = "Blank Space Logo",
-        modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .padding(bottom = 16.dp),
-        contentScale = ContentScale.Fit
-    )
-    */
 }
 
 @Composable

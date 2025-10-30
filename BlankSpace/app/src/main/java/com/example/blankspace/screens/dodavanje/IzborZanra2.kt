@@ -23,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
@@ -135,7 +134,6 @@ fun ZanroviListStyled(uiStateZanr: UiStateZ, selectedZanr: String?, onSelect: (S
                 items(uiStateZanr.zanrovi) { zanr ->
                     val isSelected = selectedZanr == zanr.naziv
 
-                    // --- STILIZOVANA KARTICA ZA IZBOR ---
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,

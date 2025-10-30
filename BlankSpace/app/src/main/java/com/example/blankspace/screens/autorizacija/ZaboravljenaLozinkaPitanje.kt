@@ -120,7 +120,6 @@ fun HandlePasswordQuestionResponse(
     }
 }
 
-// **MODIFIKOVANO**: Stilizovano polje
 @Composable
 fun PasswordQuestionField(odgovor: String, onValueChange: (String) -> Unit) {
     OutlinedTextField(
