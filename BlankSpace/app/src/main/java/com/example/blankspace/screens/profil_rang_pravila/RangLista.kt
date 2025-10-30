@@ -1,12 +1,10 @@
 package com.example.blankspace.screens.pocetne
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,15 +20,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.RangListaModel
 import com.example.blankspace.viewModels.UiStateRL
 
-// Definicija modernih boja za Rang Listu
-val RLCardColor = Color.White // Glavna kartica bela
-val RLAccentColor = Color(0xFFEC8FB7) // Roza akcent (kao na Pocetna dugmadima)
-val RLTertiaryColor = Color(0xFF49006B) // Tamno ljubičasta za tekst/naslove
+val RLCardColor = Color.White
+val RLAccentColor = Color(0xFFEC8FB7)
+val RLTertiaryColor = Color(0xFF49006B)
 
 @Composable
 fun RangLista(navController: NavController) {
@@ -59,7 +54,6 @@ fun RangLista_mainCard(navController: NavController) {
         Spacer(modifier = Modifier.height(28.dp))
 
         Spacer(modifier = Modifier.height(44.dp))
-        // 💳 Glavna Kartica - Bela sa senkom i zaobljenjem
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,19 +67,16 @@ fun RangLista_mainCard(navController: NavController) {
                     .padding(vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 🏆 NOVI NASLOV UNUTAR CARDA
                 Text(
                     text = "Rang Lista 🏆",
-                    color = RLTertiaryColor, // Tamno ljubičasta na beloj pozadini
+                    color = RLTertiaryColor,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier.padding(bottom = 16.dp) // Dodatni razmak ispod naslova
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Separator ispod naslova
                 Divider(color = Color.LightGray.copy(alpha = 0.5f), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
 
-                // Naslov kolona unutar kartice
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,8 +97,6 @@ fun RangLista_mainCard(navController: NavController) {
     }
 }
 
-// Ostatak koda za RangListaContent ostaje nepromenjen,
-// jer se fokusira na prikaz pojedinačnih stavki liste.
 @Composable
 fun RangListaContent(uiState: UiStateRL) {
     LazyColumn(

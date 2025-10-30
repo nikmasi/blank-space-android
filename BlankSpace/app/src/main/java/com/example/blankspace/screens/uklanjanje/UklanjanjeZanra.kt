@@ -34,7 +34,6 @@ import com.example.blankspace.viewModels.ZanrViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-// Boje za usklađivanje
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7)
@@ -84,7 +83,6 @@ fun UklanjanjeZanra_mainCard(navController: NavController, modifier: Modifier) {
             ZanrUklanjanjeHeaderUklanjanje()
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- STILIZOVANA LISTA KARTICA ---
             ZanroviListaZaUklanjanjeStyled(uiState = uiState, onRemove = { zanrId ->
                 viewModelUklanjanje.fetchUklanjanjeZanra(zanrId)
             })
@@ -92,7 +90,6 @@ fun UklanjanjeZanra_mainCard(navController: NavController, modifier: Modifier) {
     }
 }
 
-// --- Lista koja koristi kartice za svaku stavku ---
 
 @Composable
 fun ZanroviListaZaUklanjanjeStyled(
@@ -119,9 +116,8 @@ fun ZanroviListaZaUklanjanjeStyled(
                 modifier = Modifier
                     .fillMaxHeight(0.8f)
                     .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp) // Razmak između kartica
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Generisanje kartica za svaki žanr
                 items(uiState.zanrovi) { item ->
                     ZanrUklanjanjeCard(item = item, onRemove = onRemove)
                 }
@@ -151,7 +147,6 @@ fun ZanrUklanjanjeCard(item: Zanr, onRemove: (Int) -> Unit) {
             )
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        // Ime žanra
         Text(
             text = item.naziv.toString(),
             color = PrimaryDark,
@@ -162,7 +157,6 @@ fun ZanrUklanjanjeCard(item: Zanr, onRemove: (Int) -> Unit) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Dugme za uklanjanje
         Button(
             onClick = {
                 Toast.makeText(context, "Uklanjam ${item.naziv}...", Toast.LENGTH_SHORT).show()
@@ -180,8 +174,6 @@ fun ZanrUklanjanjeCard(item: Zanr, onRemove: (Int) -> Unit) {
         }
     }
 }
-
-// --- Ostale pomoćne funkcije su nepromenjene ---
 
 @Composable
 fun ZanrUklanjanjeHeaderUklanjanje() {

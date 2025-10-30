@@ -85,7 +85,6 @@ fun KorisnikPregled_mainCard(navController: NavController, modifier: Modifier,vi
                 item { TopProtivniciCard(uiState) }
                 item { NedavniMeceviCard(uiState) }
                 item { PesmeMecevaCard(uiState) }
-                //PesmeMecevaCard
             }
         }
     }
@@ -128,10 +127,6 @@ fun PesmeMecevaCard(uiState: UiStateKorisnikPregled) {
     CardStatistika(title = "Pesme", titleColor = PrimaryDark) {
         uiState.informacije?.pesmeMeceva?.forEach { match ->
             PesmaMecevaRow(match)
-//            if (uiState.informacije!!.mecevi.indexOf(match) < 4 && uiState.informacije!!.mecevi.indexOf(match) < uiState.informacije!!.mecevi.size - 1) {
-//                Divider(color = PrimaryDark.copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 4.dp))
-//            }
-
         }
     }
 }
@@ -224,7 +219,6 @@ fun MatchRow(match: Mecevi) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Ime protivnika
         Text(
             text = match.ime,
             fontSize = 16.sp,
@@ -232,7 +226,6 @@ fun MatchRow(match: Mecevi) {
             color = PrimaryDark
         )
 
-        // Rezultat i status
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "${match.brojPoenaMoj} - ${match.brojPoenaProtivnika}",
@@ -267,7 +260,6 @@ fun TopOpponentRow(opponent: Protivnik, rank: Int) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Rang i Ime
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "#$rank",
@@ -309,7 +301,6 @@ fun PesmaMecevaRow(pesma: PesmeMeceva) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Naziv pesme i izvođač
         Column {
             Text(
                 text = pesma.naziv,
@@ -324,7 +315,6 @@ fun PesmaMecevaRow(pesma: PesmeMeceva) {
             )
         }
 
-        // Broj pojavljivanja
         Text(
             text = "${pesma.brojPojavljivanja}x",
             fontSize = 14.sp,

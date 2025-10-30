@@ -27,12 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.ui.components.BodyText
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.igra_sam.KrajIgreBody
-import com.example.blankspace.screens.igra_sam.KrajIgreHeader
 import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.LoginViewModel

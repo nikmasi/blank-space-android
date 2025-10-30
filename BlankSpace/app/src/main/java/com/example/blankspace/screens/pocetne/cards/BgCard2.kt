@@ -24,14 +24,13 @@ fun BgCard2() {
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFF0DAE7), // tvoja roze boja
+                        Color(0xFFF0DAE7), // roze boja
                         Color(0xFFFFB6C1), // svetloroze
-                        Color(0xFFF0DAE7)  // vraćamo baznu boju
+                        Color(0xFFF0DAE7)
                     )
                 )
             )
     ) {
-        // diskretan svetlosni krug za “glow” efekat
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 color = Color.White.copy(alpha = 0.12f),
@@ -41,4 +40,3 @@ fun BgCard2() {
         }
     }
 }
-

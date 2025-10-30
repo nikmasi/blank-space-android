@@ -182,7 +182,6 @@ fun PesmaUklanjanjeCard(item: PesmeIzvodjaca, onRemove: (Int) -> Unit) {
             )
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        // Ime pesme
         Text(
             text = item.naziv ?: "Nepoznato",
             color = PrimaryDark,
@@ -193,7 +192,6 @@ fun PesmaUklanjanjeCard(item: PesmeIzvodjaca, onRemove: (Int) -> Unit) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Dugme za uklanjanje
         Button(
             onClick = {
                 Toast.makeText(context, "Uklanjam ${item.naziv}...", Toast.LENGTH_SHORT).show()

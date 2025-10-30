@@ -28,7 +28,6 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.ui.components.HeadlineTextWhite
 import kotlinx.coroutines.delay
 
-// Uklonili smo MaxHeightForScroll jer više ne skrolujemo.
 
 @Composable
 fun PocetnaMainCard(
@@ -44,7 +43,6 @@ fun PocetnaMainCard(
     onGameSing :(()->Unit)? =null,
     onGameChallenge :(()->Unit)? =null
 ) {
-    // Uklonili smo rememberScrollState() jer više ne skrolujemo.
 
     Column(
         modifier = Modifier
@@ -53,7 +51,6 @@ fun PocetnaMainCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // 🔝 Naslov
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "BlankSpace 🎵",
@@ -70,7 +67,6 @@ fun PocetnaMainCard(
             )
         }
 
-        // 🎮 Glavni deo - Kartica
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,30 +77,24 @@ fun PocetnaMainCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp), // Zadržavamo padding za celu karticu
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 HeadlineTextWhite("Izaberi režim igre")
 
-                // Smanjen Spacer
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 🕹️ Dugme za solo mod
                 GameButton(
                     text = "Igraj sam",
                     onClick = onGameSoloClick
                 )
 
-                // Smanjen Spacer
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // ⚔️ Dugme za duel mod
                 GameButton(
                     text = "Igraj u duelu",
                     onClick = onGameDuelClick
                 )
-
-                // --- Dodatne opcije sa smanjenim razmacima ---
 
                 onGameSing?.let {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -146,14 +136,11 @@ fun PocetnaMainCard(
                     )
                 }
 
-                // Dodatni mali spacer na dnu kartice
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
-        // 🔻 Donji tekst
         Spacer(modifier = Modifier.height(20.dp))
-
         Text(
             text = "🎧 Zabavi se i testiraj svoje muzičko znanje!",
             color = Color(0xFF49006B).copy(alpha = 0.8f),
@@ -190,12 +177,11 @@ fun GameButton(
     ) {
         Text(
             text = text,
-            fontSize = 16.sp, // SMANJEN FONT (sa 18.sp na 16.sp)
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
     }
 
-    // kratak bounce efekat
     LaunchedEffect(pressed) {
         if (pressed) {
             delay(100)

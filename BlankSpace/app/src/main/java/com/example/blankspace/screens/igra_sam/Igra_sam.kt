@@ -39,20 +39,17 @@ import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
 
-// --- BOJE (Koristimo jasne definicije za rozi stil) ---
-private val PrimaryDark = Color(0xFF49006B) // Tamno ljubičasta/Bordo
-private val AccentPink = Color(0xFFEC8FB7) // Akcent roza
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za karticu
-private val InfoBarColor = Color(0xFFE0BBE4) // Svetlija ljubičasta/roza za donju traku
+private val PrimaryDark = Color(0xFF49006B)
+private val AccentPink = Color(0xFFEC8FB7)
+private val CardContainerColor = Color(0xFFF0DAE7)
+private val InfoBarColor = Color(0xFFE0BBE4)
 private val TextMain = PrimaryDark
 private val TextAccent = AccentPink
-private val TimeWarningColor = Color(0xFFD32F2F) // Crvena za upozorenje
+private val TimeWarningColor = Color(0xFFD32F2F)
 
-// ODRŽAVANJE ORIGINALNIH NAZIVA BOJA ZA KOMPATIBILNOST SA VAŠIM FAJLOM
-val LIGTH_BLUE = InfoBarColor // Prilagođavanje
-val TEXT_COLOR = PrimaryDark // Prilagođavanje
+val LIGTH_BLUE = InfoBarColor
+val TEXT_COLOR = PrimaryDark
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Igra_sam(navController: NavController, selectedZanrovi: String, selectedNivo: String, runda: Int, poeni: Int, viewModelIgraSam: IgraSamViewModel) {
@@ -62,7 +59,6 @@ fun Igra_sam(navController: NavController, selectedZanrovi: String, selectedNivo
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
         val selectedZanroviList = selectedZanrovi.split(",").map { it.trim() }
 
-        // Kartica je centralizovana ovde
         Igra_sam_mainCard(
             navController,
             selectedZanroviList,
@@ -98,7 +94,6 @@ fun Igra_sam_mainCard(
     val isAudioP = remember { mutableStateOf(false) }
     var crta = remember { mutableStateOf("") }
 
-    // Ispravka Logike tajmera
     TimerEffect(count, navController, sZ, sN, uiState, runda, poeni)
     FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
 
@@ -107,36 +102,34 @@ fun Igra_sam_mainCard(
     }
 
     Surface(
-        color = CardContainerColor, // ROZA BOJA
-        modifier = modifier // Koristi modifier za centriranje
+        color = CardContainerColor,
+        modifier = modifier
             .fillMaxWidth(0.9f)
             .fillMaxHeight(0.75f)
-            .shadow(16.dp, RoundedCornerShape(24.dp)), // Dodatna senka
-        shape = RoundedCornerShape(24.dp) // Zaobljeni uglovi
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 24.dp), // Povećan padding
+                    .padding(horizontal = 24.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                // Gornji deo: Runda, Učitavanje i Sadržaj
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Runda ${uiState.igrasam?.runda ?: runda}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextAccent // Roza akcent boja
+                        color = TextAccent
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     LoadingStateIgraSam(uiState)
                     DisplayContentIgraSam(uiState, crta)
                 }
 
-                // Srednji deo: Unos i Dugmad
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     UserInputSectionIgraSam(uiState, context, navController, sZ, sN, runda, poeni, isAudioP, count, viewModel)
                     Spacer(modifier = Modifier.height(20.dp))
@@ -144,13 +137,10 @@ fun Igra_sam_mainCard(
                 }
             }
 
-            // Donja Info Traka
             BottomInfoBar(runda = uiState.igrasam?.runda ?: runda, poeni = poeni, count = count.value)
         }
     }
 }
-
-// --- EFEKTI I PRIKAZI ---
 
 @Composable
 fun TimerEffect(
@@ -162,8 +152,8 @@ fun TimerEffect(
     runda: Int,
     poeni: Int
 ) {
-    LaunchedEffect(runda) { // OGRANIČAVAMO NA RUNDU DA SE NE RESETUJE NA SVAKOM RECOMPOSITION-U
-        count.value = 0 // Resetovanje tajmera pri novoj rundi
+    LaunchedEffect(runda) {
+        count.value = 0
         while (count.value < 60) {
             delay(1000)
             count.value += 1
@@ -239,7 +229,6 @@ fun DisplayContentIgraSam(uiState: UiStateI, crta: MutableState<String>) {
     }
 }
 
-// --- KONTROLE I UNOS (AŽURIRANO) ---
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -300,13 +289,11 @@ fun UserInputSectionIgraSam(
 
     Spacer(modifier = Modifier.height(20.dp))
 
-    // RED ZA DUGMAD: Govori, Pusti, Proveri
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Govori Dugme (AŽURIRANO)
         SpeechButton(
             context = context,
             speechRecognizer = speechRecognizer,
@@ -317,7 +304,6 @@ fun UserInputSectionIgraSam(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        // Pusti Dugme (AŽURIRANO)
         ActionButton(
             onClick = {
                 if (!isAudioP.value) {
@@ -333,11 +319,9 @@ fun UserInputSectionIgraSam(
         )
         Spacer(modifier = Modifier.width(4.dp))
 
-        // Proveri Dugme (AŽURIRANO)
         ActionButton(
             onClick = {
                 if (uiState.igrasam != null) {
-                    // Normalizacija slova (Kao u originalu)
                     val normalize = { text: String ->
                         text.toLowerCase()
                             .replace("ć", "c").replace("č", "c")
@@ -375,7 +359,7 @@ fun UserInputSectionIgraSam(
     ActionButton(
         onClick = {
             viewModel.stopAudio()
-            val nextRunda = runda + 1 // Koristi runda argument
+            val nextRunda = runda + 1
             if (nextRunda < 7) {
                 navController.navigate(Destinacije.Igra_sam.ruta + "/$sZ/$sN/$nextRunda/$poeni")
             } else {
@@ -384,12 +368,10 @@ fun UserInputSectionIgraSam(
         },
         text = "Preskoči/Dalje",
         icon = Icons.Default.ArrowForward,
-        containerColor = PrimaryDark.copy(alpha = 0.8f), // Tamnija boja za preskakanje
+        containerColor = PrimaryDark.copy(alpha = 0.8f),
         modifier = Modifier.fillMaxWidth()
     )
 }
-
-// --- DUGMAD I POMOĆNE KOMPONENTE ---
 
 @Composable
 fun SpeechButton(
@@ -545,13 +527,11 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Runda
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Runda: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(text = "$runda", color = PrimaryDark, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
             }
 
-            // Vreme
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Vreme: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(
@@ -562,7 +542,6 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
                 )
             }
 
-            // Poeni
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Poeni: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(
@@ -571,7 +550,7 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 16.sp
                 )
-                Text(text = " \uD834\uDD1E", color = Color.Black) // Nota
+                Text(text = " \uD834\uDD1E", color = Color.Black)
             }
         }
     }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,10 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.NotificationReceiver
-import com.example.blankspace.ui.components.HeadlineText
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.components.ListItemRow
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.MojProfilViewModel
 import java.util.Calendar
@@ -42,8 +38,6 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
-import androidx.compose.material3.*
 
 val ProfileCardColor = Color.White
 val ProfileAccentColor = Color(0xFF49006B)
@@ -52,7 +46,7 @@ private val PrimaryDark = Color(0xFF49006B)
 @Composable
 fun MojProfil(navController: NavController, viewModelLogin: LoginViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
-        BgCard2() // Zadržana je BgCard2 pozadina
+        BgCard2()
         MojProfil_mainCard(navController, viewModelLogin)
     }
 }
@@ -85,37 +79,28 @@ fun MojProfil_mainCard(navController: NavController, viewModelLogin: LoginViewMo
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 64.dp), // Veliki vertikalni padding
+            .padding(horizontal = 24.dp, vertical = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top // Postavljeno na vrh
+        verticalArrangement = Arrangement.Top
     ) {
 
         Spacer(modifier = Modifier.height(28.dp))
-        // 🔝 Naslov van kartice (na pozadini)
-        /*Text(
-            text = "Moj Profil",
-            color = ProfileCardColor, // Beli tekst za naslov
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier.align(Alignment.Start) // Pomereno ulevo
-        )*/
+
         Spacer(modifier = Modifier.height(44.dp))
 
-        // 💳 Glavna Kartica Profita - Cisto Bela
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(16.dp, RoundedCornerShape(36.dp)), // Ekstremna senka
-            colors = CardDefaults.cardColors(containerColor = ProfileCardColor), // Čisto bela
+                .shadow(16.dp, RoundedCornerShape(36.dp)),
+            colors = CardDefaults.cardColors(containerColor = ProfileCardColor),
             shape = RoundedCornerShape(36.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp), // Veći padding unutar kartice
+                    .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Ime korisnika (naglašeno)
                 Text(
                     text="Moj Profil",
                     //text = profile?.korisnicko_ime ?: "Korisnik",
@@ -125,7 +110,6 @@ fun MojProfil_mainCard(navController: NavController, viewModelLogin: LoginViewMo
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Lista podacima
                 MojProfilDataList(profileItems)
                 Spacer(modifier = Modifier.height(24.dp))
                 NotificationTimePicker(viewModelLogin)
@@ -136,12 +120,10 @@ fun MojProfil_mainCard(navController: NavController, viewModelLogin: LoginViewMo
 
 @Composable
 fun MojProfilDataList(profileItems: List<Pair<String, String>>) {
-    // Ovde koristimo čisti Column/LazyColumn, bez dodatnih kartica ili bordera,
-    // za ultra-čist izgled.
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp) // Razmak između stavki
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         itemsIndexed(profileItems) { index, item ->
             Row(
@@ -151,7 +133,6 @@ fun MojProfilDataList(profileItems: List<Pair<String, String>>) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Naslov
                 Text(
                     text = item.first,
                     fontSize = 16.sp,
@@ -162,7 +143,7 @@ fun MojProfilDataList(profileItems: List<Pair<String, String>>) {
                     text = item.second,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = ProfileAccentColor // Akcent boja
+                    color = ProfileAccentColor
                 )
             }
             if (index < profileItems.size - 1) {
@@ -191,10 +172,8 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
         { _, hour: Int, minute: Int ->
             timeState.value = String.format("%02d:%02d", hour, minute)
 
-            // cuva izabrano vreme
             saveNotificationTime(context, hour, minute)
 
-            // Zakazi prvi alarm
             scheduleDailyNotification(context, hour, minute)
             Toast.makeText(context, "Dnevna notifikacija zakazana za ${timeState.value}", Toast.LENGTH_LONG).show()
         },
@@ -204,9 +183,7 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
     )
     Divider(color = PrimaryDark.copy(alpha = 0.1f))
     Spacer(modifier = Modifier.height(32.dp))
-    // Fajl: MojProfil.kt
 
-// ... (unutar fun NotificationTimePicker())
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -237,7 +214,6 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 📝 Prikaz Odabranog Vremena (Jasno i Uočljivo)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -289,15 +265,12 @@ fun scheduleDailyNotification(context: Context, hour: Int, minute: Int) {
 fun RequestNotificationPermission() {
     val context = LocalContext.current
 
-    // Launcher koji pokreće dijalog za dozvolu
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // ✅ Dozvoljeno
             Toast.makeText(context, "Notifikacije su omogućene ✅", Toast.LENGTH_SHORT).show()
         } else {
-            // ❌ Odbijeno
             Toast.makeText(context, "Notifikacije su onemogućene ❌", Toast.LENGTH_SHORT).show()
         }
     }
@@ -342,6 +315,5 @@ fun getNotificationTime(context: Context): Pair<Int, Int>? {
     val hour = prefs.getInt(KEY_HOUR, -1)
     val minute = prefs.getInt(KEY_MINUTE, -1)
 
-    // Provera da li su vrednosti validne (-1 je default)
     return if (hour != -1 && minute != -1) Pair(hour, minute) else null
 }

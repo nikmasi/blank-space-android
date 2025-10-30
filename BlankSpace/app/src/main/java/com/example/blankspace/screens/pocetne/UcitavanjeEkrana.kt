@@ -97,20 +97,17 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
     val mediaPlayer = remember { MediaPlayer.create(context, R.raw.taylorswiftblankspace2) }
     val animationFinished = remember { mutableStateOf(false) }
 
-    // Efekat za pokretanje muzike i navigaciju
     LaunchedEffect(true) {
         mediaPlayer.start()
         delay(5400)
         mediaPlayer.stop()
         mediaPlayer.release()
 
-        // Sačekaj da se animacija završi (dajemo joj ~1.5s)
         animationFinished.value = true
         delay(1500)
 
         isLoadingData.value = false
 
-        // Logika za internet i navigaciju (ista kao prethodno)
         if (isInternetAvailable(context)) {
             if (!hasDownloadedData(context)) {
                 withContext(Dispatchers.IO) {
@@ -150,7 +147,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
         }
     }
 
-    // Animacije za UI elemente
     val infiniteTransition = rememberInfiniteTransition(label = "loading_screen_animations")
 
     val iconScale by infiniteTransition.animateFloat(
@@ -162,7 +158,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
         ), label = "icon_scale_animation"
     )
 
-    // Animacija 'Zavese' (wipe effect)
     val wipeProgress by animateFloatAsState(
         targetValue = if (animationFinished.value) 1f else 0f,
         animationSpec = tween(
@@ -174,9 +169,9 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
     Surface(
         color = CardContainerColor,
         modifier = modifier
-            .fillMaxWidth(0.85f) // Veća širina kartice
-            .fillMaxHeight(0.65f) // Veća visina
-            .shadow(20.dp, RoundedCornerShape(32.dp)), // Još jača senka
+            .fillMaxWidth(0.85f)
+            .fillMaxHeight(0.65f)
+            .shadow(20.dp, RoundedCornerShape(32.dp)),
         shape = RoundedCornerShape(32.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -184,11 +179,10 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp, vertical = 40.dp), // Veći padding
+                    .padding(horizontal = 32.dp, vertical = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // 1. Ikonica (iznad teksta)
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                     contentDescription = "BlankSpace Logo",
@@ -201,7 +195,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
                     contentScale = ContentScale.Fit
                 )
 
-                // 2. Citat (veći font i bolji raspored)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     LoadingQuoteText(text = "Cause I’ve got a ", color = PrimaryDark)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -214,7 +207,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
                     LoadingQuoteText(text = "write your name", color = PrimaryDark)
                 }
 
-                // 3. Progres Bar
                 if (isLoadingData.value) {
                     CircularProgressIndicator(color = PrimaryDark)
                 } else {
@@ -252,7 +244,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
     }
 }
 
-// Pomoćna funkcija za stilizaciju teksta
 @Composable
 fun LoadingQuoteText(text: String, color: Color, fontWeight: FontWeight = FontWeight.Bold) {
     Text(

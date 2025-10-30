@@ -132,20 +132,13 @@ fun KorisniciStatistikaCard(uiState: AdminStatistikaUiState) {
             uiState.informacije?.korisnikSaNajviseRangPoenimaPoeni.toString() ?: "Nema podataka"
             , isValueLeft = false, valueColor = HighlightColor)
         Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        //StatistikaRed("Prosečan rezultat po igri:", String.format("%.2f", uiState.averageScore), valueColor = HighlightColor)
-        //Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        //StatistikaRed("Korisnika registrovanih danas:", uiState.newUsersToday.toString(), valueColor = TextColor(uiState.newUsersToday > 0))
     }
 }
 
 @Composable
 fun SadrzajStatistikaCard(uiState: AdminStatistikaUiState) {
     StatistikaKard(title = "Statistika Sadržaja", titleColor = AccentPink) {
-        //StatistikaRed("Najpopularniji žanr:", uiState.mostPopularGenre ?: "Nema podataka")
-        //Divider(color = PrimaryDark.copy(alpha = 0.1f))
         StatistikaRed("Ukupno odigranih duel igara:", uiState.informacije?.brojDuela.toString(), valueColor = HighlightColor)
-        //Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        //StatistikaRed("Pesme dodate od strane admina:", uiState.adminAddedSongs.toString())
     }
 }
 
@@ -196,6 +189,3 @@ fun StatistikaRed(title: String, value: String, isValueLeft: Boolean = true, val
         )
     }
 }
-
-@Composable
-fun TextColor(isPositive: Boolean): Color = if (isPositive) HighlightColor else PrimaryDark.copy(alpha = 0.8f)

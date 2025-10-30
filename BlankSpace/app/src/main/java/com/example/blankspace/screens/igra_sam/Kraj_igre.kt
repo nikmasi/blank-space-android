@@ -42,7 +42,7 @@ import com.example.blankspace.screens.pocetne.cards.BgCard2
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextHighlight = Color(0xFFD32F2F) // Crvena za isticanje poena
+private val TextHighlight = Color(0xFFD32F2F)
 
 @Composable
 fun Kraj_igre_igre_sam(navController: NavController, poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel) {
@@ -150,7 +150,6 @@ fun KrajIgreButtonsStyled(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Dugme KRAJ (povratak na Login/Pocetak)
         FullWidthStyledButton(
             onClick = { navController.navigate(Destinacije.Login.ruta) },
             text = "Kraj",
@@ -183,36 +182,4 @@ fun FullWidthStyledButton(
             fontWeight = FontWeight.Bold
         )
     }
-}
-
-@Composable
-fun KrajIgreHeader() {
-    HeadlineText("Rezultat")
-}
-
-@Composable
-fun KrajIgreBody(poeni: Int) {
-    BodyText("Kraj igre!")
-    BodyText("Broj osvojenih poena: $poeni")
-}
-
-@Composable
-fun KrajIgreButtons(navController: NavController) {
-    SmallButton(
-        onClick = {
-            navController.navigate(Destinacije.Nivo_igra_sam.ruta)
-        },
-        text = "Igraj ponovo",
-        style = MaterialTheme.typography.bodyMedium
-    )
-
-    Spacer(modifier = Modifier.height(22.dp))
-
-    SmallButton(
-        onClick = {
-            navController.navigate(Destinacije.Login.ruta)
-        },
-        text = "Kraj",
-        style = MaterialTheme.typography.bodyMedium
-    )
 }

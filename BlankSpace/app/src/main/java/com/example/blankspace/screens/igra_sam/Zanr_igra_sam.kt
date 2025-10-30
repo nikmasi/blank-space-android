@@ -222,10 +222,9 @@ fun ZanrIgraSamButton(
         onClick = {
             if (selectedZanrovi.isNotEmpty()) {
                 val zanroviIds = selectedZanrovi.joinToString(",") { it.id.toString() }
-                // Napomena: Proveriti da li je selectedNivo String ili List<String> pre slanja rute
                 val nivoString = selectedNivo.replace("[", "").replace("]", "").replace(" ", "") // Čišćenje ako je prosleđen kao lista-string
 
-                viewModelIgraSam.postaviListu(emptyList()) // Resetovanje liste za novu igru
+                viewModelIgraSam.postaviListu(emptyList())
                 navController.navigate(Destinacije.Igra_sam.ruta + "/$zanroviIds/$nivoString/0/0")
             } else {
                 Toast.makeText(context, "Morate izabrati bar jedan žanr", Toast.LENGTH_SHORT).show()
@@ -237,7 +236,6 @@ fun ZanrIgraSamButton(
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         colors = ButtonDefaults.buttonColors(containerColor = AccentPink, contentColor = Color.White),
         shape = RoundedCornerShape(16.dp),
-        //enabled = selectedZanrovi.isNotEmpty()
     ) {
         Text("Dalje", fontSize = 18.sp, fontWeight = FontWeight.Bold)
     }

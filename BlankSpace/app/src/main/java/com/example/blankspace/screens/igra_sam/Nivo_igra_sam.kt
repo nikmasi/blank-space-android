@@ -32,38 +32,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.ui.components.HeadlineTextWhite
 import kotlinx.coroutines.delay
 
-// Boje za usklađivanje
-private val PrimaryDark = Color(0xFF49006B)       // Tamno ljubičasta/Magenta
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roze (za karticu)
-private val AccentPink = Color(0xFFEC8FB7)       // Roze za Normal dugme
+private val PrimaryDark = Color(0xFF49006B)
+private val CardContainerColor = Color(0xFFF0DAE7)
+private val AccentPink = Color(0xFFEC8FB7)
 
 @Composable
 fun Nivo_igra_sam(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // Malo smanjen top padding radi lepše centriranosti
             .padding(top = 30.dp)
     ) {
-        BgCard2() // Pozadinska karta (Gradijent)
+        BgCard2()
 
-        // Centrirana kartica sa izborom težine
         Surface(
-            // KARTICA JE SVETLO ROZE (Kao što ste tražili)
             color = CardContainerColor,
             modifier = Modifier
-                .align(Alignment.Center) // Centriramo karticu
+                .align(Alignment.Center)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
                 .fillMaxHeight(0.55f)
-                // Koristimo jaču senku
                 .shadow(16.dp, RoundedCornerShape(28.dp)),
             shape = RoundedCornerShape(28.dp)
         ) {
@@ -72,9 +64,8 @@ fun Nivo_igra_sam(navController: NavController) {
                     .fillMaxSize()
                     .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceAround // Raspored oko dugmadi
+                verticalArrangement = Arrangement.SpaceAround
             ) {
-                // Naslov - koristi tamnu PrimaryDark boju za dobar kontrast na svetlo roze
                 Text(
                     text = "Izaberite težinu",
                     color = PrimaryDark,
@@ -83,21 +74,17 @@ fun Nivo_igra_sam(navController: NavController) {
                     modifier = Modifier.padding(top = 8.dp)
                 )
 
-                // Dugmići - grupisani
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(18.dp), // Veći razmak
+                    verticalArrangement = Arrangement.spacedBy(18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // EASY - Svetlija, kontrastna boja
                     LevelButton(text = "Easy", color = Color(0xFF5AB1BB)) {
                         navController.navigate(Destinacije.Zanr_igra_sam.ruta + "/easy")
                     }
-                    // NORMAL - Naglašena roze boja
                     LevelButton(text = "Normal", color = AccentPink) {
                         navController.navigate(Destinacije.Zanr_igra_sam.ruta + "/normal")
                     }
-                    // HARD - Tamna PrimaryDark boja
                     LevelButton(text = "Hard", color = PrimaryDark) {
                         navController.navigate(Destinacije.Zanr_igra_sam.ruta + "/hard")
                     }
@@ -105,16 +92,11 @@ fun Nivo_igra_sam(navController: NavController) {
             }
         }
     }
-    // Napomena: Stari, suvišni kodovi (Nivo_igra_sam_mainCard, NivoIgreButtons, itd.) su uklonjeni.
 }
 
-/**
- * Poboljšana i usklađena komponenta dugmeta za nivo.
- */
 @Composable
 fun LevelButton(text: String, color: Color, onClick: () -> Unit) {
     var pressed by remember { mutableStateOf(false) }
-    // Visina senke se menja sa pritiskom (moderniji bounce efekat)
     val elevation = if (pressed) 2.dp else 8.dp
 
     Button(
@@ -123,10 +105,10 @@ fun LevelButton(text: String, color: Color, onClick: () -> Unit) {
             onClick()
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = color, // Boja definisana za nivo
+            containerColor = color,
             contentColor = Color.White
         ),
-        shape = RoundedCornerShape(16.dp), // Moderniji ugao
+        shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -140,7 +122,6 @@ fun LevelButton(text: String, color: Color, onClick: () -> Unit) {
         )
     }
 
-    // Kratak bounce efekat
     LaunchedEffect(pressed) {
         if (pressed) {
             delay(100)

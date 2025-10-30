@@ -32,7 +32,7 @@ fun PocetnaAdmin(modifier: Modifier = Modifier, navController: NavController, vi
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
-        // checkLoginState(viewModelLogin,navController) // Ovu funkciju niste dali, ali pretpostavljam da radi kako treba
+        // checkLoginState(viewModelLogin,navController)
         PocetnaAdmin_mainCard(navController, viewModelLogin, modifier = Modifier.align(Alignment.Center))
     }
 }
@@ -238,5 +238,3 @@ fun LogoutButton(onClick: () -> Unit) {
             .padding(8.dp)
     )
 }
-
-// (Funkciju checkLoginState niste priložili, ali treba da ostane van ovog fajla ili je dodajte)
