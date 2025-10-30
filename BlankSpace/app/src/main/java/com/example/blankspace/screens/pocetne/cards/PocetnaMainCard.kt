@@ -175,13 +175,13 @@ fun GameButton(
             onClick()
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFEC8FB7), // roza dugme
+            containerColor = Color(0xFFEC8FB7),
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(50),
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp) // SMANJENA VISINA DUGMETA (sa 56.dp na 44.dp)
+            .height(44.dp)
             .graphicsLayer {
                 scaleX = if (pressed) 0.97f else 1f
                 scaleY = if (pressed) 0.97f else 1f

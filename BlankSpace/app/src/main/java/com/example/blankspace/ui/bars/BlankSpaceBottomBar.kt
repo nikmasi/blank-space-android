@@ -20,10 +20,8 @@ import com.example.blankspace.screens.listaStudent
 
 @Composable
 fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, userType: String) {
-
-    // Boje iz PocetnaMainCard i BgCard2 za usklađivanje
-    val PrimaryDark = Color(0xFF49006B) // Tamna boja za naglašavanje (selected icon)
-    val LightPink = Color(0xFFF0DAE7) // Svetla roze za pozadinu (container)
+    val PrimaryDark = Color(0xFF49006B)
+    val LightPink = Color(0xFFF0DAE7)
 
     when (userType) {
         "brucos", "student", "master" -> {
@@ -33,8 +31,6 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
                 "master" -> listaMaster
                 else -> emptyList()
             }
-
-            // Koristimo svetlo roze boju sa malom transparentnošću
             NavigationBar(
                 containerColor = LightPink.copy(alpha = 0.9f),
                 tonalElevation = 0.dp,
@@ -42,14 +38,7 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
             ) {
                 navigationList.forEach { navDestination ->
                     NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = navDestination.ikonica,
-                                // Koristimo rutu kao opis za pristupačnost
-                                contentDescription = navDestination.ruta
-                            )
-                        },
-                        // Uklonjen label tekst
+                        icon = { Icon(imageVector = navDestination.ikonica, contentDescription = navDestination.ruta) },
                         label = null,
                         selected = currentRoute == navDestination.ruta,
                         onClick = {
@@ -57,13 +46,8 @@ fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, user
                                 navController.navigate(navDestination.ruta)
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(
-                            // Odabrana ikonica je tamna PrimaryDark boja
-                            selectedIconColor = PrimaryDark,
-                            // Neodabrana ikonica je tamno siva ili malo tamnija roze
-                            unselectedIconColor = Color.Gray.copy(alpha = 0.8f),
-                            // Pozadina dugmeta (ripple) pri kliku je svetlo roze
-                            indicatorColor = LightPink
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = PrimaryDark,
+                            unselectedIconColor = Color.Gray.copy(alpha = 0.8f), indicatorColor = LightPink
                         )
                     )
                 }

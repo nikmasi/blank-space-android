@@ -58,44 +58,15 @@ import com.example.blankspace.viewModels.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BlankSpaceTopAppBar(
-    navController: NavController,
-    currentRoute: String,
-    viewModelLogin: LoginViewModel
-) {
+fun BlankSpaceTopAppBar(navController: NavController, currentRoute: String, viewModelLogin: LoginViewModel) {
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
 
-    // Glavni Box da glow i TopAppBar budu zajedno
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .background(Color.Transparent) // TopAppBar će imati transparent container
-    ) {
-        // Blur pozadina sa gradijentom
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFADD8E6), // tvoja plava
-                            Color(0xFFADD8E6)
-                        )
-                    )
-                )
-                .blur(8.dp)
-        )
+    Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Transparent)) {
+        Box(modifier = Modifier.fillMaxSize().background(brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFFADD8E6), Color(0xFFADD8E6)))).blur(8.dp))
 
-        // TopAppBar
         TopAppBar(
-            title = {
-                Text(
-                    text = "Blank Space",
-                    color = TEXT_COLOR,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
+            title = { Text(text = "Blank Space", color = TEXT_COLOR, style = MaterialTheme.typography.titleLarge) },
             actions = {
                 when {
                     Destinacije.Pocetna.ruta == currentRoute -> {
@@ -128,13 +99,10 @@ fun BlankSpaceTopAppBar(
                         IconButton(onClick = {
                             navController.navigate(Destinacije.Login.ruta)
                             viewModelLogin.izloguj_se()
-                        }) {
-                            Icon(Icons.Default.PlayArrow, contentDescription = "Izloguj se", tint = TEXT_COLOR)
-                        }
+                        }) { Icon(Icons.Default.PlayArrow, contentDescription = "Izloguj se", tint = TEXT_COLOR) }
                     }
                 }
 
-                // Dugme za pravila igre uvek
                 IconButton(onClick = { navController.navigate(Destinacije.PravilaIgre.ruta) }) {
                     Icon(Icons.Default.Info, contentDescription = "Pravila igre", tint = TEXT_COLOR)
                 }
@@ -143,7 +111,6 @@ fun BlankSpaceTopAppBar(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Glow linija ispod TopAppBar
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -152,7 +119,7 @@ fun BlankSpaceTopAppBar(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color(0x66ADD8E6), // poluprovidna svetloplava
+                            Color(0x66ADD8E6),
                             Color.Transparent
                         )
                     )
