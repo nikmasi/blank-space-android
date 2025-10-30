@@ -42,17 +42,15 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.DuelViewModel
 
-// --- BOJE ---
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za pozadinu kartice
 private val TextMain = PrimaryDark
-private val TableHeaderBg = AccentPink.copy(alpha = 0.8f) // Roza za zaglavlje
-private val TableRowOddBg = CardContainerColor.copy(alpha = 0.7f) // Svetlo roza za neparne redove
-private val TableRowEvenBg = Color.White.copy(alpha = 0.8f) // Bela za parne redove
+private val TableHeaderBg = AccentPink.copy(alpha = 0.8f)
+private val TableRowOddBg = CardContainerColor.copy(alpha = 0.7f)
+private val TableRowEvenBg = Color.White.copy(alpha = 0.8f)
 private val WinnerColor = Color(0xFF4CAF50) // Zelena
 
-// --- POMOĆNE KOMPONENTE (Za konzistentnost) ---
 
 @Composable
 fun HeadlineTextCekanjeRezultata(text: String) {
@@ -74,7 +72,6 @@ fun ActionButtonCekanjeRezultata(onClick: () -> Unit, text: String, modifier: Mo
     }
 }
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel,sifra:Int){
@@ -100,14 +97,13 @@ fun Kraj_duela_mainCard(
     val uiState by viewModelDuel.uiState.collectAsState()
     val uiStateKraj by viewModelDuel.uiStateKrajDuela.collectAsState()
 
-    // Fetch podataka o kraju duela
     LaunchedEffect(Unit) {
         uiState.duel?.poeni?.let {
             viewModelDuel.fetchKrajDuela(
                 it,
                 sifra,
                 uiState.duel!!.rundePoeni,
-                uiState.duel!!.runda, // Poslati redni broj (1 ili 2)
+                uiState.duel!!.runda,
                 "true"
             )
         }
@@ -129,23 +125,18 @@ fun Kraj_duela_mainCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Naslov
             HeadlineTextCekanjeRezultata("Rezultati duela \uD83C\uDFC6")
 
-            // Tabela rezultata
             DuelResultsTable(uiStateKraj.krajDuela?.poeni_runde ?: emptyList(), uiStateKraj.krajDuela?.igrac1, uiStateKraj.krajDuela?.igrac2)
 
-            // Ukupan rezultat i pobednik
             val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
             val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
             val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }
             DisplayWinner(ukupno1, ukupno2)
 
-            // Dugmad
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ActionButtonCekanjeRezultata(
                     onClick = {
-                        // Resetovanje stanja za novu igru (vracanje na izbor zanra)
                         navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
                     },
                     text = "Igraj ponovo",
@@ -154,8 +145,7 @@ fun Kraj_duela_mainCard(
                 Spacer(modifier = Modifier.height(12.dp))
                 ActionButtonCekanjeRezultata(
                     onClick = {
-                        // Čišćenje sobe i odjava
-                       // viewModelDuel.ocistiSobu(sifra)
+
                         navController.navigate(Destinacije.Login.ruta)
                     },
                     text = "Kraj",
@@ -196,7 +186,6 @@ fun DuelResultsTable(runde: List<List<Int>>, igrac1: String?, igrac2: String?) {
                 Text(igrac2 ?: "Igrač 2", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
             }
 
-            // Redovi Tabele
             LazyColumn(contentPadding = PaddingValues(vertical = 4.dp), modifier = Modifier.height(250.dp)) {
                 itemsIndexed(runde) { index, poeni ->
                     val isIgrac1Winner = poeni.getOrElse(0) { 0 } > poeni.getOrElse(1) { 0 }
@@ -236,7 +225,6 @@ fun DuelResultsTable(runde: List<List<Int>>, igrac1: String?, igrac2: String?) {
                     }
                 }
 
-                // Ukupno Red
                 item {
                     val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
                     val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }

@@ -42,7 +42,6 @@ import com.example.blankspace.viewModels.UiStateSifSobe
 import com.example.blankspace.viewModels.UiStateStigaoIgrac
 import kotlinx.coroutines.delay
 
-// --- BOJE ---
 private val PrimaryDark = Color(0xFF49006B) // Tamno ljubičasta/Bordo
 private val AccentPink = Color(0xFFEC8FB7) // Akcent roza
 private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za karticu
@@ -50,7 +49,6 @@ private val TextMain = PrimaryDark
 private val TextAccent = AccentPink
 private val TimeWarningColor = Color(0xFFD32F2F) // Crvena za upozorenje
 
-// ODRŽAVANJE ORIGINALNIH NAZIVA KOMPONENTI (Radi kompatibilnosti)
 @Composable
 fun HeadlineText(text: String) {
     Text(text, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = TextMain)
@@ -77,7 +75,6 @@ fun ActionButton(onClick: () -> Unit, text: String, modifier: Modifier, containe
 }
 
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Generisi_sifru_sobe(navController: NavController,viewModelDuel:DuelViewModel){
@@ -101,19 +98,15 @@ fun Generisi_sifru_sobe_mainCard(
     val uiStateStigaoIgrac by viewModelDuel.uiStateStigaoIgrac.collectAsState()
     val uiStateSifra by viewModelDuel.uiStateSifSobe.collectAsState()
 
-    // Prvo generisanje šifre (ako već nije)
-    // NAPOMENA: Pretpostavljam da se generisanje dešava na nekom prethodnom ekranu,
-    // a ovde samo prikazujemo rezultat uiStateSifra.
-
-    HandleSifraResponse(navController, viewModelDuel, context) // Poziv bez viška uiState-ova
+    HandleSifraResponse(navController, viewModelDuel, context)
 
     Surface(
-        color = CardContainerColor, // Svetlo roza
+        color = CardContainerColor,
         modifier = modifier
             .fillMaxWidth(0.9f) // Uže
             .fillMaxHeight(0.5f) // Kraće
             .shadow(16.dp, RoundedCornerShape(24.dp)), // Dodavanje senke
-        shape = RoundedCornerShape(24.dp) // Zaobljeni uglovi
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
@@ -126,17 +119,15 @@ fun Generisi_sifru_sobe_mainCard(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            // Prikaz šifre
             Text(
                 text = "${uiStateSifra.sifraResponse?.sifra}",
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Black,
-                color = AccentPink // Akcentna boja za šifru
+                color = AccentPink
             )
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            // Status čekanja
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (uiStateStigaoIgrac.isRefreshing) {
                     CircularProgressIndicator(
@@ -150,11 +141,9 @@ fun Generisi_sifru_sobe_mainCard(
 
             Spacer(modifier = Modifier.height(42.dp))
 
-            // Dugme Odustani
             ActionButton(
                 onClick = {
-                    // Pre navigacije, očisti stanje sobe na serveru (opciono, ali preporučeno)
-                    // viewModelDuel.ocistiSobu(uiStateSifra.sifraResponse?.sifra)
+
                     navController.navigate(Destinacije.Login.ruta)
                 },
                 text = "Odustani",
@@ -165,7 +154,6 @@ fun Generisi_sifru_sobe_mainCard(
     }
 }
 
-// --- LOGIKA POLLINGA ---
 
 @Composable
 fun HandleSifraResponse(
@@ -181,32 +169,24 @@ fun HandleSifraResponse(
         val sifra = sifraSobe.sifra
         if (sifra == -1) return@LaunchedEffect
 
-        // Polling loop
         while (true) {
-            // POZOVI FUNKCIJU koja šalje zahtev na backend
             viewModelDuel.stigaoIgrac(sifra)
 
-            // Sačekaj pre sledećeg poziva
             delay(3000)
 
             val stigaoIgrac = viewModelDuel.uiStateStigaoIgrac.value.stigaoIgrac?.stigao
 
-            // OBAVEZNO KORISTI JEDNU NAVIGACIJU
             if (stigaoIgrac == "true") {
-                // Prekinimo audio ako postoji (iz predostrožnosti)
                 viewModelDuel.stopAudio()
 
-                // POKRENI FETCH DUEL PODATAKA PRE NAVIGACIJE
                 val stihovi = uiStateSifra.sifraResponse?.stihovi
                 if (stihovi != null) {
                     viewModelDuel.fetchDuel(0, 0, stihovi, rundaPoeni = emptyList(), context)
                 }
 
-                // AŽURIRAJ LOKALNO STANJE
                 viewModelDuel.upisiRedniBroj(1)
                 viewModelDuel.upisiSifruSobe(sifra)
 
-                // NAVIGACIJA
                 navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0 + "/${sifra}")
                 break
             }

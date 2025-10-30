@@ -39,13 +39,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-// --- BOJE ---
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za pozadinu kartice
+private val CardContainerColor = Color(0xFFF0DAE7)
 private val TextMain = PrimaryDark
 
-// --- POMOĆNE KOMPONENTE (Za konzistentnost) ---
 
 @Composable
 fun HeadlineTextCek(text: String) {
@@ -57,7 +55,6 @@ fun BodyTextCek(text: String) {
     Text(text, fontSize = 16.sp, color = TextMain.copy(alpha = 0.8f), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
 }
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,poeni: Int,sifra:Int){
@@ -68,7 +65,7 @@ fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,p
             viewModelDuel = viewModelDuel,
             poeni = poeni,
             sifra = sifra,
-            modifier = Modifier.align(Alignment.Center) // Centriranje kartice
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
@@ -85,17 +82,15 @@ fun Cekanje_rezultata_mainCard(
     val uiStateCekanjeRezultata by viewModelDuel.uiStateCekanjeRezultata.collectAsState()
     val uiStateD by viewModelDuel.uiState.collectAsState()
 
-    // Polling za slanje rezultata
     HandleCekanjeRezultataResponse(viewModelDuel,poeni,uiStateD)
 
-    // Polling za odgovor
     HandleCekanjeRezultataOdgovorResponse(navController,context, viewModelDuel,poeni,uiStateCekanjeRezultata,sifra)
 
     Surface(
-        color = CardContainerColor, // Svetlo roza
+        color = CardContainerColor,
         modifier = modifier
             .fillMaxWidth(0.9f)
-            .fillMaxHeight(0.4f) // Manja kartica
+            .fillMaxHeight(0.4f)
             .shadow(16.dp, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp)
     ) {
@@ -112,7 +107,7 @@ fun Cekanje_rezultata_mainCard(
             Spacer(modifier = Modifier.height(34.dp))
 
             CircularProgressIndicator(
-                color = AccentPink, // Roza boja za indikator
+                color = AccentPink,
                 modifier = Modifier.height(48.dp).width(48.dp)
             )
 
@@ -126,19 +121,16 @@ fun Cekanje_rezultata_mainCard(
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HandleCekanjeRezultataResponse(viewModelDuel: DuelViewModel,poeni: Int,uiStateD: UiStateD){
-    // Koristimo sifraSobe kao ključ da osiguramo da se polling pokrene kada se šifra postavi
     LaunchedEffect(viewModelDuel.sifraSobe.value.sifra) {
-        // Dodajemo inicijalni kratki delay pre prvog poziva da bi se UI učitao
         delay(1000)
 
         while (true) {
             viewModelDuel.fetchCekanjeRezultata(
                 poeni/10,
                 viewModelDuel.sifraSobe.value.sifra,
-                uiStateD.duel?.rundePoeni ?: emptyList(), // Koristimo safe call
+                uiStateD.duel?.rundePoeni ?: emptyList(),
                 viewModelDuel.redniBroj.value.redniBroj
             )
-            // Polling interval
             delay(3000)
         }
     }
@@ -156,23 +148,15 @@ fun HandleCekanjeRezultataOdgovorResponse(
     LaunchedEffect(uiStateCekanjeRezultata.cekanjeRezultata?.odgovor) {
         val odgovor = uiStateCekanjeRezultata.cekanjeRezultata?.odgovor
 
-        // Provera da li postoji odgovor
         if (!odgovor.isNullOrEmpty()) {
 
-            // Prikaz Toast poruke na glavnom threadu
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
             }
 
-            // Ako odgovor i dalje kaže da se čeka, ne radimo ništa i dozvoljavamo polingu da nastavi
             if (odgovor.contains("Čeka se rezultat duela")) {
                 return@LaunchedEffect
             }
-
-            // Ako je stigao finalni odgovor, navigiramo na Kraj duela
-            // NAPOMENA: Vaš originalni kod je ponovo zvao fetchCekanjeRezultata pre navigacije,
-            // što možda nije neophodno ako backend šalje finalni rezultat.
-            // Ostavljam logiku da se koristi odgovor za navigaciju direktno.
 
             navController.navigate(Destinacije.Kraj_duela.ruta+"/$sifra")
         }

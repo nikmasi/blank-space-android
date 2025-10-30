@@ -45,13 +45,11 @@ import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.UiStateL
 import com.example.blankspace.viewModels.UiStateProveriSifru
 
-// --- BOJE ---
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7)
 private val TextMain = PrimaryDark
 
-// --- POMOĆNE KOMPONENTE (za samostalnost fajla) ---
 
 @Composable
 fun HeadlineTextSifraSobe(text: String) {
@@ -97,7 +95,6 @@ fun OutlinedTextFieldInput(
     )
 }
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Sifra_sobe_duel(navController: NavController,viewModelDuel:DuelViewModel,loginViewModel: LoginViewModel){
@@ -144,7 +141,6 @@ fun Sifra_sobe_duel_mainCard(
 
             SifraSobeGenerisiNovuSifru(navController,viewModelDuel,uiStateLogin)
 
-            // Estetski separator
             Text("— ILI —", color = TextMain.copy(alpha = 0.6f), fontWeight = FontWeight.Bold)
 
             SifraSobeUnesiPostojecuSifru(viewModelDuel,uiStateLogin,sifra, onValueChange = { sifra = it })
@@ -163,25 +159,19 @@ fun HandleProveriSifruResponse(
     LaunchedEffect(uiStateProveriSifru.proveriSifru?.error) {
         val odgovor = uiStateProveriSifru.proveriSifru?.error
 
-        // Proveravamo da li je došlo do odgovora i da li je soba slobodna ("NE" znači da je soba postojala i da si drugi igrač)
         if (odgovor == "NE") {
             uiStateProveriSifru.proveriSifru?.stihovi?.let {
-                // Pozovi dodeli za sinhronizaciju stanja
                 viewModelDuel.dodeli(uiStateProveriSifru,sifra.toInt())
 
-                // Fetch Duel podaci
-                viewModelDuel.fetchDuel(1,0,
+                viewModelDuel.fetchDuel(0,0,
                     it, emptyList(), context)
             }
 
-            // Ažuriraj lokalno stanje
             viewModelDuel.upisiSifruSobe(sifra.toInt())
-            viewModelDuel.upisiRedniBroj(redniBroj = 2) // Ti si drugi igrač!
+            viewModelDuel.upisiRedniBroj(redniBroj = 2)
 
-            // Navigacija
-            navController.navigate(Destinacije.Duel.ruta + "/" + 1 + "/" + 0+"/${sifra.toInt()}")
+            navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0+"/${sifra.toInt()}")
         }
-        // Možda treba dodati i else blok za Toast("Neispravna šifra") ako je odgovor DA (soba ne postoji)
         else if (odgovor == "DA") {
             // Toast.makeText(context, "Šifra ne postoji ili je soba puna.", Toast.LENGTH_SHORT).show()
         }
@@ -211,12 +201,11 @@ fun SifraSobeUnesiPostojecuSifru(viewModelDuel: DuelViewModel,uiStateLogin: UiSt
         HeadlineTextSifraSobe("Unesi postojeću šifru sobe")
         Spacer(modifier = Modifier.height(22.dp))
 
-        // Koristi stilizovani OutlinedTextFieldInput
         OutlinedTextFieldInput(
             value = sifra,
             onValueChange = onValueChange,
             label = "Šifra",
-            keyboardType = KeyboardType.Number // Šifra je obično numerička
+            keyboardType = KeyboardType.Number
         )
 
         ActionButtonSifraSobe(
@@ -226,7 +215,6 @@ fun SifraSobeUnesiPostojecuSifru(viewModelDuel: DuelViewModel,uiStateLogin: UiSt
                         viewModelDuel.proveriSifru(it, sifra.toInt())
                     }
                 } else {
-                    // Opciono: Toast upozorenje
                 }
             },
             text = "Unesi",

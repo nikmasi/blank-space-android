@@ -66,16 +66,11 @@ import com.example.blankspace.viewModels.DuelViewModel
 import com.example.blankspace.viewModels.UiStateD
 import kotlinx.coroutines.delay
 
-// --- BOJE ---
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za karticu
-private val InfoBarColor = Color(0xFFE0BBE4) // Svetlija ljubičasta/roza za donju traku
-private val TimeWarningColor = Color(0xFFD32F2F) // Crvena za upozorenje
-
-
-
-// --- POMOĆNE KOMPONENTE ZA DUGMAD (Kao na Igra_sam) ---
+private val CardContainerColor = Color(0xFFF0DAE7)
+private val InfoBarColor = Color(0xFFE0BBE4)
+private val TimeWarningColor = Color(0xFFD32F2F)
 
 @Composable
 fun SpeechButton2(
@@ -149,7 +144,6 @@ fun ActionButton2(
 }
 
 
-// --- GLAVNE KOMPONENTE ---
 
 @Composable
 fun Duel(navController: NavController,runda:Int,poeni:Int,viewModel: DuelViewModel,sifra:Int) {
@@ -176,28 +170,23 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
     val speechRecognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
     SetupSpeechRecognition(speechRecognizer, onResults = { odgovor = it }, onListeningChange = { isListening = it })
 
-
-    // LOGIKA TAJMERA
     LaunchedEffect(runda) {
-        count.value = 0 // Resetovanje tajmera pri novoj rundi
+        count.value = 0
         while (count.value < 60) {
             delay(1000)
             count.value += 1
         }
 
-        // Navigacija tek nakon isteka vremena, ako je i dalje na istoj rundi
         //if (uiState.duel?.runda == runda) {
             viewModel.stopAudio()
             viewModel.dodaj(0) // Dodajemo 0 poena jer je isteklo vreme
 
             if(runda < 7){
                 uiStateSifra.sifraResponse?.stihovi?.let {
-                    // Fetch za sledeću rundu
                     viewModel.fetchDuel(runda , poeni, it, uiState.duel!!.rundePoeni, context)
                 }
                 navController.navigate(Destinacije.Duel.ruta+"/${runda+1}/${poeni}/${sifra}")
             } else {
-                // Kraj igre, idi na cekanje
                 viewModel.fetchCekanjeRezultata(poeni, viewModel.sifraSobe.value.sifra, uiState.duel!!.rundePoeni, viewModel.redniBroj.value.redniBroj)
                 navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}/${sifra}")
             }
@@ -209,7 +198,7 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
     }
 
     Surface(
-        color = CardContainerColor, // ROZA BOJA
+        color = CardContainerColor,
         modifier = modifier
             .fillMaxWidth(0.9f)
             .fillMaxHeight(0.75f)
@@ -221,12 +210,11 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp), // Povećan padding
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Spacer(modifier = Modifier.height(80.dp))
-                // --- PRIKAZ SADRŽAJA ---
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (uiState.isRefreshing) {
                         CircularProgressIndicator(color = AccentPink)
@@ -236,7 +224,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                         }
 
                         uiState.duel?.let { duel ->
-                            // Prikaz stiha
                             duel.stihpoznat.forEach { stih->
                                 Text(
                                     text = stih,
@@ -245,7 +232,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                                     textAlign = TextAlign.Center
                                 )
                             }
-                            // Prikaz crtica
                             Text(
                                 "${crta.value}",
                                 color = TEXT_COLOR,
@@ -258,7 +244,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                     }
                 }
 
-                // --- UNOS I DUGMAD ---
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     // OutlinedTextField
                     OutlinedTextField(
@@ -277,13 +262,11 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Row dugmadi
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 1. Govori Dugme
                         SpeechButton2(
                             context = context,
                             speechRecognizer = speechRecognizer,
@@ -294,7 +277,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        // 2. Pusti Dugme
                         ActionButton2(
                             onClick = {
                                 if(!isAudioP.value){
@@ -311,10 +293,8 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        // 3. Proveri Dugme
                         ActionButton2(
                             onClick = {
-                                // Funkcija za normalizaciju slova (kao u Igra_sam)
                                 val normalize = { text: String ->
                                     text.toLowerCase()
                                         .replace("ć", "c").replace("č", "c")
@@ -344,7 +324,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                                         }
                                     } else {
                                         Toast.makeText(context, "Netačan odgovor", Toast.LENGTH_SHORT).show()
-                                        // Netačan odgovor šalje na čekanje, ali ne prolazi kroz fetchDuel za sledeću rundu
                                         viewModel.dodaj(0)
                                         viewModel.fetchCekanjeRezultata(poeni, viewModel.sifraSobe.value.sifra, uiState.duel!!.rundePoeni, viewModel.redniBroj.value.redniBroj)
                                         navController.navigate("${Destinacije.Cekanje_rezultata.ruta}/${poeni}/${sifra}")
@@ -360,7 +339,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // 4. Dalje/Preskoči Dugme
                     ActionButton2(
                         onClick = {
                             viewModel.stopAudio()
@@ -385,7 +363,6 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                 }
             }
 
-            // --- DONJA INFO TRAKA ---
             BottomInfoBarDuel(runda = uiState.duel?.runda ?: runda, poeni = poeni, count = count.value)
         }
     }
