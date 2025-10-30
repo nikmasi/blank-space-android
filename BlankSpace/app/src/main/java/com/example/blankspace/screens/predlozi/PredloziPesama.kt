@@ -205,7 +205,6 @@ fun PredlogPesmeCard(
                     Text("Prihvati", fontWeight = FontWeight.Bold)
                 }
 
-                // Dugme Odbij
                 Button(
                     onClick = { viewModel.odbijPredlogPesme(item.id) },
                     colors = ButtonDefaults.buttonColors(containerColor = AccentRed, contentColor = Color.White),

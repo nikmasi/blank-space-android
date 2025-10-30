@@ -195,7 +195,7 @@ fun AdminContentButtons(navController: NavController) {
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajIzvodjaci.ruta) }, text = "Pregled izvodjaca")
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajPesme.ruta) }, text = "Pregled pesama")
         AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajStihovi.ruta) }, text = "Pregled stihova")
-        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajStihovi.ruta) }, text = "Pregled soba")
+        AdminActionButton(onClick = { navController.navigate(Destinacije.SadrzajSoba.ruta) }, text = "Pregled soba")
     }
 }
 

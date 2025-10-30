@@ -21,6 +21,7 @@ class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private
     val allIzvodjaci = roomDao.getIzvodjaci()
     val allPesme = roomDao.getPesme()
     val allStihov = roomDao.getStihovi()
+    val allSobe = roomDao.getSobe()
 
     suspend fun insert(zanr: ZanrEntity) { roomDao.insert(zanr) }
 

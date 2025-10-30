@@ -86,6 +86,7 @@ fun PredloziIzvodjaca_mainCard(navController: NavController, viewModelPredlozi: 
 
                     viewModelPredlozi.sacuvajIzvodjacPredlozi(item.id,
                         item.ime_izvodjaca,item.zan_naziv,item.kor_ime)
+                    viewModelPredlozi.odbijPredlogIzvodjaca(item.id)
                     navController.navigate("${Destinacije.PesmaPodaci.ruta}/${item.zan_naziv}/${item.ime_izvodjaca}")
                 },
                 onReject = { id ->
@@ -194,9 +195,9 @@ fun PredlogIzvodjacaCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                // Dugme Prihvati
                 Button(
-                    onClick = { onAccept(item) },
+                    onClick = {
+                        onAccept(item) },
                     colors = ButtonDefaults.buttonColors(containerColor = AccentGreen, contentColor = Color.White),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.weight(1f).padding(end = 6.dp)

@@ -25,6 +25,7 @@ class DatabaseViewModel @Inject constructor(
 ) : ViewModel() {
 
     val allZanrovi = myRoomRepository.allZanrovi
+    val allSobe = myRoomRepository.allSobe
 
     fun insert(word: ZanrEntity) = viewModelScope.launch {
         myRoomRepository.insert(word)

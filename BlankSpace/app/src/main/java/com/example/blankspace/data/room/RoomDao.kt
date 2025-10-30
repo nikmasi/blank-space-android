@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RoomDao {
+    @Query("SELECT * FROM soba")
+    fun getSobe(): Flow<List<SobaEntity>>
+
     @Query("SELECT * FROM zanr")
     fun getZanrovi(): Flow<List<ZanrEntity>>
 
