@@ -98,7 +98,7 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/login.png" width="250" />
+  <img src="C:\Users\Administrator\Pictures\Screenshots\login.png" width="250" />
   <img src="screenshots/home.png" width="250" />
   <img src="screenshots/rang.png" width="250" />
   <img src="screenshots/profile.png" width="250" />
