@@ -1,18 +1,13 @@
 package com.example.blankspace
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -25,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource.Companion.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,7 +46,7 @@ import com.example.blankspace.screens.igra_challenge.Nivo_challenge
 import com.example.blankspace.screens.igra_challenge.Zanr_challenge
 import com.example.blankspace.screens.igra_offline.Igra_offline
 import com.example.blankspace.screens.igra_offline.Kraj_igre_offline
-import com.example.blankspace.screens.igra_offline.Nivo_igra_offline
+import com.example.blankspace.screens.igra_offline.ui.Nivo_igra_offline
 import com.example.blankspace.screens.igra_offline.Zanr_igra_offline
 import com.example.blankspace.screens.igra_pogodi_i_pevaj.Igra_pogodiPevaj
 import com.example.blankspace.screens.igra_pogodi_i_pevaj.Kraj_pogodiPevaj
@@ -114,14 +108,7 @@ import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
-import com.example.blankspace.whisper.WhisperRecognizer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,10 +35,8 @@ import com.example.blankspace.viewModels.DatabaseViewModel
 import com.example.blankspace.viewModels.IgraOfflineLista
 import com.example.blankspace.viewModels.UiStateIgraOffline
 import kotlinx.coroutines.delay
+import  com.example.blankspace.ui.theme.*
 
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
 private val InfoBarColor = Color(0xFFE0BBE4)
 private val TextAccent = AccentPink
 private val TimeWarningColor = Color(0xFFD32F2F)

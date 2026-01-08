@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -45,38 +44,50 @@ import com.example.blankspace.data.room.ZanrEntity
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.igra_sam.ZanrIgreHeaderStyled
 import com.example.blankspace.screens.pocetne.cards.BgCard2
+import com.example.blankspace.ui.modifiers.buttonStyle
+import com.example.blankspace.ui.modifiers.columnMainStyle
+import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.viewModels.DatabaseViewModel
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color.White
+import  com.example.blankspace.ui.theme.*
 
 @Composable
 fun Zanr_igra_offline(navController: NavController,selectedNivo:String,databaseViewModel: DatabaseViewModel){
+    val zanrovi by databaseViewModel.allZanrovi.collectAsState(initial = null)
+
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
-        Zanr_igra_offline_mainCard(navController,selectedNivo,databaseViewModel, modifier = Modifier.align(Alignment.Center))
+
+        if (zanrovi == null) {
+            // da izbegnemo bljesak
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = AccentPink
+            )
+        } else {
+            Zanr_igra_offline_mainCard(
+                zanrovi = zanrovi!!,
+                onNext = { zanroviIds ->
+                    val nivoi = selectedNivo.replace("[", "").replace("]", "")
+                    navController.navigate("${Destinacije.Igra_offline.ruta}/$zanroviIds/$nivoi/0/0")
+                },
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 
 @Composable
-fun Zanr_igra_offline_mainCard(navController: NavController,selectedNivo: String,databaseViewModel: DatabaseViewModel, modifier: Modifier = Modifier) {
-    val selectedNivoList = selectedNivo?.split(",")?.map { it.toString() }
-    val context = LocalContext.current
-    val zanrovi = databaseViewModel.allZanrovi.collectAsState(initial = emptyList())
+fun Zanr_igra_offline_mainCard(zanrovi: List<ZanrEntity>, onNext: (String) -> Unit, modifier: Modifier = Modifier) {
     var selectedZanrovi by remember { mutableStateOf(setOf<ZanrEntity>()) }
+    val context = LocalContext.current
 
     Surface(
         color = CardContainerColor,
-        modifier = modifier
-            .fillMaxWidth(0.9f)
-            .fillMaxHeight(0.75f)
-            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        modifier = modifier.mainCardStyle(widthFraction = 0.9f, heightFraction = 0.75f),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(24.dp),
+            modifier = Modifier.columnMainStyle(paddingValue = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -90,7 +101,7 @@ fun Zanr_igra_offline_mainCard(navController: NavController,selectedNivo: String
                 modifier = Modifier.weight(1f).padding(vertical = 16.dp)
             ) {
                 ZanroviEntityCheckboxList(
-                    zanrovi = zanrovi.value,
+                    zanrovi = zanrovi,
                     selectedZanrovi = selectedZanrovi,
                     onZanrSelected = { zanr, isChecked ->
                         selectedZanrovi = if (isChecked) {
@@ -105,8 +116,8 @@ fun Zanr_igra_offline_mainCard(navController: NavController,selectedNivo: String
             Button(
                 onClick = {
                     if (selectedZanrovi.isNotEmpty()) {
-                        val zanroviIds = selectedZanrovi.joinToString(",") { it.id.toString() }
-                        navController.navigate(Destinacije.Igra_offline.ruta + "/$zanroviIds/$selectedNivoList/0/0")
+                        val ids = selectedZanrovi.joinToString(",") { it.id.toString() }
+                        onNext(ids)
                     } else {
                         Toast.makeText(context, "Niste izabrali nijedan žanr", Toast.LENGTH_SHORT).show()
                     }
@@ -116,9 +127,7 @@ fun Zanr_igra_offline_mainCard(navController: NavController,selectedNivo: String
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(52.dp)
+                modifier = Modifier.buttonStyle()
             ) {
                 Text(
                     text = "Dalje",

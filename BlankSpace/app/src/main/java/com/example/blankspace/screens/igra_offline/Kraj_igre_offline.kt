@@ -4,64 +4,48 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.BodyText
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.ui.modifiers.buttonStyle
+import com.example.blankspace.ui.modifiers.columnMainStyle
+import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.viewModels.DatabaseViewModel
-import com.example.blankspace.viewModels.IgraSamViewModel
-import com.example.blankspace.viewModels.LoginViewModel
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-
+import  com.example.blankspace.ui.theme.*
 @Composable
 fun Kraj_igre_offline(navController: NavController,poeni:Int,databaseViewModel: DatabaseViewModel){
     Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
         BgCard2()
         val poeni2=poeni/10
-        Kraj_igre_offline_mainCard(navController,poeni2,databaseViewModel, modifier = Modifier.align(Alignment.Center))
+        Kraj_igre_offline_mainCard(navController,poeni2, modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun Kraj_igre_offline_mainCard(navController: NavController,poeni: Int,databaseViewModel: DatabaseViewModel, modifier: Modifier = Modifier) {
-    val uiState by databaseViewModel.uiState.collectAsState()
+fun Kraj_igre_offline_mainCard(navController: NavController, poeni: Int, modifier: Modifier = Modifier) {
 
     Surface(
         color = CardContainerColor,
-        modifier = modifier
-            .fillMaxWidth(0.85f)
-            .fillMaxHeight(0.55f)
-            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        modifier = modifier.mainCardStyle(heightFraction = 0.55f),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.columnMainStyle(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -115,7 +99,7 @@ fun KrajIgreButtons(navController: NavController) {
                 contentColor = Color.White
             ),
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth(0.9f).height(52.dp)
+            modifier = Modifier.buttonStyle()
         ) {
             Text(text = text, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
         }
@@ -139,9 +123,7 @@ fun KrajIgreButtons(navController: NavController) {
             contentColor = PrimaryDark.copy(alpha = 0.7f)
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .height(52.dp)
+        modifier = Modifier.buttonStyle()
     ) {
         Text(text = "Kraj", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
     }
