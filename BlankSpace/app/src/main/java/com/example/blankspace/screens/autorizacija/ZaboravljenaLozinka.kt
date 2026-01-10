@@ -16,15 +16,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.ui.modifiers.columnMainStyle
+import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.viewModels.UiStateZL
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun ZaboravljenaLozinka(navController: NavController, viewModel: ZaboravljenaLozinkaViewModel) {
@@ -48,16 +47,11 @@ fun ZaboravljenaLozinka_mainCard(navController: NavController, viewModel: Zabora
 
     Surface(
         color = CardContainerColor,
-        modifier = modifier
-            .fillMaxWidth(0.8f)
-            .fillMaxHeight(0.45f)
-            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        modifier = modifier.mainCardStyle(heightFraction = 0.45f, widthFraction = 0.8f),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.columnMainStyle(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

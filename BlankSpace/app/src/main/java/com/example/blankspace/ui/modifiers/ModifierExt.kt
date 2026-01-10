@@ -1,6 +1,6 @@
 package com.example.blankspace.ui.modifiers
 
-import android.icu.number.IntegerWidth
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -33,3 +34,17 @@ fun Modifier.buttonStyle(
     width: Float = 0.9f,
     height: Dp = 52.dp
 ) = this.fillMaxWidth(width).height(height)
+
+
+fun Modifier.horizontalVerticalPadding(
+    horizontalP: Dp = 24.dp,
+    verticalP: Dp = 64.dp
+) = this.fillMaxSize()
+    .padding(horizontal = horizontalP, vertical = verticalP)
+
+fun Modifier.tableRowStyle(
+    bgColor: Color,
+    isHeader: Boolean
+): Modifier = this
+    .fillMaxWidth().background(color = bgColor)
+    .padding(vertical = if (isHeader) 12.dp else 10.dp)

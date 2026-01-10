@@ -19,10 +19,6 @@ fun Pocetna(modifier: Modifier = Modifier, navController: NavController,viewMode
         BgCard2()
 
         PocetnaMainCard(
-            navController = navController,
-            8,
-            userName = null,
-            isLoggedIn = false,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
         )

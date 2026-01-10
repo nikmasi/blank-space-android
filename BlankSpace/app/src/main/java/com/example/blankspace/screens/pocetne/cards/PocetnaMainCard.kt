@@ -1,12 +1,7 @@
 package com.example.blankspace.screens.pocetne.cards
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,22 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.pocetne.components.PocetnaFooterText
+import com.example.blankspace.screens.pocetne.components.PocetnaHeaderText
 import com.example.blankspace.ui.components.HeadlineTextWhite
+import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun PocetnaMainCard(
-    navController: NavController,
-    imgSize:Int,
-    userName: String?,
-    isLoggedIn: Boolean,
     onGameSoloClick: () -> Unit,
     onGameDuelClick: () -> Unit,
     onSuggestArtistClick :(()->Unit)? =null,
@@ -45,27 +35,12 @@ fun PocetnaMainCard(
 ) {
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+        modifier = Modifier.horizontalVerticalPadding(verticalP = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "BlankSpace 🎵",
-                color = Color.White,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Igra dopunjavanja tekstova pesama",
-                color = Color.White.copy(alpha = 0.8f),
-                fontSize = 16.sp
-            )
-        }
+
+        PocetnaHeaderText()
 
         Card(
             modifier = Modifier
@@ -139,13 +114,7 @@ fun PocetnaMainCard(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "🎧 Zabavi se i testiraj svoje muzičko znanje!",
-            color = Color(0xFF49006B).copy(alpha = 0.8f),
-            fontSize = 14.sp
-        )
+        PocetnaFooterText()
     }
 }
 

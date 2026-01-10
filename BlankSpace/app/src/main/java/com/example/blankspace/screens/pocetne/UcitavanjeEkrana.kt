@@ -10,17 +10,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,62 +24,33 @@ import androidx.navigation.NavController
 import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.LoginViewModel
 import kotlinx.coroutines.delay
-import android.media.AudioAttributes
-import android.media.SoundPool
 import android.media.MediaPlayer
 import android.widget.Toast
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import com.example.blankspace.hasDownloadedData
 import com.example.blankspace.isInternetAvailable
 import com.example.blankspace.viewModels.DatabaseViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.blankspace.hasDownloadedData
-import com.example.blankspace.isInternetAvailable
-import com.example.blankspace.screens.pocetne.cards.BgCard2
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-
-// Boje za usklađivanje
-private val PrimaryDark = Color(0xFF49006B)       // Tamno ljubičasta/Magenta
-private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roze (za karticu)
-private val DarkOverlay = Color(0xFF330044) // Još tamnija boja za efekat zavese
+import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
+import com.example.blankspace.ui.modifiers.mainCardStyle
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController, loginViewModel: LoginViewModel, databaseViewModel: DatabaseViewModel) {
     Box(modifier = modifier.fillMaxSize()) {
-        BgCard2() // Pozadina sa gradijentom
+        BgCard2()
 
-        // Glavni sadržaj ekrana za učitavanje, centriran unutar Box-a
         UcitavanjeEkrana_main(
             navController = navController,
             loginViewModel = loginViewModel,
             databaseViewModel = databaseViewModel,
-            modifier = Modifier.align(Alignment.Center) // Centriranje!
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
@@ -158,28 +125,15 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
         ), label = "icon_scale_animation"
     )
 
-    val wipeProgress by animateFloatAsState(
-        targetValue = if (animationFinished.value) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 1200,
-            easing = FastOutSlowInEasing
-        )
-    )
-
     Surface(
         color = CardContainerColor,
-        modifier = modifier
-            .fillMaxWidth(0.85f)
-            .fillMaxHeight(0.65f)
-            .shadow(20.dp, RoundedCornerShape(32.dp)),
+        modifier = modifier.mainCardStyle(heightFraction = 0.65f, elevation = 20.dp, cornerRadius = 32.dp),
         shape = RoundedCornerShape(32.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 32.dp, vertical = 40.dp),
+                modifier = Modifier.horizontalVerticalPadding(horizontalP = 32.dp, verticalP = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -218,28 +172,6 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
                     )
                 }
             }
-            /*
-            // EFEKAT ZAVESE/WIPE EFFECT (Simulacija Motion Blur-a)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        // Pomeranje u Y osi bazirano na progresu wipe-a
-                        translationY = size.height * (1 - wipeProgress)
-                    }
-                    .background(DarkOverlay) // Tamna preklopna boja
-            ) {
-                // Opšta poruka dok je zavesa spuštena
-                if (wipeProgress < 0.2f) {
-                    Text(
-                        text = "Loading...",
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }*/
         }
     }
 }
@@ -249,7 +181,7 @@ fun LoadingQuoteText(text: String, color: Color, fontWeight: FontWeight = FontWe
     Text(
         text = text,
         color = color,
-        fontSize = 25.sp, // Veći font
+        fontSize = 25.sp,
         fontWeight = fontWeight,
         modifier = Modifier.padding(vertical = 4.dp)
     )

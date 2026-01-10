@@ -2,8 +2,6 @@ package com.example.blankspace.screens.autorizacija
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,33 +22,37 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.autorizacija.auth_components.ClickableTextStyled
+import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
 import com.example.blankspace.screens.pocetne.cards.BgCard2
+import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
+import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.RegistracijaViewModel
 import com.example.blankspace.viewModels.UiStateR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun Registracija(navController: NavController, viewModelLogin: LoginViewModel) {
+fun Registracija(navController: NavController, viewModelLogin: LoginViewModel, onBackToLogin: ()->Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         Registracija_mainCard(
             navController = navController,
             viewModelLogin = viewModelLogin,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            onBackToLogin = onBackToLogin
         )
     }
 }
 
 @Composable
-fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginViewModel, modifier: Modifier) {
+fun Registracija_mainCard(
+    navController: NavController, viewModelLogin: LoginViewModel, modifier: Modifier,onBackToLogin: ()->Unit
+) {
     val viewModel: RegistracijaViewModel = hiltViewModel()
     val uiStateRegistracija by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -59,15 +61,12 @@ fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginVie
     Spacer(modifier = Modifier.height(19.dp))
     Surface(
         color = CardContainerColor,
-        modifier = modifier
-            .fillMaxWidth(0.9f)
-            .fillMaxHeight(0.8f)
-            .shadow(16.dp, RoundedCornerShape(32.dp)),
+        modifier = modifier.mainCardStyle(widthFraction = 0.9f, heightFraction = 0.8f, cornerRadius = 32.dp),
         shape = RoundedCornerShape(32.dp)
     ) {
         Spacer(modifier = Modifier.height(19.dp))
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.horizontalVerticalPadding(horizontalP = 32.dp, verticalP = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
             contentPadding = PaddingValues(bottom = 16.dp)
@@ -106,10 +105,10 @@ fun Registracija_mainCard(navController: NavController, viewModelLogin: LoginVie
                     RegistrationButton(name, username, password, co_password, question, answer, context, viewModel)
 
                     Spacer(modifier = Modifier.height(20.dp))
-                    DividerWithIconModernReg()
+                    DividerWithIconModernAuth()
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    LoginNavigation(navController)
+                    LoginNavigation(onClick = onBackToLogin)
                 }
             }
         }
@@ -142,7 +141,7 @@ fun HandleRegistrationResponse(uiStateRegistracija: UiStateR, context: android.c
 }
 
 @Composable
-fun RegistrationHeader() {
+private fun RegistrationHeader() {
     Text(
         text = "Registracija",
         color = PrimaryDark,
@@ -153,7 +152,7 @@ fun RegistrationHeader() {
 }
 
 @Composable
-fun RegistrationFields(
+private fun RegistrationFields(
     name: String,
     username: String,
     password: String,
@@ -238,59 +237,13 @@ fun RegistrationButton(name: String, username: String, password: String, co_pass
 }
 
 @Composable
-fun DividerWithIconModernReg() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Divider(
-            color = PrimaryDark.copy(alpha = 0.3f),
-            modifier = Modifier.weight(1f),
-            thickness = 1.dp
-        )
-        Text(
-            text = "ILI",
-            color = PrimaryDark.copy(alpha = 0.6f),
-            fontSize = 12.sp,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-        Divider(
-            color = PrimaryDark.copy(alpha = 0.3f),
-            modifier = Modifier.weight(1f),
-            thickness = 1.dp
-        )
-    }
-}
-
-@Composable
-fun LoginNavigation(navController: NavController) {
+private fun LoginNavigation(onClick: ()-> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             "Imate nalog? ",
             style = MaterialTheme.typography.bodyMedium,
             color = PrimaryDark.copy(alpha = 0.8f)
         )
-        ClickableTextStyledReg(
-            text = "Prijavite se",
-            navController = navController,
-            destination = Destinacije.Login.ruta
-        )
+        ClickableTextStyled("Prijavi se", onClick = onClick)
     }
-}
-
-@Composable
-fun ClickableTextStyledReg(text: String, navController: NavController, destination: String) {
-    val color by animateColorAsState(
-        targetValue = PrimaryDark,
-        label = "clickable_text_color"
-    )
-
-    Text(
-        text = text,
-        color = color,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp,
-        modifier = Modifier
-            .clickable { navController.navigate(destination) }
-    )
 }

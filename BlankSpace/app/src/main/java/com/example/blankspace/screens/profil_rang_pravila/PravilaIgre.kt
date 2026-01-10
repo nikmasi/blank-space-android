@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.profil_rang_pravila
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,10 +16,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.shadow
-
-val RULES_CARD_BG = Color.White
-val RULES_ACCENT = Color(0xFFEC8FB7)
-val RULES_TEXT_DARK = Color(0xFF49006B)
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
+import com.example.blankspace.ui.modifiers.mainCardStyle
+import com.example.blankspace.ui.modifiers.tableRowStyle
+import  com.example.blankspace.ui.theme.*
 
 @Composable
 fun PravilaIgre(navController: NavController){
@@ -28,25 +30,19 @@ fun PravilaIgre(navController: NavController){
         BgCard2()
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 64.dp),
+            modifier = Modifier.horizontalVerticalPadding().padding(top=28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(28.dp))
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.9f)
-                    .shadow(16.dp, RoundedCornerShape(36.dp)),
+                modifier = Modifier.mainCardStyle(widthFraction = 1f, heightFraction = 0.9f, cornerRadius = 36.dp)
+                    .padding(top=28.dp),
                 colors = CardDefaults.cardColors(containerColor = RULES_CARD_BG),
                 shape = RoundedCornerShape(36.dp)
             ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp, vertical = 32.dp),
+                    modifier = Modifier.horizontalVerticalPadding(verticalP = 32.dp),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
@@ -55,21 +51,14 @@ fun PravilaIgre(navController: NavController){
                             fontSize = 32.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = RULES_TEXT_DARK,
-                            modifier = Modifier.padding(bottom = 24.dp)
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
                     }
 
                     item { Section1Content() }
-                    item { Spacer(modifier = Modifier.height(32.dp)) }
-
                     item { Section2Content() }
-                    item { Spacer(modifier = Modifier.height(32.dp)) }
-
                     item { Section3Content() }
-                    item { Spacer(modifier = Modifier.height(32.dp)) }
-
                     item { Section4Content() }
-                    item { Spacer(modifier = Modifier.height(40.dp)) }
 
                     item {
                         Button(
@@ -207,58 +196,59 @@ fun BulletPointSmall(text: String) {
 }
 
 @Composable
-fun TableRowModern(
-    col1: String,
-    col2: String,
-    col3: String,
-    col4: String,
-    bgColor: Color
-) {
+fun TableRowModern(col1: String, col2: String, col3: String, col4: String, bgColor: Color) {
     val isHeader = bgColor == RULES_ACCENT
+    val textColor = if (isHeader) Color.White else RULES_TEXT_DARK
+    val fontWeight = if (isHeader) FontWeight.ExtraBold else FontWeight.Normal
+    val fontSize = if (isHeader) 16.sp else 14.sp
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = bgColor)
-            .padding(vertical = if (isHeader) 12.dp else 10.dp),
+        modifier = Modifier.tableRowStyle(bgColor,isHeader),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Text(
+        TableCell(
             text = col1,
-            modifier = Modifier
-                .weight(1.5f)
-                .padding(start = 16.dp),
-            textAlign = TextAlign.Start,
+            weight = 1.5f,
             color = if (isHeader) Color.White else RULES_TEXT_DARK.copy(alpha = 0.8f),
-            fontWeight = if (isHeader) FontWeight.ExtraBold else FontWeight.Normal,
-            fontSize = if (isHeader) 16.sp else 14.sp
+            fontWeight = fontWeight,
+            fontSize = fontSize,
+            alignment = TextAlign.Start,
+            paddingStart = 16.dp
         )
-        Text(
-            text = col2,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            color = if (isHeader) Color.White else RULES_TEXT_DARK,
-            fontWeight = FontWeight.Bold,
-            fontSize = if (isHeader) 16.sp else 14.sp
-        )
-        Text(
-            text = col3,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            color = if (isHeader) Color.White else RULES_TEXT_DARK,
-            fontWeight = FontWeight.Bold,
-            fontSize = if (isHeader) 16.sp else 14.sp
-        )
-        Text(
-            text = col4,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            color = if (isHeader) Color.White else RULES_TEXT_DARK,
-            fontWeight = FontWeight.Bold,
-            fontSize = if (isHeader) 16.sp else 14.sp
-        )
+        listOf(col2, col3, col4).forEach { text ->
+            TableCell(
+                text = text,
+                weight = 1f,
+                color = textColor,
+                fontWeight = if (isHeader) fontWeight else FontWeight.Bold,
+                fontSize = fontSize,
+                alignment = TextAlign.Center
+            )
+        }
     }
     if (!isHeader) {
-        Divider(color = Color.LightGray.copy(alpha = 0.5f), thickness = 1.dp)
+        HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f), thickness = 0.5.dp)
     }
+}
+
+@Composable
+private fun RowScope.TableCell(
+    text: String,
+    weight: Float,
+    color: Color,
+    fontWeight: FontWeight,
+    fontSize: TextUnit,
+    alignment: TextAlign,
+    paddingStart: Dp = 0.dp
+) {
+    Text(
+        text = text,
+        modifier = Modifier.weight(weight).padding(start = paddingStart),
+        textAlign = alignment,
+        color = color,
+        fontWeight = fontWeight,
+        fontSize = fontSize,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
 }

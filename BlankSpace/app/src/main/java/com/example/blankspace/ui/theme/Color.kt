@@ -16,3 +16,7 @@ val PrimaryDark = Color(0xFF49006B)
 val CardContainerColor = Color(0xFFF0DAE7)
 val AccentPink = Color(0xFFEC8FB7)
 val LightBackground = Color.White
+
+val RULES_CARD_BG = Color.White
+val RULES_ACCENT = Color(0xFFEC8FB7)
+val RULES_TEXT_DARK = Color(0xFF49006B)

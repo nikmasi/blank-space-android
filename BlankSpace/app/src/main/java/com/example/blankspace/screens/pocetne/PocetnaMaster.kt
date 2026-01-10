@@ -32,10 +32,6 @@ fun PocetnaMaster(modifier: Modifier = Modifier,navController: NavController,vie
         }
 
         PocetnaMainCard(
-            navController = navController,
-            imgSize = 5,
-            userName = ime.ime,
-            isLoggedIn = isLoggedIn,
             onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
             onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
             onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },

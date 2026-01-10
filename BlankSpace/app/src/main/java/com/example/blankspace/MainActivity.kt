@@ -199,7 +199,8 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PocetnaOffline.ruta) {
                 userType=""
-                PocetnaOffline(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                PocetnaOffline(modifier = Modifier.padding(padding),
+                    onNavigateToOffline = { navController.navigate(Destinacije.Nivo_igra_offline.ruta) })
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"
@@ -364,7 +365,8 @@ fun BlankSpaceApp(){
                 Login(navController,viewModelLogin)
             }
             composable(route = Destinacije.Registracija.ruta) {
-                Registracija(navController,viewModelLogin)
+                Registracija(navController,viewModelLogin,
+                    onBackToLogin ={ navController.navigate(Destinacije.Login.ruta) })
             }
             composable(route = Destinacije.ZaboravljenaLozinka.ruta) {
                 ZaboravljenaLozinka(navController,viewModelZaboravljenaLozinka)
