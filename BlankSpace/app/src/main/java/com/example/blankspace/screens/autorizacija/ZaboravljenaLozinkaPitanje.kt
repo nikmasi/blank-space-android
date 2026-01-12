@@ -22,10 +22,7 @@ import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun ZaboravljenaLozinkaPitanje(navController: NavController, viewModel: ZaboravljenaLozinkaViewModel) {
@@ -68,7 +65,6 @@ fun ZaboravljenaLozinkaPitanje_mainCard(navController: NavController, viewModel:
             var odgovor by remember { mutableStateOf("") }
 
             PasswordQuestionField(odgovor, onValueChange = { odgovor = it })
-
 
             PasswordQuestionButton(odgovor, context, uiState, viewModel)
         }

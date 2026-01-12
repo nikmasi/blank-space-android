@@ -1,0 +1,26 @@
+<resources>
+    <string name="subtitle_default">Igra dopunjavanja tekstova pesama</string>
+    <string name="welcome_description">Zabavi se i testiraj svoje muzičko znanje!</string>
+    <string name="headline_choose_mode">Izaberi režim igre</string>
+    <string name="btn_offline_play">Offline igra</string>
+
+    //login
+    <string name="title_login">Prijava</string>
+    <string name="textField_username">Korisničko ime</string>
+    <string name="textField_password">Lozinka</string>
+    <string name="btn_login">Prijavi se</string>
+    <string name="login_no_account">Još nemate nalog? </string>
+    <string name="login_sign_up">Registrujte se</string>
+    <string name="login_continue_as_guest">Nastavi kao gost</string>
+    <string name="divider_or">ILI</string>
+    <string name="login_forgot_password">Zaboravili ste lozinku?</string>
+
+
+    //registracija
+    <string name="title_signUp"> Registracija</string>
+    <string name="registration_already_have_account">Imate nalog? </string>
+    <string name="registration_log_in"> Prijavi se</string>
+
+    <string name="welcome_msg">Dobrodošli!</string>
+    <string name="rules_btn">Pravila igre</string>
+</resources>

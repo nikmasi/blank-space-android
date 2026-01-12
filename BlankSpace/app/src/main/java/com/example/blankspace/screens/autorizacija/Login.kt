@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.autorizacija.auth_components.AuthHeader
+import com.example.blankspace.screens.autorizacija.auth_components.AuthNavigation
 import com.example.blankspace.screens.autorizacija.auth_components.ClickableTextStyled
 import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
 import com.example.blankspace.screens.pocetne.cards.BgCard2
@@ -66,7 +69,7 @@ fun Login_mainCard(navController: NavController, viewModel: LoginViewModel, modi
         ) {
 
             LoginImage()
-            LoginHeader()
+            AuthHeader(stringResource(id = R.string.title_login))
 
             LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
 
@@ -107,19 +110,6 @@ fun HandleLoginResponse(uiState: UiStateL, context: android.content.Context, nav
     }
 }
 
-
-@Composable
-private fun LoginHeader() {
-    Text(
-        text = "Prijava",
-        style = MaterialTheme.typography.headlineLarge,
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 32.sp,
-        modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
-    )
-}
-
 @Composable
 private fun LoginImage() {
     Image(
@@ -135,7 +125,7 @@ private fun LoginFields(username: String, password: String, onUsernameChange: (S
     OutlinedTextField(
         value = username,
         onValueChange = onUsernameChange,
-        label = { Text("Korisničko ime", color = PrimaryDark) },
+        label = { Text(stringResource(id = R.string.textField_username), color = PrimaryDark) },
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = AccentPink,
             unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
@@ -150,7 +140,7 @@ private fun LoginFields(username: String, password: String, onUsernameChange: (S
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Lozinka", color = PrimaryDark) },
+        label = { Text(stringResource(id = R.string.textField_password), color = PrimaryDark) },
         visualTransformation = PasswordVisualTransformation(),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = AccentPink,
@@ -184,13 +174,11 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(top=12.dp, bottom = 24.dp)
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
+        modifier = Modifier.padding(top=12.dp, bottom = 24.dp).fillMaxWidth()
+            .height(56.dp).shadow(elevation, RoundedCornerShape(16.dp))
     ) {
         Text(
-            text = "Prijavi se",
+            text = stringResource(id = R.string.btn_login),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -203,12 +191,10 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
     }
 }
 
-
-
 @Composable
 fun ForgotPassword(onClick: () ->Unit) {
     ClickableTextStyled(
-        text = "Zaboravili ste lozinku?",
+        text = stringResource(id = R.string.login_forgot_password),
         onClick = onClick,
     )
 }
@@ -216,18 +202,9 @@ fun ForgotPassword(onClick: () ->Unit) {
 @Composable
 fun SignUpNavigation(onSignUpClick: () -> Unit, onGuestClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "Još nemate nalog? ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = PrimaryDark.copy(alpha = 0.8f)
-            )
 
-            ClickableTextStyled(
-                text = "Registrujte se",
-                onClick = onSignUpClick
-            )
-        }
+        AuthNavigation(title = stringResource(id = R.string.login_no_account),
+            textClick = stringResource(id = R.string.login_sign_up), onSignUpClick)
 
         Button(
             onClick = onGuestClick,
@@ -241,7 +218,7 @@ fun SignUpNavigation(onSignUpClick: () -> Unit, onGuestClick: () -> Unit) {
             modifier = Modifier.padding(top = 8.dp)
         ) {
             Text(
-                text = "Nastavi kao gost",
+                text = stringResource(id = R.string.login_continue_as_guest),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
             )

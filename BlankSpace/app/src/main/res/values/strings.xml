@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">BlankSpace</string>
+    //pocetna
+    <string name="app_name" translatable="false">Blank Space</string>
+    <string name="subtitle_default">Complete the song lyrics</string>
+    <string name="welcome_description">Have fun and test your music knowledge!</string>
+    <string name="headline_choose_mode">Choose Game Mode</string>
+    <string name="btn_offline_play">Play Offline</string>
+
+
+    //login
+    <string name="title_login">Login</string>
+    <string name="textField_username">Username</string>
+    <string name="textField_password">Password</string>
+    <string name="btn_login">Log in</string>
+    <string name="login_no_account">Don\'t have an account? </string>
+    <string name="login_sign_up">Sign up</string>
+    <string name="login_continue_as_guest">Continue as a guest</string>
+    <string name="divider_or">OR</string>
+    <string name="login_forgot_password">Forgot your password?</string>
+
+    //registracija
+    <string name="title_signUp"> Sign up</string>
+    <string name="registration_already_have_account">Already have an account? </string>
+    <string name="registration_log_in"> Log in</string>
+
+    <string name="welcome_msg">Welcome!</string>
+    <string name="rules_btn">Game Rules</string>
 </resources>

@@ -7,15 +7,17 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.pocetne.components.PocetnaFooterText
 import com.example.blankspace.screens.pocetne.components.PocetnaHeaderText
 import com.example.blankspace.ui.components.HeadlineTextWhite
 import com.example.blankspace.ui.components.PrimaryGameButton
+import com.example.blankspace.ui.modifiers.cardStyle
 import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
+import com.example.blankspace.R
 
 @Composable
 fun PocetnaOffline(modifier: Modifier = Modifier, onNavigateToOffline: () -> Unit) {
@@ -41,9 +43,7 @@ fun PocetnaOffline(modifier: Modifier = Modifier, onNavigateToOffline: () -> Uni
 @Composable
 private fun PocetnaOfflineCard(onNavigateToOffline: () -> Unit){
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(12.dp, RoundedCornerShape(36.dp)),
+        modifier = Modifier.cardStyle(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF0DAE7)),
         shape = RoundedCornerShape(36.dp)
     ) {
@@ -51,9 +51,9 @@ private fun PocetnaOfflineCard(onNavigateToOffline: () -> Unit){
             modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadlineTextWhite("Izaberi režim igre")
+            HeadlineTextWhite(stringResource(id = R.string.headline_choose_mode))
 
-            PrimaryGameButton(text = "Offline igra", onClick = onNavigateToOffline)
+            PrimaryGameButton(text = stringResource(id = R.string.btn_offline_play), onClick = onNavigateToOffline)
         }
     }
 }

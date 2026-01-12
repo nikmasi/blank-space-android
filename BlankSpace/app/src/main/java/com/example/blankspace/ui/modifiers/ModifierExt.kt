@@ -24,6 +24,14 @@ fun Modifier.mainCardStyle(
     .fillMaxHeight(heightFraction)
     .shadow(elevation, RoundedCornerShape(cornerRadius))
 
+fun Modifier.cardStyle(
+    elevation: Dp = 12.dp,
+    cornerRadius: Dp = 36.dp
+): Modifier = this
+    .fillMaxWidth()
+    .shadow(elevation, RoundedCornerShape(cornerRadius))
+
+
 fun Modifier.columnMainStyle(
     paddingValue: Dp = 32.dp
 ): Modifier = this

@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.blankspace.R
 import com.example.blankspace.ui.theme.PrimaryDark
 
 @Composable
@@ -24,7 +26,7 @@ fun DividerWithIconModernAuth() {
             color = PrimaryDark.copy(alpha = 0.3f)
         )
         Text(
-            text = "ILI",
+            text = stringResource(id = R.string.divider_or),
             color = PrimaryDark.copy(alpha = 0.6f),
             fontSize = 12.sp,
             modifier = Modifier.padding(horizontal = 8.dp)

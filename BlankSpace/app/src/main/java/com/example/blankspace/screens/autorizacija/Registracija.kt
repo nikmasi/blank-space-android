@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -21,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.autorizacija.auth_components.ClickableTextStyled
+import com.example.blankspace.screens.autorizacija.auth_components.AuthHeader
+import com.example.blankspace.screens.autorizacija.auth_components.AuthNavigation
 import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
@@ -71,7 +74,7 @@ fun Registracija_mainCard(
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            item { RegistrationHeader() }
+            item { AuthHeader(stringResource(id = R.string.title_signUp)) }
 
             item {
                 var name by remember { mutableStateOf("") }
@@ -108,7 +111,8 @@ fun Registracija_mainCard(
                     DividerWithIconModernAuth()
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    LoginNavigation(onClick = onBackToLogin)
+                    AuthNavigation(title = stringResource(id = R.string.registration_already_have_account),
+                        textClick = stringResource(id = R.string.registration_log_in), onBackToLogin)
                 }
             }
         }
@@ -138,17 +142,6 @@ fun HandleRegistrationResponse(uiStateRegistracija: UiStateR, context: android.c
             navController.navigate(Destinacije.PocetnaBrucos.ruta)
         }
     }
-}
-
-@Composable
-private fun RegistrationHeader() {
-    Text(
-        text = "Registracija",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 32.sp,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
 }
 
 @Composable
@@ -233,17 +226,5 @@ fun RegistrationButton(name: String, username: String, password: String, co_pass
             delay(100)
             pressed = false
         }
-    }
-}
-
-@Composable
-private fun LoginNavigation(onClick: ()-> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            "Imate nalog? ",
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryDark.copy(alpha = 0.8f)
-        )
-        ClickableTextStyled("Prijavi se", onClick = onClick)
     }
 }

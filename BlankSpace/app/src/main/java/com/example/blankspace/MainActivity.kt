@@ -180,7 +180,10 @@ fun BlankSpaceApp(){
 
     Scaffold(
         topBar = {
-            if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta)
+            if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta && currentRoute!=Destinacije.Login.ruta
+                && currentRoute!=Destinacije.Registracija.ruta
+                && currentRoute!=Destinacije.ZaboravljenaLozinka.ruta
+            )
                 BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin)},
         bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
