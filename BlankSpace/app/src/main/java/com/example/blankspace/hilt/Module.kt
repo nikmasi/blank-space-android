@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.Api
 import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.data.retrofit.BASE_URL_LOCALHOST
 import com.google.gson.GsonBuilder
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,4 +96,14 @@ object AppModule {
         return context
     }
 
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    abstract fun bindRepository(
+        repositoryImpl: Repository
+    ): RepositoryInterface
 }

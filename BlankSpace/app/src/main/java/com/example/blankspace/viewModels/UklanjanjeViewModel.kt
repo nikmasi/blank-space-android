@@ -1,9 +1,9 @@
 package com.example.blankspace.viewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UklanjanjeViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: RepositoryInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateUklanjanjeKorisnika())

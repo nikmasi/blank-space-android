@@ -3,6 +3,7 @@ package com.example.blankspace.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.RangListaResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RangListaModel @Inject constructor(
-    private val repository: Repository
+    private val repository: RepositoryInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateRL())

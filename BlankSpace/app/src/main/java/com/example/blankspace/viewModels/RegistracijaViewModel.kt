@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.RegistracijaRequest
 import com.example.blankspace.data.retrofit.models.RegistracijaResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegistracijaViewModel @Inject constructor(
-    private val repository: Repository,
+    private val repository: RepositoryInterface,
     private val context: Context
 ) : ViewModel() {
 

@@ -5,7 +5,6 @@ import com.example.blankspace.data.retrofit.models.AudioRequest
 import com.example.blankspace.data.retrofit.models.AudioResponse
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataRequst
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataResponse
-import com.example.blankspace.data.retrofit.models.DodajZanrRequest
 import com.example.blankspace.data.retrofit.models.DodajZanrResponse
 import com.example.blankspace.data.retrofit.models.DuelRequest
 import com.example.blankspace.data.retrofit.models.DuelResponse
@@ -69,100 +68,98 @@ import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
-import com.example.blankspace.data.retrofit.models.ZanrResponse
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
-import retrofit2.http.GET
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val Api: Api,
-) {
-    suspend fun getZanrovi():List<Zanr> = Api.getZanrovi()
+): RepositoryInterface {
+    override suspend fun getZanrovi():List<Zanr> = Api.getZanrovi()
 
-    suspend fun dohvati_izvodjace_zanra(request:ZanrNazivRequest):List<IzvodjaciZanra> = Api.dohvati_izvodjace_zanra(request)
+    override suspend fun dohvati_izvodjace_zanra(request:ZanrNazivRequest):List<IzvodjaciZanra> = Api.dohvati_izvodjace_zanra(request)
 
-    suspend fun web_scrapper(request: WebScrapperRequest): List<WebScrapperResponse> = Api.web_scrapper(request)
+    override suspend fun web_scrapper(request: WebScrapperRequest): List<WebScrapperResponse> = Api.web_scrapper(request)
 
-    suspend fun getIgraSamData(request: IgraSamRequest): IgraSamResponse = Api.getIgraSamData(request)
+    override suspend fun getIgraSamData(request: IgraSamRequest): IgraSamResponse = Api.getIgraSamData(request)
 
-    suspend fun getRangLista(): List<RangListaResponse> = Api.getRangLista()
+    override suspend fun getRangLista(): List<RangListaResponse> = Api.getRangLista()
 
-    suspend fun getMojProfilData(@Body request: MojProfilRequest): MojProfilResponse=Api.getMojProfilData(request)
+    override suspend fun getMojProfilData(@Body request: MojProfilRequest): MojProfilResponse=Api.getMojProfilData(request)
 
-    suspend fun getIzvodjaci(): List<Izvodjac> = Api.getIzvodjaci()
+    override suspend fun getIzvodjaci(): List<Izvodjac> = Api.getIzvodjaci()
 
-    suspend fun getPesme(): List<Pesma> = Api.getPesme()
+    override suspend fun getPesme(): List<Pesma> = Api.getPesme()
 
-    suspend fun getStihovi(): List<Stih> = Api.getStihovi()
+    override suspend fun getStihovi(): List<Stih> = Api.getStihovi()
 
-    suspend fun getAudio(request:AudioRequest):AudioResponse = Api.getAudio(request)
+    override suspend fun getAudio(request:AudioRequest):AudioResponse = Api.getAudio(request)
 
-    suspend fun login(@Body credentials: LoginRequest): LoginResponse = Api.login(credentials)
+    override suspend fun login(@Body credentials: LoginRequest): LoginResponse = Api.login(credentials)
 
-    suspend fun predlaganje_izvodjaca(@Body predlaganjeIzvodjacaRequset: PredlaganjeIzvodjacaRequset):
+    override suspend fun predlaganje_izvodjaca(@Body predlaganjeIzvodjacaRequset: PredlaganjeIzvodjacaRequset):
             PredlaganjeIzvodjacaResponse = Api.predlaganje_izvodjaca(predlaganjeIzvodjacaRequset)
 
-    suspend fun predlaganje_pesme(@Body predlaganjePesmeRequset: PredlaganjePesmeRequset):
+    override suspend fun predlaganje_pesme(@Body predlaganjePesmeRequset: PredlaganjePesmeRequset):
             PredlaganjePesmeResponse = Api.predlaganje_pesme(predlaganjePesmeRequset)
 
-    suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
+    override suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
             PredlaganjePretraziResponse = Api.predlaganje_pretrazi(predlaganjePretraziRequest)
 
 
-    suspend fun getIzvodjaciZanra(@Body request: Zanr): List<IzvodjaciZanra> = Api.getIzvodjaciZanra(request)
+    override suspend fun getIzvodjaciZanra(@Body request: Zanr): List<IzvodjaciZanra> = Api.getIzvodjaciZanra(request)
 
-    suspend fun getPesmeIzvodjaca(@Body request: Izvodjac): List<PesmeIzvodjaca> = Api.getPesmeIzvodjaca(request)
+    override suspend fun getPesmeIzvodjaca(@Body request: Izvodjac): List<PesmeIzvodjaca> = Api.getPesmeIzvodjaca(request)
 
-    suspend fun getKorisniciUklanjanje():List<KorisniciResponse> = Api.getKorisniciUklanjanje()
+    override suspend fun getKorisniciUklanjanje():List<KorisniciResponse> = Api.getKorisniciUklanjanje()
 
-    suspend fun postRegistracija(@Body request: RegistracijaRequest): RegistracijaResponse = Api.postRegistracija(request)
+    override suspend fun postRegistracija(@Body request: RegistracijaRequest): RegistracijaResponse = Api.postRegistracija(request)
 
-    suspend fun postZaboravljenaLozinka(@Body request: ZaboravljenaLozinkaRequest): ZaboravljenaLozinkaResponse
+    override suspend fun postZaboravljenaLozinka(@Body request: ZaboravljenaLozinkaRequest): ZaboravljenaLozinkaResponse
             = Api.postZaboravljenaLozinka(request)
 
-    suspend fun postZaboravljenaLozinkaPitanje(@Body request: ZaboravljenaLozinkaPitanjeRequest): ZaboravljenaLozinkaPitanjeResponse
+    override suspend fun postZaboravljenaLozinkaPitanje(@Body request: ZaboravljenaLozinkaPitanjeRequest): ZaboravljenaLozinkaPitanjeResponse
             = Api.postZaboravljenaLozinkaPitanje(request)
 
-    suspend fun postNovaLozinka(@Body request: NovaLozinkaRequest): NovaLozinkaResponse = Api.postNovaLozinka(request)
+    override suspend fun postNovaLozinka(@Body request: NovaLozinkaRequest): NovaLozinkaResponse = Api.postNovaLozinka(request)
 
-    suspend fun getPredloziIzvodjaca():List<PredloziIzvodjacaResponse> = Api.getPredloziIzvodjaca()
+    override suspend fun getPredloziIzvodjaca():List<PredloziIzvodjacaResponse> = Api.getPredloziIzvodjaca()
 
-    suspend fun odbijPredlogIzvodjaca(@Body request: PredloziIzvodjacaOdbijRequest): List<PredloziIzvodjacaResponse>
+    override suspend fun odbijPredlogIzvodjaca(@Body request: PredloziIzvodjacaOdbijRequest): List<PredloziIzvodjacaResponse>
         = Api.odbijPredlogIzvodjaca(request)
 
-    suspend fun getPredloziPesme():List<PredloziPesamaResponse> = Api.getPredloziPesme()
+    override suspend fun getPredloziPesme():List<PredloziPesamaResponse> = Api.getPredloziPesme()
 
-    suspend fun odbijPredlogPesme(@Body request: PredloziPesamaOdbijRequest): List<PredloziPesamaResponse>
+    override suspend fun odbijPredlogPesme(@Body request: PredloziPesamaOdbijRequest): List<PredloziPesamaResponse>
        = Api.odbijPredlogPesme(request)
 
-    suspend fun generisiSifru(@Body request: GenerisiSifruRequest): GenerisiSifruResponse = Api.generisiSifru(request)
+    override suspend fun generisiSifru(@Body request: GenerisiSifruRequest): GenerisiSifruResponse = Api.generisiSifru(request)
 
-    suspend fun proveriSifruSobe(@Body request: ProveriSifruRequest): ProveriSifruResponse = Api.proveriSifruSobe(request)
+    override suspend fun proveriSifruSobe(@Body request: ProveriSifruRequest): ProveriSifruResponse = Api.proveriSifruSobe(request)
 
-    suspend fun stigaoIgrac(@Body request: StigaoIgracRequest): StigaoIgracResponse = Api.stigaoIgrac(request)
+    override suspend fun stigaoIgrac(@Body request: StigaoIgracRequest): StigaoIgracResponse = Api.stigaoIgrac(request)
 
-    suspend fun duel(@Body request: DuelRequest): DuelResponse =Api.duel(request)
+    override suspend fun duel(@Body request: DuelRequest): DuelResponse =Api.duel(request)
 
-    suspend fun krajIgre(@Body request: KrajIgreRequest): KrajIgreResponse =Api.krajIgre(request)
+    override suspend fun krajIgre(@Body request: KrajIgreRequest): KrajIgreResponse =Api.krajIgre(request)
 
-    suspend fun uklanjanjeKorisnika(@Body request: UklanjanjeKorisnikaRequest): UklanjanjeKorisnikaResponse =
+    override suspend fun uklanjanjeKorisnika(@Body request: UklanjanjeKorisnikaRequest): UklanjanjeKorisnikaResponse =
         Api.uklanjanjeKorisnika(request)
 
-    suspend fun uklanjanjeZanra(@Body request: UklanjanjeZanraRequest): UklanjanjeZanraResponse= Api.uklanjanjeZanra(request)
+    override suspend fun uklanjanjeZanra(@Body request: UklanjanjeZanraRequest): UklanjanjeZanraResponse= Api.uklanjanjeZanra(request)
 
-    suspend fun uklanjanjeIzvodjaca(@Body request: UklanjanjeIzvodjacaRequest): UklanjanjeIzvodjacaResponse
+    override suspend fun uklanjanjeIzvodjaca(@Body request: UklanjanjeIzvodjacaRequest): UklanjanjeIzvodjacaResponse
         = Api.uklanjanjeIzvodjaca(request)
 
-    suspend fun uklanjanjePesme(@Body request: UklanjanjePesmeRequest): UklanjanjePesmeResponse = Api.uklanjanjePesme(request)
+    override suspend fun uklanjanjePesme(@Body request: UklanjanjePesmeRequest): UklanjanjePesmeResponse = Api.uklanjanjePesme(request)
 
 
-    suspend fun provera_da_li_postoji(@Body request: ProveraDaLiPostojiRequest): ProveraDaLiPostojiResponse
+    override suspend fun provera_da_li_postoji(@Body request: ProveraDaLiPostojiRequest): ProveraDaLiPostojiResponse
         =Api.provera_da_li_postoji(request)
 
-    suspend fun dodajZanr( zanr: String,
+    override suspend fun dodajZanr( zanr: String,
                            izvodjac: String,
                            nazivPesme: String,
                            nepoznatiStihovi: String,
@@ -178,16 +175,16 @@ class Repository @Inject constructor(
         zvuk = zvuk
     )
 
-    suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst): CekanjeRezultataResponse
+    override suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst): CekanjeRezultataResponse
         = Api.cekanjeRezultata(request)
 
-    suspend fun krajDuela(@Body request: KrajDuelaRequest): KrajDuelaResponse = Api.krajDuela(request)
+    override suspend fun krajDuela(@Body request: KrajDuelaRequest): KrajDuelaResponse = Api.krajDuela(request)
 
-    suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse> = Api.getPesmePoIzvodjacima()
+    override suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse> = Api.getPesmePoIzvodjacima()
 
-    suspend fun getStihoviPoPesmama():List<StihoviPoPesmamaResponse> = Api.getStihoviPoPesmama()
+    override suspend fun getStihoviPoPesmama():List<StihoviPoPesmamaResponse> = Api.getStihoviPoPesmama()
 
-    suspend fun getStatistika():StatistikaResponse = Api.getStatistika()
+    override suspend fun getStatistika():StatistikaResponse = Api.getStatistika()
 
-    suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest): KorisnikPregledResponse = Api.getPregledKorisnik(requst)
+    override suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest): KorisnikPregledResponse = Api.getPregledKorisnik(requst)
 }

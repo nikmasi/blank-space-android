@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRequest
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ZaboravljenaLozinkaViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: RepositoryInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateZL())

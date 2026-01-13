@@ -4,8 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.Zanr
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ZanrViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: RepositoryInterface,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateZ())

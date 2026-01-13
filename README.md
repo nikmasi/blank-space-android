@@ -41,6 +41,7 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - Room (local database for offline support)
 - Retrofit (REST API communication)
 - Hilt (Dependency Injection)
+- JUnit 4, MockK & Turbine (Unit Testing)
 - EncryptedSharedPreferences (secure JWT token storage)
 - MediaPlayer (audio playback)
 - Android SpeechRecognizer API (voice input)
@@ -92,6 +93,18 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - Student – unlocks voice-based mode
 - Master – unlocks challenge mode & song suggestions
 - Admin – content management, user moderation, system analytics
+
+---
+
+## Testing
+
+The project includes a comprehensive unit testing suite for the ViewModel layer to ensure business logic reliability and state integrity.
+
+- **Unit Testing:** Implemented using JUnit 4.
+- **Mocking:** Utilized MockK for repository and Android dependency mocking (Log, MediaPlayer).
+- **Coroutines Testing:** Handled via `MainDispatcherRule` and `runTest` for predictable asynchronous execution.
+- **State Verification:** Used Turbine for concise and robust testing of `StateFlow` emissions.
+- **Coverage:** Key flows tested include room code generation, game logic, data mapping from Room, and file upload handling.
 
 ---
 

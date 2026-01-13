@@ -3,16 +3,10 @@ package com.example.blankspace.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.Repository
-import com.example.blankspace.data.retrofit.models.Izvodjac
+import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.StatistikaResponse
 import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
-import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
-import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaRequest
-import com.example.blankspace.data.retrofit.models.UklanjanjeKorisnikaResponse
-import com.example.blankspace.data.retrofit.models.UklanjanjePesmeRequest
-import com.example.blankspace.data.retrofit.models.UklanjanjeZanraRequest
-import com.example.blankspace.data.retrofit.models.Zanr
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AdminStatistikaViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: RepositoryInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminStatistikaUiState())

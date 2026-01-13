@@ -1,10 +1,9 @@
-package com.example.blankspace.data.retrofit
+package com.example.blankspace.data
 
 import com.example.blankspace.data.retrofit.models.AudioRequest
 import com.example.blankspace.data.retrofit.models.AudioResponse
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataRequst
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataResponse
-import com.example.blankspace.data.retrofit.models.DodajZanrRequest
 import com.example.blankspace.data.retrofit.models.DodajZanrResponse
 import com.example.blankspace.data.retrofit.models.DuelRequest
 import com.example.blankspace.data.retrofit.models.DuelResponse
@@ -69,157 +68,98 @@ import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
 
-//const val BASE_URL = "http://10.103.97.178:8000/"
-const val BASE_URL = "http://10.0.2.2:8000/"
-const val BASE_URL_LOCALHOST ="http://127.0.0.1:8000/"
+interface RepositoryInterface {
+    suspend fun getZanrovi():List<Zanr>
 
-interface Api {
-    @GET("zanrovi")
-    suspend fun getZanrovi(): List<Zanr>
+    suspend fun dohvati_izvodjace_zanra(request:ZanrNazivRequest):List<IzvodjaciZanra>
 
-    @POST("dohvati_izvodjace_zanra_android/")
-    suspend fun dohvati_izvodjace_zanra(@Body request: ZanrNazivRequest):List<IzvodjaciZanra>
+    suspend fun web_scrapper(request: WebScrapperRequest): List<WebScrapperResponse>
 
-    @POST("web_scrapper_android/")
-    suspend fun web_scrapper(@Body request: WebScrapperRequest): List<WebScrapperResponse>
+    suspend fun getIgraSamData(request: IgraSamRequest): IgraSamResponse
 
-    @GET("izvodjaci_andoid")
-    suspend fun getIzvodjaci(): List<Izvodjac>
-
-    @GET("pesme_android")
-    suspend fun getPesme(): List<Pesma>
-
-    @GET("stihovi_android")
-    suspend fun getStihovi(): List<Stih>
-
-    @POST("igra_sam_android/")
-    suspend fun getIgraSamData(@Body request: IgraSamRequest): IgraSamResponse
-
-    @GET("rang_lista_andoid")
     suspend fun getRangLista(): List<RangListaResponse>
 
-    @POST("pregled_profila_andoid/")
     suspend fun getMojProfilData(@Body request: MojProfilRequest): MojProfilResponse
 
-    @POST("get_audio/")
-    suspend fun getAudio(@Body url:AudioRequest):AudioResponse
+    suspend fun getIzvodjaci(): List<Izvodjac>
 
-    @POST("login_android/")
+    suspend fun getPesme(): List<Pesma>
+
+    suspend fun getStihovi(): List<Stih>
+
+    suspend fun getAudio(request:AudioRequest):AudioResponse
+
     suspend fun login(@Body credentials: LoginRequest): LoginResponse
 
-    @POST("predlaganje_izvodjaca_android/")
     suspend fun predlaganje_izvodjaca(@Body predlaganjeIzvodjacaRequset: PredlaganjeIzvodjacaRequset):
             PredlaganjeIzvodjacaResponse
 
-    @POST("predlaganje_pretrazi_android/")
-    suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
-            PredlaganjePretraziResponse
-
-    @POST("predlaganje_pesme_android/")
     suspend fun predlaganje_pesme(@Body predlaganjePesmeRequset: PredlaganjePesmeRequset):
             PredlaganjePesmeResponse
 
-    @POST("izvodjaci_zanra_andoid/")
+    suspend fun predlaganje_pretrazi(@Body predlaganjePretraziRequest: PredlaganjePretraziRequest):
+            PredlaganjePretraziResponse
+
+
     suspend fun getIzvodjaciZanra(@Body request: Zanr): List<IzvodjaciZanra>
 
-    @POST("izvodjaci_pesme_andoid/")
     suspend fun getPesmeIzvodjaca(@Body request: Izvodjac): List<PesmeIzvodjaca>
 
-    @POST("poeni_igre_android/")
-    suspend fun postPoeniIgre(@Body request: Zanr): List<IzvodjaciZanra>
-
-    @GET("uklanjanje_korisnika_android/")
     suspend fun getKorisniciUklanjanje():List<KorisniciResponse>
 
-    @POST("registracija_android/")
     suspend fun postRegistracija(@Body request: RegistracijaRequest): RegistracijaResponse
 
-    @POST("zaboravljena_lozinka_android/")
     suspend fun postZaboravljenaLozinka(@Body request: ZaboravljenaLozinkaRequest): ZaboravljenaLozinkaResponse
 
-    @POST("zaboravljena_lozinka_pitanje_android/")
     suspend fun postZaboravljenaLozinkaPitanje(@Body request: ZaboravljenaLozinkaPitanjeRequest): ZaboravljenaLozinkaPitanjeResponse
 
-    @POST("nova_lozinka_android/")
     suspend fun postNovaLozinka(@Body request: NovaLozinkaRequest): NovaLozinkaResponse
 
-    @GET("predlozi_izvodjaca_android/")
     suspend fun getPredloziIzvodjaca():List<PredloziIzvodjacaResponse>
 
-    @POST("predlozi_izvodjaca_odbij_android/")
     suspend fun odbijPredlogIzvodjaca(@Body request: PredloziIzvodjacaOdbijRequest): List<PredloziIzvodjacaResponse>
 
-    @GET("predlozi_pesme_android/")
     suspend fun getPredloziPesme():List<PredloziPesamaResponse>
 
-    @POST("predlozi_pesme_odbij_android/")
     suspend fun odbijPredlogPesme(@Body request: PredloziPesamaOdbijRequest): List<PredloziPesamaResponse>
 
-    // duel
-
-    @POST("generisi_sifru_sobe_android/")
     suspend fun generisiSifru(@Body request: GenerisiSifruRequest): GenerisiSifruResponse
 
-    @POST("proveri_sifru_sobe_android/")
     suspend fun proveriSifruSobe(@Body request: ProveriSifruRequest): ProveriSifruResponse
 
-    @POST("stigao_igrac_android/")
     suspend fun stigaoIgrac(@Body request: StigaoIgracRequest): StigaoIgracResponse
 
-    @POST("duel_android/")
     suspend fun duel(@Body request: DuelRequest): DuelResponse
 
-    @POST("kraj_igre_adndroid/")
-    suspend fun krajIgre(@Body request: KrajIgreRequest):KrajIgreResponse
+    suspend fun krajIgre(@Body request: KrajIgreRequest): KrajIgreResponse
 
-    @POST("ukloni_korisnika_android/")
     suspend fun uklanjanjeKorisnika(@Body request: UklanjanjeKorisnikaRequest): UklanjanjeKorisnikaResponse
 
-    @POST("ukloni_zanr_android/")
     suspend fun uklanjanjeZanra(@Body request: UklanjanjeZanraRequest): UklanjanjeZanraResponse
-
-    @POST("ukloni_izvodjaca_android/")
     suspend fun uklanjanjeIzvodjaca(@Body request: UklanjanjeIzvodjacaRequest): UklanjanjeIzvodjacaResponse
 
-    @POST("ukloni_pesmu_android/")
     suspend fun uklanjanjePesme(@Body request: UklanjanjePesmeRequest): UklanjanjePesmeResponse
-
-    @POST("provera_da_li_postoji/")
     suspend fun provera_da_li_postoji(@Body request: ProveraDaLiPostojiRequest): ProveraDaLiPostojiResponse
 
-    @Multipart
-    @POST("dodaj_zanr_android/")
-    suspend fun dodajZanr(@Part("zanr") zanr: RequestBody,
-                          @Part("izvodjac") izvodjac: RequestBody,
-                          @Part("naziv_pesme") nazivPesme: RequestBody,
-                          @Part("nepoznati_stihovi") nepoznatiStihovi: RequestBody,
-                          @Part("poznati_stihovi") poznatiStihovi: RequestBody,
-                          @Part("nivo") nivo: RequestBody,
-                          @Part zvuk: MultipartBody.Part): DodajZanrResponse
+    suspend fun dodajZanr( zanr: String,
+                           izvodjac: String,
+                           nazivPesme: String,
+                           nepoznatiStihovi: String,
+                           poznatiStihovi: String,
+                           nivo: String,
+                           zvuk: MultipartBody.Part): DodajZanrResponse
 
-    @POST("cekanje_rezultata_android/")
-    suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst):CekanjeRezultataResponse
+    suspend fun cekanjeRezultata(@Body request: CekanjeRezultataRequst): CekanjeRezultataResponse
 
-    @POST("kraj_duela_android/")
-    suspend fun krajDuela(@Body request: KrajDuelaRequest):KrajDuelaResponse
+    suspend fun krajDuela(@Body request: KrajDuelaRequest): KrajDuelaResponse
 
-    @GET("pesme_po_izvodjacima_android/")
     suspend fun getPesmePoIzvodjacima():List<PesmePoIzvodjacimaResponse>
 
-    @GET("stihovi_po_pesmama_android/")
     suspend fun getStihoviPoPesmama():List<StihoviPoPesmamaResponse>
 
-    @GET("statistika_android/")
     suspend fun getStatistika():StatistikaResponse
 
-    @POST("pregledKorisnik_android/")
-    suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest):KorisnikPregledResponse
+    suspend fun getPregledKorisnik(@Body requst: KorisnikPregledRequest): KorisnikPregledResponse
 }
-
