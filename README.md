@@ -120,6 +120,7 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/nivo.png" width="270" />
   <img src="screenshots/zanr.png" width="270" />
   <img src="screenshots/game.png" width="270" />
+  <img src="screenshots/kraj_igre.png" width="270" />
   <img src="screenshots/sifra_sobe.png" width="270" />
   <img src="screenshots/generisana_sifra.png" width="270" />
   <img src="screenshots/pogodi_i_pevaj.png" width="270" />
@@ -127,6 +128,7 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/predlozi_pesmu.png" width="270" />
   <img src="screenshots/pretraga_i_predlaganje.png" width="270" />
   <img src="screenshots/profile.png" width="270" />
+  <img src="screenshots/notifikacija.png" width="270" />
   <img src="screenshots/rang.png" width="270" />
   <img src="screenshots/stats.png" width="270" />
   <img src="screenshots/stats2.png" width="270" />
