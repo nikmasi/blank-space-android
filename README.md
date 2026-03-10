@@ -111,10 +111,21 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/login.png" width="250" />
-  <img src="screenshots/home.png" width="250" />
-  <img src="screenshots/rang.png" width="250" />
-  <img src="screenshots/profile.png" width="250" />
-  <img src="screenshots/stats.png" width="250" />
-  <img src="screenshots/game.png" width="250" />
+  <img src="screenshots/login.png" width="270" />
+  <img src="screenshots/sign_up.png" width="270" />
+  <img src="screenshots/zaboravljena_lozinka.png" width="270" />
+  <img src="screenshots/pitanje_lozinka.png" width="270" />
+  <img src="screenshots/home.png" width="270" />
+  <img src="screenshots/nivo.png" width="270" />
+  <img src="screenshots/zanr.png" width="270" />
+  <img src="screenshots/game.png" width="270" />
+  <img src="screenshots/sifra_sobe.png" width="270" />
+  <img src="screenshots/generisana_sifra.png" width="270" />
+  <img src="screenshots/pogodi_i_pevaj.png" width="270" />
+  <img src="screenshots/predlozi_izvodjaca.png" width="270" />
+  <img src="screenshots/predlozi_pesmu.png" width="270" />
+  <img src="screenshots/pretraga_i_predlaganje.png" width="270" />
+  <img src="screenshots/profile.png" width="270" />
+  <img src="screenshots/rang.png" width="270" />
+  <img src="screenshots/stats.png" width="270" />
 </p>
