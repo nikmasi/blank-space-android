@@ -1,9 +1,8 @@
 package com.example.blankspace.viewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.MojProfilRequest
 import com.example.blankspace.data.retrofit.models.MojProfilResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MojProfilViewModel @Inject constructor(
-    private val repository: Repository
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateMP())
@@ -24,7 +23,7 @@ class MojProfilViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = MojProfilRequest(korisnicko_ime)
-            val response = repository.getMojProfilData(request)
+            val response = contentRepository.getMojProfilData(request)
             _uiState.value = UiStateMP(mojprofil = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =

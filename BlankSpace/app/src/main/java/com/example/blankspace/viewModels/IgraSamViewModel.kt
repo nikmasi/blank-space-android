@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.blankspace.data.GameRepository
 import com.example.blankspace.data.Repository
 import com.example.blankspace.data.retrofit.models.AudioRequest
 import com.example.blankspace.data.retrofit.models.IgraSamRequest
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class IgraSamViewModel @Inject constructor(
-    private val repository: Repository
+    private val gameRepository: GameRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateI())
@@ -39,7 +40,7 @@ class IgraSamViewModel @Inject constructor(
         try {
             val intList = zanrovi.map { it.toInt() }
             val request = IgraSamRequest(intList, tezina,runda,poeni,listaBilo)
-            val response = repository.getIgraSamData(request)
+            val response = gameRepository.getIgraSamData(request)
             postaviListu(response.listaBilo)
 
             _uiState.value = UiStateI(igrasam = response, isRefreshing = false)
@@ -52,7 +53,7 @@ class IgraSamViewModel @Inject constructor(
         _uiStateKI.value = _uiStateKI.value.copy(isRefreshing = true)
         try {
             val request = KrajIgreRequest(korisnickoIme, poeni)
-            val response = repository.krajIgre(request)
+            val response = gameRepository.krajIgre(request)
             _uiStateKI.value = UiStateKrajIgre(krajIgre  = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateKI.value = UiStateKrajIgre(krajIgre = null, isRefreshing = false, error = e.localizedMessage)
@@ -74,7 +75,7 @@ class IgraSamViewModel @Inject constructor(
                 stopAudio()
 
                 val audioReq = AudioRequest(url)
-                val response = repository.getAudio(audioReq)
+                val response = gameRepository.getAudio(audioReq)
 
                 // Kada dobiješ novi URL, pusti ga
                 playAudioFromUrl(response.audio_url)

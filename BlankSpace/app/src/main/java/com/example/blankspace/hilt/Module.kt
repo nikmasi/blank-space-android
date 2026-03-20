@@ -4,12 +4,25 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.blankspace.data.AdminRepository
+import com.example.blankspace.data.AdminRepositoryImpl
+import com.example.blankspace.data.AuthRepository
+import com.example.blankspace.data.AuthRepositoryImpl
+import com.example.blankspace.data.ContentRepository
+import com.example.blankspace.data.ContentRepositoryImpl
+import com.example.blankspace.data.GameRepository
+import com.example.blankspace.data.GameRepositoryImpl
 import com.example.blankspace.data.Repository
 import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.SuggestionRepository
+import com.example.blankspace.data.SuggestionRepositoryImpl
+import com.example.blankspace.data.retrofit.AdminApi
 import com.example.blankspace.data.retrofit.Api
+import com.example.blankspace.data.retrofit.AuthApi
 import com.example.blankspace.data.retrofit.BASE_URL
-import com.example.blankspace.data.retrofit.BASE_URL_LOCALHOST
-import com.google.gson.GsonBuilder
+import com.example.blankspace.data.retrofit.ContentApi
+import com.example.blankspace.data.retrofit.GameApi
+import com.example.blankspace.data.retrofit.SuggestionApi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -33,18 +46,18 @@ object Module {
         return context.getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
     }
 
-    @Singleton
     @Provides
-    fun provideImpressionsApi(@ApplicationContext context: Context): Api {
+    @Singleton
+    fun provideRetrofit(@ApplicationContext context: Context): Retrofit {
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)
         }
 
         val authInterceptor = Interceptor { chain ->
             val request = chain.request()
-            // Ako je to login poziv, dodaj Authorization header sa tokenom
+            // Logika: Ako je login poziv, dodaj token (ili obrnuto zavisno od tvog API-ja)
             if (request.url.toString().contains("login")) {
-                val token = getTokenFromSharedPrefs(context) // Dohvati token iz SharedPreferences
+                val token = getTokenFromSharedPrefs(context)
                 val newRequest = request.newBuilder().apply {
                     if (!token.isNullOrEmpty()) {
                         header("Authorization", "Bearer $token")
@@ -52,28 +65,58 @@ object Module {
                 }.build()
                 chain.proceed(newRequest)
             } else {
-                // Za sve ostale API pozive, ne dodaj header
                 chain.proceed(request)
             }
         }
 
-        // OkHttpClient sa logovanjem i dodatim Interceptor-om za login
         val okHttpClient = OkHttpClient.Builder().apply {
-            addInterceptor(httpLoggingInterceptor) // Za logovanje
-            addInterceptor(authInterceptor) // Dodaj interceptor samo za login
+            addInterceptor(httpLoggingInterceptor)
+            addInterceptor(authInterceptor)
         }.build()
 
-
-        val retrofit = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
 
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideGameApi(retrofit: Retrofit): GameApi {
+        return retrofit.create(GameApi::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideAdminApi(retrofit: Retrofit): AdminApi {
+        return retrofit.create(AdminApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideContentApi(retrofit: Retrofit): ContentApi {
+        return retrofit.create(ContentApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSuggestionApi(retrofit: Retrofit): SuggestionApi {
+        return retrofit.create(SuggestionApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImpressionsApi(retrofit: Retrofit): Api {
         return retrofit.create(Api::class.java)
     }
+
     private fun getTokenFromSharedPrefs(context: Context): String? {
         val sharedPreferences = EncryptedSharedPreferences.create(
             "auth_prefs",
@@ -84,6 +127,7 @@ object Module {
         )
         return sharedPreferences.getString("access_token", null)
     }
+
 }
 
 @Module
@@ -106,4 +150,27 @@ abstract class RepositoryModule {
     abstract fun bindRepository(
         repositoryImpl: Repository
     ): RepositoryInterface
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGameRepository(impl: GameRepositoryImpl): GameRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAdminRepository(impl: AdminRepositoryImpl): AdminRepository
+
+
+    @Binds
+    @Singleton
+    abstract fun bindContentRepository(impl: ContentRepositoryImpl): ContentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSuggestionRepository(impl: SuggestionRepositoryImpl): SuggestionRepository
 }

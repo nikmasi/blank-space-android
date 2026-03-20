@@ -3,6 +3,7 @@ package com.example.blankspace.viewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.blankspace.data.AuthRepository
 import com.example.blankspace.data.Repository
 import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ZaboravljenaLozinkaViewModel @Inject constructor(
-    private val repository: RepositoryInterface
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateZL())
@@ -36,7 +37,7 @@ class ZaboravljenaLozinkaViewModel @Inject constructor(
         Log.d("ZABORAVLJENA LOZi","ovde")
         try {
             val request = ZaboravljenaLozinkaRequest(korisnicko_ime)
-            val response = repository.postZaboravljenaLozinka(request)
+            val response = authRepository.postZaboravljenaLozinka(request)
             _uiState.value = UiStateZL(zaboravljenaLozinka = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -48,7 +49,7 @@ class ZaboravljenaLozinkaViewModel @Inject constructor(
         _uiStateP.value = _uiStateP.value.copy(isRefreshing = true)
         try {
             val request = ZaboravljenaLozinkaPitanjeRequest(korisnicko_ime,odgovor)
-            val response = repository.postZaboravljenaLozinkaPitanje(request)
+            val response = authRepository.postZaboravljenaLozinkaPitanje(request)
             _uiStateP.value = UiStateZLP(zaboravljenaLozinkaPitanje = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateP.value =
@@ -60,7 +61,7 @@ class ZaboravljenaLozinkaViewModel @Inject constructor(
         _uiStateNL.value = _uiStateNL.value.copy(isRefreshing = true)
         try {
             val request = NovaLozinkaRequest(korisnicko_ime,lozinka,potvrda)
-            val response = repository.postNovaLozinka(request)
+            val response = authRepository.postNovaLozinka(request)
             _uiStateNL.value = UiStateNL(novaLozinka = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateNL.value = UiStateNL(novaLozinka = null, isRefreshing = false, error = e.localizedMessage)

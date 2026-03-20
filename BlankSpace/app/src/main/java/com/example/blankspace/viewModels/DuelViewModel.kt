@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.GameRepository
 import com.example.blankspace.data.retrofit.models.AudioRequest
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataRequst
 import com.example.blankspace.data.retrofit.models.CekanjeRezultataResponse
@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DuelViewModel @Inject constructor(
-    private val repository: Repository
+    private val gameRepository: GameRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateD())
@@ -49,7 +49,7 @@ class DuelViewModel @Inject constructor(
         _uiStateSifSobe.value = _uiStateSifSobe.value.copy(isRefreshing = true)
         try {
             val request = GenerisiSifruRequest(korisnickoIme)
-            val response = repository.generisiSifru(request)
+            val response = gameRepository.generisiSifru(request)
             _uiStateSifSobe.value = UiStateSifSobe(sifraResponse = response, isRefreshing = false)
 
             response.sifra?.let { upisiSifruSobe(it) }
@@ -63,7 +63,7 @@ class DuelViewModel @Inject constructor(
         _uiStateProveriSifru.value = _uiStateProveriSifru.value.copy(isRefreshing = true)
         try {
             val request = ProveriSifruRequest(korisnickoIme,sifra)
-            val response = repository.proveriSifruSobe(request)
+            val response = gameRepository.proveriSifruSobe(request)
             _uiStateProveriSifru.value = UiStateProveriSifru(proveriSifru  = response, isRefreshing = false)
         }catch (e: Exception) {
             _uiStateProveriSifru.value = UiStateProveriSifru(proveriSifru = null, isRefreshing = false, error = e.localizedMessage)
@@ -81,7 +81,7 @@ class DuelViewModel @Inject constructor(
         _uiStateStigaoIgrac.value = _uiStateStigaoIgrac.value.copy(isRefreshing = true)
         try {
             val request = StigaoIgracRequest(sifra)
-            val response = repository.stigaoIgrac(request)
+            val response = gameRepository.stigaoIgrac(request)
             _uiStateStigaoIgrac.value = UiStateStigaoIgrac(stigaoIgrac = response, isRefreshing = false)
         }catch (e: Exception) {
             _uiStateStigaoIgrac.value = UiStateStigaoIgrac(stigaoIgrac = null, isRefreshing = false, error = e.localizedMessage)
@@ -97,7 +97,7 @@ class DuelViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = DuelRequest(runda,poeni,stihovi,rundaPoeni)
-            val response = repository.duel(request)
+            val response = gameRepository.duel(request)
 
             _uiState.value = UiStateD(duel = response, isRefreshing = false)
         } catch (e: Exception) {
@@ -110,7 +110,7 @@ class DuelViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val audioReq =AudioRequest(url)
-                val respose =repository.getAudio(audioReq)
+                val respose =gameRepository.getAudio(audioReq)
                 playAudioFromUrl(respose.audio_url)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = "Greška pri preuzimanju MP3 fajla: ${e.localizedMessage}")
@@ -153,7 +153,7 @@ class DuelViewModel @Inject constructor(
         _uiStateCekanjeRezultata.value = _uiStateCekanjeRezultata.value.copy(isRefreshing = true)
         try {
             val request = CekanjeRezultataRequst(rundaPoeni,poeni,soba,redniBroj)
-            val response = repository.cekanjeRezultata(request)
+            val response = gameRepository.cekanjeRezultata(request)
 
             _uiStateCekanjeRezultata.value = UiStateCekanjeRezultata(cekanjeRezultata = response, isRefreshing = false)
         } catch (e: Exception) {
@@ -185,7 +185,7 @@ class DuelViewModel @Inject constructor(
         _uiStateKrajDuela.value = _uiStateKrajDuela.value.copy(isRefreshing = true)
         try {
             val request = KrajDuelaRequest(rundaPoeni,poeni*10,soba,redniBroj,upisuj)
-            val response = repository.krajDuela(request)
+            val response = gameRepository.krajDuela(request)
             Log.d("SIFF333",response.toString())
 
             _uiStateKrajDuela.value = UiStateKrajDuela(poeni_runde = response.poeni_runde, krajDuela = response, isRefreshing = false)

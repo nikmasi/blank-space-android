@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.SuggestionRepository
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
 import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
 import com.example.blankspace.data.retrofit.models.PredlaganjePretraziRequest
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PredlaganjeIzvodjacaViewModel @Inject constructor(
-    private val repository: Repository
+    private val suggestionRepository: SuggestionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStatePI())
@@ -31,7 +31,7 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = PredlaganjeIzvodjacaRequset(ime,zanr,korisnicko_ime)
-            val response = repository.predlaganje_izvodjaca(request)
+            val response = suggestionRepository.predlaganje_izvodjaca(request)
             _uiState.value = UiStatePI(predlaganjeIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -46,7 +46,7 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = PredlaganjePretraziRequest(naziv,korisnicko_ime)
-            val response = repository.predlaganje_pretrazi(request)
+            val response = suggestionRepository.predlaganje_pretrazi(request)
             _uiStatePretrazi.value = UiStatePretrazi(predlaganjePretrazi = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStatePretrazi.value =
@@ -59,7 +59,7 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
         try {
             val request = WebScrapperRequest(reci=reci)
             //val response = repository.predlaganje_izvodjaca(request)
-            val response = repository.web_scrapper(request)
+            val response = suggestionRepository.web_scrapper(request)
             _uiStateWebScrapper.value = UiStateWebScrapper(pesme =response, isRefreshing = false, error =null)
         } catch (e: Exception) {
             _uiStateWebScrapper.value =

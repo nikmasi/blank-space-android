@@ -1,10 +1,8 @@
 package com.example.blankspace.viewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.retrofit.models.DodajZanrRequest
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.DodajZanrResponse
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
@@ -20,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DodavanjeViewModel @Inject constructor(
-    private val repository: Repository
+    private val adminRepository: AdminRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStatePredloziIzv())
@@ -29,7 +27,7 @@ class DodavanjeViewModel @Inject constructor(
     fun fetchPredloziIzvodjaca() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getPredloziIzvodjaca()
+            val response = adminRepository.getPredloziIzvodjaca()
             _uiState.value = UiStatePredloziIzv(predloziIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -41,7 +39,7 @@ class DodavanjeViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = PredloziIzvodjacaOdbijRequest(id)
-            val response = repository.odbijPredlogIzvodjaca(request)
+            val response = adminRepository.odbijPredlogIzvodjaca(request)
             _uiState.value = UiStatePredloziIzv(predloziIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -57,7 +55,7 @@ class DodavanjeViewModel @Inject constructor(
         _uiStateProveraPostojanja.value = _uiStateProveraPostojanja.value.copy(isRefreshing = true)
         try {
             val request = ProveraDaLiPostojiRequest(vrednost,tip)
-            val response = repository.provera_da_li_postoji(request)
+            val response = adminRepository.provera_da_li_postoji(request)
             _uiStateProveraPostojanja.value = ProveraPostojanja(proveraDaLiPostoji = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateProveraPostojanja.value =
@@ -93,7 +91,7 @@ class DodavanjeViewModel @Inject constructor(
             _uiStateDodajZanr.value = _uiStateDodajZanr.value.copy(isRefreshing = true)
             try {
                // val request = DodajZanrRequest(zanr,izvodjac,nazivPesme,nepoznatiStihovi,poznatiStihovi,nivo,audioPart)
-                val response = repository.dodajZanr(zanr, izvodjac, nazivPesme,
+                val response = adminRepository.dodajZanr(zanr, izvodjac, nazivPesme,
                     nepoznatiStihovi, poznatiStihovi, nivo,
                     audioPart)
                 _uiStateDodajZanr.value = UiStateDodajZanr(dodajZanr = response, isRefreshing = false)

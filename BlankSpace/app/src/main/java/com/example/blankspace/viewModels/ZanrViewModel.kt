@@ -3,12 +3,9 @@ package com.example.blankspace.viewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.Zanr
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ZanrViewModel @Inject constructor(
-    private val repository: RepositoryInterface,
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateZ())
@@ -29,7 +26,7 @@ class ZanrViewModel @Inject constructor(
     fun fetchCategories() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getZanrovi()
+            val response = contentRepository.getZanrovi()
             Log.d("API_RESPONSE", response.toString())
             _uiState.value = UiStateZ(zanrovi = response, isRefreshing = false)
         } catch (e: Exception) {

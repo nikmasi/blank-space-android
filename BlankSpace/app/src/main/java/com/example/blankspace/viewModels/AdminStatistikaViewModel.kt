@@ -2,8 +2,7 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.StatistikaResponse
 import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
@@ -13,10 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class AdminStatistikaViewModel @Inject constructor(
-    private val repository: RepositoryInterface
+    private val adminRepository: AdminRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminStatistikaUiState())
@@ -31,7 +29,7 @@ class AdminStatistikaViewModel @Inject constructor(
     fun fetchAdminStatistika() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getStatistika()
+            val response = adminRepository.getStatistika()
             //_uiState.value = AdminStatistikaUiState(informacije = response, isRefreshing = false)
 
             _uiState.value =
@@ -46,7 +44,7 @@ class AdminStatistikaViewModel @Inject constructor(
         _uiStatePesmePoIzvodjacima.value = _uiStatePesmePoIzvodjacima.value.copy(isRefreshing = true)
         try {
 
-            val response = repository.getPesmePoIzvodjacima()
+            val response = adminRepository.getPesmePoIzvodjacima()
 
             _uiStatePesmePoIzvodjacima.value =
                 PesmePoIzvodjacimaUiState(pesmePoIzvodjacima = response, isRefreshing = false)
@@ -60,7 +58,7 @@ class AdminStatistikaViewModel @Inject constructor(
         _uiStateStihoviPoPesmama.value = _uiStateStihoviPoPesmama.value.copy(isRefreshing = true)
         try {
 
-            val response = repository.getStihoviPoPesmama()
+            val response = adminRepository.getStihoviPoPesmama()
 
             _uiStateStihoviPoPesmama.value =
                 StihoviPoPesmamaUiState(stihoviPoPesmama = response, isRefreshing = false)

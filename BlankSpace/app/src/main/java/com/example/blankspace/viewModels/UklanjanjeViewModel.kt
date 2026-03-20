@@ -2,8 +2,7 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.data.retrofit.models.UklanjanjeIzvodjacaRequest
@@ -23,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UklanjanjeViewModel @Inject constructor(
-    private val repository: RepositoryInterface
+    private val adminRepository: AdminRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateUklanjanjeKorisnika())
@@ -42,7 +41,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = UklanjanjeKorisnikaRequest(korisnicko_ime)
-            val response = repository.uklanjanjeKorisnika(request)
+            val response = adminRepository.uklanjanjeKorisnika(request)
             _uiState.value = UiStateUklanjanjeKorisnika(uklanjanjeKorisnika = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -54,7 +53,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiStateZanr.value = _uiStateZanr.value.copy(isRefreshing = true)
         try {
             val request = UklanjanjeZanraRequest(zanr)
-            val response = repository.uklanjanjeZanra(request)
+            val response = adminRepository.uklanjanjeZanra(request)
             _uiStateZanr.value = UiStateUklanjanjeZanra(uklanjanjeZanra = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateZanr.value =
@@ -66,7 +65,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiStateIzvodjac.value = _uiStateIzvodjac.value.copy(isRefreshing = true)
         try {
             val request = UklanjanjeIzvodjacaRequest(izvodjac)
-            val response = repository.uklanjanjeIzvodjaca(request)
+            val response = adminRepository.uklanjanjeIzvodjaca(request)
             _uiStateIzvodjac.value = UiStateUklanjanjeIzvodjaca(uklanjanjeIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateIzvodjac.value =
@@ -78,7 +77,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiStatePesma.value = _uiStatePesma.value.copy(isRefreshing = true)
         try {
             val request = UklanjanjePesmeRequest(pesma)
-            val response = repository.uklanjanjePesme(request)
+            val response = adminRepository.uklanjanjePesme(request)
             _uiStatePesma.value = UiStateUklanjanjePesme(uklanjanjePesme = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStatePesma.value =
@@ -100,7 +99,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiStateIzvodjacaZanra.value = _uiStateIzvodjacaZanra.value.copy(isRefreshing = true)
         try {
             val request = Zanr(zanr_id,imeZanr)
-            val response = repository.getIzvodjaciZanra(request)
+            val response = adminRepository.getIzvodjaciZanra(request)
             _uiStateIzvodjacaZanra.value = UiStateIZU(izvodjaci = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateIzvodjacaZanra.value =
@@ -115,7 +114,7 @@ class UklanjanjeViewModel @Inject constructor(
         _uiStatePesmeIzvodjaca.value = _uiStatePesmeIzvodjaca.value.copy(isRefreshing = true)
         try {
             val request = Izvodjac(izvodjac_id,ime,zanr_id)
-            val response = repository.getPesmeIzvodjaca(request)
+            val response = adminRepository.getPesmeIzvodjaca(request)
             _uiStatePesmeIzvodjaca.value = UiStatePesmeIzvodjaca(pesmeIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStatePesmeIzvodjaca.value =

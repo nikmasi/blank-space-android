@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.SuggestionRepository
 import com.example.blankspace.data.retrofit.models.DodajZanrResponse
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PredloziViewModel @Inject constructor(
-    private val repository: Repository
+    private val suggestionRepository: SuggestionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStatePredloziIzv())
@@ -30,7 +30,7 @@ class PredloziViewModel @Inject constructor(
     fun fetchPredloziIzvodjaca() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getPredloziIzvodjaca()
+            val response = suggestionRepository.getPredloziIzvodjaca()
             _uiState.value = UiStatePredloziIzv(predloziIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -42,7 +42,7 @@ class PredloziViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = PredloziIzvodjacaOdbijRequest(id)
-            val response = repository.odbijPredlogIzvodjaca(request)
+            val response = suggestionRepository.odbijPredlogIzvodjaca(request)
             _uiState.value = UiStatePredloziIzv(predloziIzvodjaca = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value =
@@ -53,7 +53,7 @@ class PredloziViewModel @Inject constructor(
     fun fetchPredloziPesama() = viewModelScope.launch {
         _uiStateP.value = _uiStateP.value.copy(isRefreshing = true)
         try {
-            val response = repository.getPredloziPesme()
+            val response = suggestionRepository.getPredloziPesme()
             _uiStateP.value = UiStatePredloziPes(predloziPesama = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateP.value =
@@ -65,7 +65,7 @@ class PredloziViewModel @Inject constructor(
         _uiStateP.value = _uiStateP.value.copy(isRefreshing = true)
         try {
             val request = PredloziPesamaOdbijRequest(id)
-            val response = repository.odbijPredlogPesme(request)
+            val response = suggestionRepository.odbijPredlogPesme(request)
             _uiStateP.value = UiStatePredloziPes(predloziPesama = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateP.value =
@@ -102,7 +102,7 @@ class PredloziViewModel @Inject constructor(
             _uiStatePredlog.value = _uiStatePredlog.value.copy(isRefreshing = true)
             try {
                 // val request = DodajZanrRequest(zanr,izvodjac,nazivPesme,nepoznatiStihovi,poznatiStihovi,nivo,audioPart)
-                val response = repository.dodajZanr(zanr, izvodjac, nazivPesme,
+                val response = suggestionRepository.dodajZanr(zanr, izvodjac, nazivPesme,
                     nepoznatiStihovi, poznatiStihovi, nivo,
                     audioPart)
                 _uiStatePredlog.value = UiStatePredlog(predlog = response, isRefreshing = false)

@@ -1,10 +1,9 @@
 package com.example.blankspace.viewModels
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
 import com.example.blankspace.data.retrofit.models.KorisnikPregledRequest
 import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KorisniciViewModel @Inject constructor(
-    private val repository: Repository
+    private val adminRepository: AdminRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateK())
@@ -39,7 +38,7 @@ class KorisniciViewModel @Inject constructor(
     fun fetchKorisnici() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getKorisniciUklanjanje()
+            val response = adminRepository.getKorisniciUklanjanje()
 
             val formattedResponse = response.map { item ->
                 val formattedDate = item.poslednja_aktivnost?.let { formatDate(it) }
@@ -60,7 +59,7 @@ class KorisniciViewModel @Inject constructor(
         _uiStateKorisnikPregled.value = _uiStateKorisnikPregled.value.copy(isRefreshing = true)
         try {
             val request = KorisnikPregledRequest(ime)
-            val response = repository.getPregledKorisnik(request)
+            val response = adminRepository.getPregledKorisnik(request)
             _uiStateKorisnikPregled.value = UiStateKorisnikPregled(informacije = response, isRefreshing = false)
         } catch (e: Exception) {
             _uiStateKorisnikPregled.value = UiStateKorisnikPregled(informacije = null, isRefreshing = false, error = e.localizedMessage)

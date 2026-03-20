@@ -1,6 +1,5 @@
 package com.example.blankspace.data.retrofit.models
 
-import com.example.blankspace.viewModels.RedniBroj
 import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 

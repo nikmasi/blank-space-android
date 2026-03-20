@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.AuthRepository
 import com.example.blankspace.data.retrofit.models.LoginRequest
 import com.example.blankspace.data.retrofit.models.LoginResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +15,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: Repository,
+    private val authRepository: AuthRepository,
     @ApplicationContext private val context: Context,
     private val sharedpreferences:SharedPreferences
 ) : ViewModel() {
@@ -81,7 +80,7 @@ class LoginViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val request = LoginRequest(username, password)
-            val response = repository.login(request)
+            val response = authRepository.login(request)
             // Sačuvaj JWT token u EncryptedSharedPreferences
             Log.d("LOGIN", response.toString())
 

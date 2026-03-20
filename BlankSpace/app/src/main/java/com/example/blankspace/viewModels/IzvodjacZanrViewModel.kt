@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.Zanr
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class IzvodjacZanrViewModel @Inject constructor(
-    private val repository: Repository
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateIZ())
@@ -26,8 +26,8 @@ class IzvodjacZanrViewModel @Inject constructor(
     fun fetch() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
-            val response = repository.getZanrovi()
-            val response2=repository.getIzvodjaci()
+            val response = contentRepository.getZanrovi()
+            val response2= contentRepository.getIzvodjaci()
             _uiState.value = UiStateIZ(zanrovi = response, izvodjaci = response2, isRefreshing = false)
         } catch (e: Exception) {
             _uiState.value = UiStateIZ(zanrovi = emptyList(), izvodjaci = emptyList(),
