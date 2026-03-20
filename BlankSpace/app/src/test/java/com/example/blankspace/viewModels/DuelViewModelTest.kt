@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import android.util.Log
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.GameRepository
 import com.example.blankspace.data.retrofit.models.*
 import io.mockk.coEvery
 import io.mockk.every
@@ -22,7 +22,7 @@ class DuelViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: GameRepository = mockk()
     private lateinit var viewModel: DuelViewModel
 
     @Before

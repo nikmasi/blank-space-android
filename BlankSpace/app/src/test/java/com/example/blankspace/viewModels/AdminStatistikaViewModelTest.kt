@@ -1,7 +1,7 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.data.retrofit.models.StatistikaResponse
 import com.google.common.truth.Truth.assertThat
@@ -18,7 +18,7 @@ class AdminStatistikaViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: RepositoryInterface = mockk()
+    private val repository: AdminRepository = mockk()
     private lateinit var viewModel: AdminStatistikaViewModel
 
     @Test

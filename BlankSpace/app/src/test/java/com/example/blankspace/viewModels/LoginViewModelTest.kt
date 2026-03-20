@@ -2,9 +2,6 @@ package com.example.blankspace.viewModels
 
 import android.content.Context
 import android.content.SharedPreferences
-import app.cash.turbine.test
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.retrofit.models.LoginResponse
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -15,8 +12,7 @@ import org.junit.Test
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.blankspace.MainDispatcherRule
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.yield
+import com.example.blankspace.data.AuthRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
@@ -24,7 +20,7 @@ class LoginViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: AuthRepository = mockk()
     private val context: Context = mockk(relaxed = true)
     private val sharedPrefs: SharedPreferences = mockk(relaxed = true)
     private val editor: SharedPreferences.Editor = mockk(relaxed = true)

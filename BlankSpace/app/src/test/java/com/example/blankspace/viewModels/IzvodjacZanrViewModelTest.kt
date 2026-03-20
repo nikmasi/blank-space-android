@@ -1,7 +1,7 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.Zanr
 import io.mockk.coEvery
@@ -19,7 +19,7 @@ class IzvodjacZanrViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: ContentRepository = mockk()
     private lateinit var viewModel: IzvodjacZanrViewModel
 
     @Test

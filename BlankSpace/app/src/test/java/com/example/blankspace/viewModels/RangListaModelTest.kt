@@ -1,7 +1,7 @@
 package com.example.blankspace.viewModels
 
 import app.cash.turbine.test
-import com.example.blankspace.data.RepositoryInterface
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.RangListaResponse
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -17,7 +17,7 @@ import org.junit.Test
 class RangListaModelTest {
 
     private lateinit var viewModel: RangListaModel
-    private val repository: RepositoryInterface = mockk()
+    private val repository: ContentRepository = mockk()
 
     private val testDispatcher = StandardTestDispatcher()
 

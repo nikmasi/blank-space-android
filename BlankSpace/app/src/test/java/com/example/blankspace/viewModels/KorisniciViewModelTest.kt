@@ -1,7 +1,7 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
 import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
 import com.example.blankspace.data.retrofit.models.Mecevi
@@ -23,7 +23,7 @@ class KorisniciViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: AdminRepository = mockk()
     private lateinit var viewModel: KorisniciViewModel
 
     private val mockKorisnici = listOf(

@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import android.content.Context
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.GameRepository
 import com.example.blankspace.data.retrofit.models.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -20,7 +20,7 @@ class IgraSamViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: GameRepository = mockk()
     private val context: Context = mockk()
     private lateinit var viewModel: IgraSamViewModel
 

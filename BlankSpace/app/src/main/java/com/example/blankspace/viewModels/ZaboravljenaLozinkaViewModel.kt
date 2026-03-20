@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.AuthRepository
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.retrofit.models.NovaLozinkaRequest
 import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
 import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeRequest

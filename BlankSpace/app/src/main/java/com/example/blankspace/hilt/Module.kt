@@ -12,8 +12,6 @@ import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.ContentRepositoryImpl
 import com.example.blankspace.data.GameRepository
 import com.example.blankspace.data.GameRepositoryImpl
-import com.example.blankspace.data.Repository
-import com.example.blankspace.data.RepositoryInterface
 import com.example.blankspace.data.SuggestionRepository
 import com.example.blankspace.data.SuggestionRepositoryImpl
 import com.example.blankspace.data.retrofit.AdminApi
@@ -145,11 +143,6 @@ object AppModule {
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
-    @Binds
-    abstract fun bindRepository(
-        repositoryImpl: Repository
-    ): RepositoryInterface
 
     @Binds
     @Singleton

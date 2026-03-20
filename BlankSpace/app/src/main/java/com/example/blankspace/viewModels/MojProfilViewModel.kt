@@ -24,10 +24,16 @@ class MojProfilViewModel @Inject constructor(
         try {
             val request = MojProfilRequest(korisnicko_ime)
             val response = contentRepository.getMojProfilData(request)
-            _uiState.value = UiStateMP(mojprofil = response, isRefreshing = false)
+
+            _uiState.value = _uiState.value.copy(
+                mojprofil = response,
+                isRefreshing = false
+            )
         } catch (e: Exception) {
-            _uiState.value =
-                UiStateMP(mojprofil = null, isRefreshing = false, error = e.localizedMessage)
+            _uiState.value = _uiState.value.copy(
+                isRefreshing = false,
+                error = e.localizedMessage
+            )
         }
     }
 }

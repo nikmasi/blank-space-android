@@ -3,7 +3,7 @@ package com.example.blankspace.viewModels
 import android.util.Log
 import app.cash.turbine.test
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.AuthRepository
 import com.example.blankspace.data.retrofit.models.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -21,7 +21,7 @@ class ZaboravljenaLozinkaViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: AuthRepository = mockk()
     private lateinit var viewModel: ZaboravljenaLozinkaViewModel
 
     @Before

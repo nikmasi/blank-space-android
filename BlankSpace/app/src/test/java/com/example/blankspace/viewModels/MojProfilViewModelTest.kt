@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import app.cash.turbine.test
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.ContentRepository
 import com.example.blankspace.data.retrofit.models.MojProfilResponse
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,7 +19,7 @@ class MojProfilViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: ContentRepository = mockk()
     private lateinit var viewModel: MojProfilViewModel
 
     @Before

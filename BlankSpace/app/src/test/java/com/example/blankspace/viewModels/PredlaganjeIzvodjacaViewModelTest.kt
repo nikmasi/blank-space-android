@@ -2,7 +2,7 @@ package com.example.blankspace.viewModels
 
 import app.cash.turbine.test
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.SuggestionRepository
 import com.example.blankspace.data.retrofit.models.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,7 +19,7 @@ class PredlaganjeIzvodjacaViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: SuggestionRepository = mockk()
     private lateinit var viewModel: PredlaganjeIzvodjacaViewModel
 
     @Before

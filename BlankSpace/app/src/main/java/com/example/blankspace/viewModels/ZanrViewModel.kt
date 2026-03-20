@@ -28,9 +28,16 @@ class ZanrViewModel @Inject constructor(
         try {
             val response = contentRepository.getZanrovi()
             Log.d("API_RESPONSE", response.toString())
-            _uiState.value = UiStateZ(zanrovi = response, isRefreshing = false)
+
+            _uiState.value = _uiState.value.copy(
+                zanrovi = response,
+                isRefreshing = false
+            )
         } catch (e: Exception) {
-            _uiState.value = UiStateZ(zanrovi = emptyList(), isRefreshing = false, error = e.localizedMessage)
+            _uiState.value = _uiState.value.copy(
+                isRefreshing = false,
+                error = e.localizedMessage
+            )
         }
     }
 }

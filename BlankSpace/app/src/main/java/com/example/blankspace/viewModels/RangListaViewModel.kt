@@ -26,9 +26,16 @@ class RangListaModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val response = contentRepository.getRangLista()
-            _uiState.value = UiStateRL(rangLista = response, isRefreshing = false)
+
+            _uiState.value = _uiState.value.copy(
+                rangLista = response,
+                isRefreshing = false
+            )
         } catch (e: Exception) {
-            _uiState.value = UiStateRL(rangLista = emptyList(), isRefreshing = false, error = e.localizedMessage)
+            _uiState.value = _uiState.value.copy(
+                isRefreshing = false,
+                error = e.localizedMessage
+            )
         }
     }
 }

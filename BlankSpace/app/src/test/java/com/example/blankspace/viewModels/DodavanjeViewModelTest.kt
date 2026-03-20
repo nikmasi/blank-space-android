@@ -1,7 +1,7 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.Repository
+import com.example.blankspace.data.AdminRepository
 import com.example.blankspace.data.retrofit.models.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -20,7 +20,7 @@ class DodavanjeViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository: Repository = mockk()
+    private val repository: AdminRepository = mockk()
     private lateinit var viewModel: DodavanjeViewModel
 
     @Before
