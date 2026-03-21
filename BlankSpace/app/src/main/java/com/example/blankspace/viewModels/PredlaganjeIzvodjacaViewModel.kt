@@ -23,7 +23,6 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiStatePI())
     val uiState: StateFlow<UiStatePI> = _uiState
 
-
     private val _uiStateWebScrapper = MutableStateFlow(UiStateWebScrapper())
     val uiStateWebScrapper : StateFlow<UiStateWebScrapper> = _uiStateWebScrapper
 

@@ -21,6 +21,8 @@ import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.data.retrofit.ContentApi
 import com.example.blankspace.data.retrofit.GameApi
 import com.example.blankspace.data.retrofit.SuggestionApi
+import com.example.blankspace.data.storage.TokenManager
+import com.example.blankspace.data.storage.TokenManagerInterface
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -126,6 +128,7 @@ object Module {
         return sharedPreferences.getString("access_token", null)
     }
 
+
 }
 
 @Module
@@ -166,4 +169,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSuggestionRepository(impl: SuggestionRepositoryImpl): SuggestionRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class TokenModule {
+
+    @Binds
+    abstract fun bindTokenManager(impl: TokenManager): TokenManagerInterface
 }

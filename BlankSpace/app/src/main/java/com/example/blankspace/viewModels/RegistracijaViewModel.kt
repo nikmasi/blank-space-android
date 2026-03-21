@@ -1,13 +1,11 @@
 package com.example.blankspace.viewModels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
 import com.example.blankspace.data.AuthRepository
 import com.example.blankspace.data.retrofit.models.RegistracijaRequest
 import com.example.blankspace.data.retrofit.models.RegistracijaResponse
+import com.example.blankspace.data.storage.TokenManagerInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,19 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class RegistracijaViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val context: Context
+    private val tokenManager: TokenManagerInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateR())
     val uiState: StateFlow<UiStateR> = _uiState
-
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        "auth_prefs",
-        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
 
     fun fetchRegistracija(ime_i_prezime: String, korisnicko_ime: String,lozinka:String,potvrda_lozinke:String,pitanje:String,odgovor:String)
     = viewModelScope.launch {
@@ -41,20 +31,23 @@ class RegistracijaViewModel @Inject constructor(
             // Sačuvaj JWT token u EncryptedSharedPreferences
             saveToken(response.access)
 
-            _uiState.value = UiStateR(registration  = response, isRefreshing = false)
-
+            _uiState.value = _uiState.value.copy(
+                registration = response,
+                isRefreshing = false,
+                error = null
+            )
         } catch (e: Exception) {
-            _uiState.value = UiStateR(registration = null, isRefreshing = false, error = e.localizedMessage)
+            _uiState.value = _uiState.value.copy(
+                isRefreshing = false,
+                error = e.localizedMessage
+            )
         }
     }
 
     private fun saveToken(token: String) {
-        sharedPreferences.edit()
-            .putString("access_token", token)
-            .apply()
+        tokenManager.saveToken(token)
     }
 }
-
 
 data class UiStateR(
     val registration: RegistracijaResponse?=null,

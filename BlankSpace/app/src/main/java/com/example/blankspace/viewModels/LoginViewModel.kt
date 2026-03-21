@@ -1,37 +1,23 @@
 package com.example.blankspace.viewModels
 
-import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
 import com.example.blankspace.data.AuthRepository
 import com.example.blankspace.data.retrofit.models.LoginRequest
 import com.example.blankspace.data.retrofit.models.LoginResponse
+import com.example.blankspace.data.storage.TokenManagerInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context,
-    private val sharedpreferences:SharedPreferences
+    private val tokenManager: TokenManagerInterface
 ) : ViewModel() {
-
-    private companion object {
-        const val KEY_ACCESS_TOKEN = "access_token"
-        const val KEY_USERNAME = "korisnicko_ime"
-        const val KEY_PASSWORD = "lozinka"
-        const val KEY_USER_TYPE = "tip_korisnika"
-        private const val KEY_NOTIFICATION_TIME = "notification_time"
-    }
-
 
     private var _uiState = MutableStateFlow(UiStateL())
     val uiState: StateFlow<UiStateL> = _uiState
@@ -48,77 +34,34 @@ class LoginViewModel @Inject constructor(
         _uiStateNotifikacija.value = _uiStateNotifikacija.value.copy(vreme = vreme)
     }
 
-
-
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        "auth_prefs",
-        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
     init {
         checkSavedState()
     }
 
     private fun checkSavedState() {
-        try {
-            val savedUsername = sharedpreferences.getString("user_key", null)
-            val savedPassword = sharedpreferences.getString("password_key", null)
-            if (savedUsername != null && savedPassword != null) {
-                fetchLogin(savedUsername, savedPassword)
-            }
-        }catch (e: Exception){
-            Log.d("Login", "Error.")
+        val (username, password) = tokenManager.getSavedUser()
+        if (!username.isNullOrEmpty() && !password.isNullOrEmpty()) {
+            fetchLogin(username, password)
         }
-
     }
 
 
     fun fetchLogin(username: String, password: String) = viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(isRefreshing = true)
+        _uiState.update { it.copy(isRefreshing = true) }
         try {
-            val request = LoginRequest(username, password)
-            val response = authRepository.login(request)
-            // Sačuvaj JWT token u EncryptedSharedPreferences
-            Log.d("LOGIN", response.toString())
+            val response = authRepository.login(LoginRequest(username, password))
+            tokenManager.saveToken(response.access)
+            tokenManager.saveUserSession(username, password)
 
-            _uiState.value = UiStateL(login = response, isRefreshing = false)
-
-            val editor = sharedpreferences.edit()
-            editor.putString("user_key", username)
-            editor.putString("password_key", password)
-            editor.apply()
-            _ime.value= Ime(ime=_uiState.value.login?.ime)
-
+            _uiState.update { UiStateL(login = response, isRefreshing = false) }
         } catch (e: Exception) {
-            _uiState.value = UiStateL(login = null, isRefreshing = false, error = e.localizedMessage)
+            _uiState.update { it.copy(isRefreshing = false, error = e.localizedMessage) }
         }
     }
 
     fun izloguj_se(){
-        val editor = sharedpreferences.edit()
-
-        editor.putString("user_key", "")
-        editor.putString("password_key", "")
-        editor.apply()
-
-        _ime.value= Ime(ime=_uiState.value.login?.ime)
-        _uiState.value = _uiState.value.copy(login = null)
-
-    }
-
-    fun setKorisnik(UIStateR:UiStateR)= viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(
-            login = UIStateR.registration?.access?.let {
-                UIStateR.registration?.korisnicko_ime?.let { it1 ->
-                    LoginResponse(
-                        it,
-                        UIStateR.registration?.refresh,UIStateR.registration.ime, it1,UIStateR.registration.tip,"")
-                }
-            },
-            isRefreshing = false,error = null)
+        tokenManager.clearSession()
+        _uiState.update { UiStateL(login = null) }
     }
 
     fun setKorisnikZL(UIStateZL:UiStateZL)= viewModelScope.launch {

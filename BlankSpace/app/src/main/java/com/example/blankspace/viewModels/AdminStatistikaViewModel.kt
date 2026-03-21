@@ -30,8 +30,6 @@ class AdminStatistikaViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
             val response = adminRepository.getStatistika()
-            //_uiState.value = AdminStatistikaUiState(informacije = response, isRefreshing = false)
-
             _uiState.value =
                 AdminStatistikaUiState(informacije = response, isRefreshing = false)
         } catch (e: Exception) {

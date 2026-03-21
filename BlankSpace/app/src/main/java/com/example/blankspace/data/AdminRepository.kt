@@ -24,12 +24,6 @@ import com.example.blankspace.data.retrofit.models.UklanjanjeZanraRequest
 import com.example.blankspace.data.retrofit.models.UklanjanjeZanraResponse
 import com.example.blankspace.data.retrofit.models.Zanr
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
 
 interface AdminRepository{
     suspend fun getKorisniciUklanjanje():List<KorisniciResponse>
