@@ -1,5 +1,6 @@
 package com.example.blankspace.screens.autorizacija
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,21 +9,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.autorizacija.promena_lozinke.ChangePasswordButtonStyled
+import com.example.blankspace.screens.autorizacija.promena_lozinke.PasswordChangeHeader
+import com.example.blankspace.screens.autorizacija.promena_lozinke.PasswordFieldStyled
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.UiStateNL
 import com.example.blankspace.viewModels.UiStateZL
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import com.example.blankspace.ui.theme.*
 
@@ -70,9 +69,15 @@ fun PromenaLozinke_mainCard(navController: NavController, viewModel: Zaboravljen
             var novaLozinka by remember { mutableStateOf("") }
             var potvrdaLozinke by remember { mutableStateOf("") }
 
-            PasswordFieldStyled(label = "Nova lozinka", value = novaLozinka, onValueChange = { novaLozinka = it })
+            PasswordFieldStyled(
+                label = "Nova lozinka",
+                value = novaLozinka,
+                onValueChange = { novaLozinka = it })
             Spacer(modifier = Modifier.height(12.dp))
-            PasswordFieldStyled(label = "Potvrdite lozinku", value = potvrdaLozinke, onValueChange = { potvrdaLozinke = it })
+            PasswordFieldStyled(
+                label = "Potvrdite lozinku",
+                value = potvrdaLozinke,
+                onValueChange = { potvrdaLozinke = it })
 
             Spacer(modifier = Modifier.height(32.dp))
             ChangePasswordButtonStyled(novaLozinka, potvrdaLozinke, uiState, viewModel, context)
@@ -83,7 +88,7 @@ fun PromenaLozinke_mainCard(navController: NavController, viewModel: Zaboravljen
 @Composable
 fun HandlePasswordChangeResponse(
     uiStateNL: UiStateNL,
-    context: android.content.Context,
+    context: Context,
     loginViewModel: LoginViewModel,
     navController: NavController,
     uiState: UiStateZL
@@ -95,96 +100,14 @@ fun HandlePasswordChangeResponse(
                 Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
             }
             if (odgovor.contains("Lozink")) {
-                // Greška u lozinci
                 return@LaunchedEffect
             } else if (odgovor.contains("Uspeh")) {
 
                 loginViewModel.setKorisnikZL(uiState)
                 navController.navigate(Destinacije.Login.ruta) {
-                    popUpTo(Destinacije.PromenaLozinke.ruta) { inclusive = true } // Čišćenje back stack-a
+                    popUpTo(Destinacije.PromenaLozinke.ruta) { inclusive = true }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PasswordChangeHeader() {
-    Text(
-        text = "Promena lozinke",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-    Text(
-        text = "Unesite Vašu novu lozinku.",
-        style = MaterialTheme.typography.bodyMedium,
-        color = PrimaryDark.copy(alpha = 0.8f)
-    )
-}
-
-@Composable
-fun PasswordFieldStyled(label: String, value: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, color = PrimaryDark) },
-        visualTransformation = PasswordVisualTransformation(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AccentPink,
-            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
-            cursorColor = AccentPink,
-            focusedTextColor = PrimaryDark,
-            unfocusedTextColor = PrimaryDark
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun ChangePasswordButtonStyled(
-    novaLozinka: String,
-    potvrdaLozinke: String,
-    uiState: UiStateZL,
-    viewModel: ZaboravljenaLozinkaViewModel,
-    context: android.content.Context
-) {
-    var pressed by remember { mutableStateOf(false) }
-    val elevation = if (pressed) 2.dp else 8.dp
-
-    Button(
-        onClick = {
-            if (novaLozinka.isBlank() || potvrdaLozinke.isBlank()) {
-                Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
-            } else {
-                pressed = true
-                uiState.zaboravljenaLozinka?.korisnicko_ime?.let {
-                    viewModel.fetchNovaLozinka(it, novaLozinka, potvrdaLozinke)
-                }
-            }
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            text = "Promenite lozinku",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            delay(100)
-            pressed = false
         }
     }
 }

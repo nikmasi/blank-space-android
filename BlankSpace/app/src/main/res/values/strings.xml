@@ -25,4 +25,14 @@
 
     <string name="welcome_msg">Welcome!</string>
     <string name="rules_btn">Game Rules</string>
+
+    //moj profil
+    <string name="game_rules">Game Rules</string>
+    <string name="logout">Logout</string>
+
+    //rang lista
+    <string name="rank_leaderboard">Leaderboard 🏆</string>
+    <string name="rank_rank">Rank</string>
+    <string name="rank_player">Player</string>
+    <string name="rank_points">Points</string>
 </resources>

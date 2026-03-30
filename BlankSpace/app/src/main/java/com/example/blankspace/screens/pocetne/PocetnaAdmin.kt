@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.pocetne
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,13 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.HeadlineText // Pretpostavljam da ste HeadlineText zamenili sa stilizovanim Text
-import com.example.blankspace.ui.components.MyImage
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel

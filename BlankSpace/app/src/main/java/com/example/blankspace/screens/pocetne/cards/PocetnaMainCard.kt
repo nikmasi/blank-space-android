@@ -1,6 +1,7 @@
 package com.example.blankspace.screens.pocetne.cards
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -34,87 +35,92 @@ fun PocetnaMainCard(
     onGameChallenge :(()->Unit)? =null
 ) {
 
-    Column(
-        modifier = Modifier.horizontalVerticalPadding(verticalP = 32.dp),
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .horizontalVerticalPadding(verticalP = 36.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(34.dp)
     ) {
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
+            PocetnaHeaderText() }
 
-        PocetnaHeaderText()
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(12.dp, RoundedCornerShape(36.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF0DAE7)),
-            shape = RoundedCornerShape(36.dp)
-        ) {
-            Column(
+        item {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .shadow(12.dp, RoundedCornerShape(36.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF0DAE7)),
+                shape = RoundedCornerShape(36.dp)
             ) {
-                HeadlineTextWhite("Izaberi režim igre")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HeadlineTextWhite("Izaberi režim igre")
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                GameButton(
-                    text = "Igraj sam",
-                    onClick = onGameSoloClick
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                GameButton(
-                    text = "Igraj u duelu",
-                    onClick = onGameDuelClick
-                )
-
-                onGameSing?.let {
-                    Spacer(modifier = Modifier.height(8.dp))
                     GameButton(
-                        text = "Pogodi i pevaj",
-                        onClick = onGameSing
+                        text = "Igraj sam",
+                        onClick = onGameSoloClick
                     )
-                }
 
-                onGameChallenge?.let {
                     Spacer(modifier = Modifier.height(8.dp))
-                    GameButton(
-                        text = "Challenge",
-                        onClick = onGameChallenge
-                    )
-                }
 
-                onSuggestSongClick?.let {
+                    GameButton(
+                        text = "Igraj u duelu",
+                        onClick = onGameDuelClick
+                    )
+
+                    onGameSing?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameButton(
+                            text = "Pogodi i pevaj",
+                            onClick = onGameSing
+                        )
+                    }
+
+                    onGameChallenge?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameButton(
+                            text = "Challenge",
+                            onClick = onGameChallenge
+                        )
+                    }
+
+                    onSuggestSongClick?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameButton(
+                            text = "Predloži pesmu",
+                            onClick = onSuggestSongClick
+                        )
+                    }
+
+                    onSuggestArtistClick?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameButton(
+                            text = "Predloži izvođača",
+                            onClick = onSuggestArtistClick
+                        )
+                    }
+
+                    onSearchAndSuggestClick?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GameButton(
+                            text = "Pretraži i predloži",
+                            onClick = onSearchAndSuggestClick
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    GameButton(
-                        text = "Predloži pesmu",
-                        onClick = onSuggestSongClick
-                    )
                 }
-
-                onSuggestArtistClick?.let {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GameButton(
-                        text = "Predloži izvođača",
-                        onClick = onSuggestArtistClick
-                    )
-                }
-
-                onSearchAndSuggestClick?.let {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GameButton(
-                        text = "Pretraži i predloži",
-                        onClick = onSearchAndSuggestClick
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
-        PocetnaFooterText()
+        item {PocetnaFooterText()}
     }
 }
 

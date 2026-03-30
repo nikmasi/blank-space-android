@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.profil_rang_pravila
+package com.example.blankspace.screens.profil_rang_pravila.moj_profil
 
 
 import android.app.AlarmManager
@@ -33,9 +33,13 @@ import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.MojProfilViewModel
 import java.util.Calendar
 import android.Manifest
+import android.app.TimePickerDialog
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.example.blankspace.screens.Destinacije
 
 val ProfileCardColor = Color.White
 val ProfileAccentColor = Color(0xFF49006B)
@@ -111,6 +115,22 @@ fun MojProfil_mainCard(navController: NavController, viewModelLogin: LoginViewMo
                 MojProfilDataList(profileItems)
                 Spacer(modifier = Modifier.height(24.dp))
                 NotificationTimePicker(viewModelLogin)
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ProfileActions(
+                    onClickPravilaIgre = {
+                        navController.navigate(Destinacije.PravilaIgre.ruta)
+                    },
+                    onClickLogut = {
+                        navController.navigate(Destinacije.Login.ruta) {
+                            popUpTo(0)
+                        }
+                        viewModelLogin.izloguj_se()
+                    }
+                )
             }
         }
     }
@@ -154,8 +174,7 @@ fun MojProfilDataList(profileItems: List<Pair<String, String>>) {
 @Composable
 fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
     val context = LocalContext.current
-    val calendar = java.util.Calendar.getInstance()
-
+    val calendar = Calendar.getInstance()
     val initialTime = remember { getNotificationTime(context) }
 
     val timeState = remember {
@@ -165,25 +184,25 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
         )
     }
 
-    val timePickerDialog = android.app.TimePickerDialog(
+    val timePickerDialog = TimePickerDialog(
         context,
         { _, hour: Int, minute: Int ->
             timeState.value = String.format("%02d:%02d", hour, minute)
-
             saveNotificationTime(context, hour, minute)
-
             scheduleDailyNotification(context, hour, minute)
             Toast.makeText(context, "Dnevna notifikacija zakazana za ${timeState.value}", Toast.LENGTH_LONG).show()
         },
-        calendar.get(java.util.Calendar.HOUR_OF_DAY),
-        calendar.get(java.util.Calendar.MINUTE),
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
         true
     )
-    Divider(color = PrimaryDark.copy(alpha = 0.1f))
-    Spacer(modifier = Modifier.height(32.dp))
 
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Divider(color = PrimaryDark.copy(alpha = 0.1f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "🔔 Dnevna Notifikacija",
@@ -191,43 +210,34 @@ fun NotificationTimePicker(viewModelLogin: LoginViewModel) {
             fontSize = 18.sp,
             color = ProfileAccentColor
         )
-        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = { timePickerDialog.show() },
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .height(42.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ProfileAccentColor
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                "Podesi Vreme:",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+        // Dugme i prikaz vremena jedno pored drugog
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Vreme: ",
-                fontSize = 16.sp,
-                color = Color.DarkGray
-            )
-            Text(
-                text = timeState.value,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = ProfileAccentColor
-            )
+            Button(
+                onClick = { timePickerDialog.show() },
+                modifier = Modifier.height(40.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = ProfileAccentColor),
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                Text("Podesi vreme", fontSize = 14.sp)
+            }
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Vreme:", fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    text = timeState.value,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ProfileAccentColor
+                )
+            }
         }
     }
 }
@@ -267,20 +277,20 @@ fun RequestNotificationPermission() {
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Toast.makeText(context, "Notifikacije su omogućene ✅", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Notifikacije su omogućene", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "Notifikacije su onemogućene ❌", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Notifikacije su onemogućene", Toast.LENGTH_SHORT).show()
         }
     }
 
     // Proveri i traži dozvolu samo ako je potreban (API 33+)
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val permissionCheck = androidx.core.content.ContextCompat.checkSelfPermission(
+            val permissionCheck = ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             )
-            if (permissionCheck != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }

@@ -23,4 +23,17 @@
 
     <string name="welcome_msg">Dobrodošli!</string>
     <string name="rules_btn">Pravila igre</string>
+
+    //moj profil
+    <string name="game_rules">Pravila igre</string>
+    <string name="logout">Izloguj se</string>
+
+    //rang lista
+    <string name="rank_leaderboard">Rang lista 🏆</string>
+    <string name="rank_rank">Rank</string>
+    <string name="rank_player">Igrac</string>
+    <string name="rank_points">Poeni</string>
+
+
+
 </resources>

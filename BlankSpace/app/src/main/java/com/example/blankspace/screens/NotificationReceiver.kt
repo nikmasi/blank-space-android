@@ -9,8 +9,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.blankspace.screens.profil_rang_pravila.getNotificationTime
-import com.example.blankspace.screens.profil_rang_pravila.scheduleDailyNotification
+import com.example.blankspace.screens.profil_rang_pravila.moj_profil.getNotificationTime
+import com.example.blankspace.screens.profil_rang_pravila.moj_profil.scheduleDailyNotification
 
 class NotificationReceiver : BroadcastReceiver() {
     @SuppressLint("MissingPermission", "NotificationPermission")

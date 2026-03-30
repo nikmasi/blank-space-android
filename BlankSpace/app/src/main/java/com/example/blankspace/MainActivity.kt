@@ -31,11 +31,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.autorizacija.Login
+import com.example.blankspace.screens.autorizacija.login.Login
 import com.example.blankspace.screens.autorizacija.PromenaLozinke
 import com.example.blankspace.screens.autorizacija.Registracija
-import com.example.blankspace.screens.autorizacija.ZaboravljenaLozinka
-import com.example.blankspace.screens.autorizacija.ZaboravljenaLozinkaPitanje
+import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinka
+import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka_pitanje.ZaboravljenaLozinkaPitanje
 import com.example.blankspace.screens.dodavanje.IzborZanra2
 import com.example.blankspace.screens.dodavanje.PesmaPodaci
 import com.example.blankspace.screens.dodavanje.PesmaPodaci2
@@ -76,7 +76,7 @@ import com.example.blankspace.screens.predlaganje.NazivZanra
 import com.example.blankspace.screens.predlaganje.PredlaganjeIzvodjaca
 import com.example.blankspace.screens.predlaganje.PredlaganjePesme
 import com.example.blankspace.screens.predlaganje.PretragaPredlaganje
-import com.example.blankspace.screens.profil_rang_pravila.MojProfil
+import com.example.blankspace.screens.profil_rang_pravila.moj_profil.MojProfil
 import com.example.blankspace.screens.profil_rang_pravila.PravilaIgre
 import com.example.blankspace.screens.sadrzaj.SadrzajIzvodjaci
 import com.example.blankspace.screens.sadrzaj.SadrzajKorisnici
@@ -96,7 +96,6 @@ import com.example.blankspace.screens.uklanjanje.UklanjanjeKorisnika
 import com.example.blankspace.screens.uklanjanje.UklanjanjePesme
 import com.example.blankspace.screens.uklanjanje.UklanjanjeZanra
 import com.example.blankspace.ui.bars.BlankSpaceBottomBar
-import com.example.blankspace.ui.bars.BlankSpaceTopAppBar
 import com.example.blankspace.ui.theme.BlankSpaceTheme
 import com.example.blankspace.viewModels.AdminStatistikaViewModel
 import com.example.blankspace.viewModels.DatabaseViewModel
@@ -180,11 +179,12 @@ fun BlankSpaceApp(){
 
     Scaffold(
         topBar = {
-            if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta && currentRoute!=Destinacije.Login.ruta
+            /*if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta && currentRoute!=Destinacije.Login.ruta
                 && currentRoute!=Destinacije.Registracija.ruta
                 && currentRoute!=Destinacije.ZaboravljenaLozinka.ruta
             )
-                BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin)},
+                BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin)
+                */},
         bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
         val padding = innerPadding
@@ -198,7 +198,10 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.Pocetna.ruta) {
                 userType=""
-                Pocetna(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                Pocetna(modifier = Modifier,
+                    onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+                    onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) }
+                )
             }
             composable(route = Destinacije.PocetnaOffline.ruta) {
                 userType=""
@@ -207,22 +210,36 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"
-                PocetnaBrucos(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                PocetnaBrucos(modifier = Modifier,navController,viewModelLogin)
             }
             composable(route = Destinacije.PocetnaStudent.ruta) {
                 userType="student"
-                PocetnaStudent(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                PocetnaStudent(modifier = Modifier,navController,viewModelLogin)
             }
             composable(route = Destinacije.PocetnaMaster.ruta) {
                 userType="master"
-                PocetnaMaster(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                PocetnaMaster(modifier = Modifier,viewModelLogin,
+                    onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+                    onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
+                    onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },
+                    onSuggestSongClick = { navController.navigate(Destinacije.PredlaganjePesme.ruta) },
+                    onSearchAndSuggestClick = { navController.navigate(Destinacije.PretragaPredlaganje.ruta) },
+                    onGameSing = {navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta)},
+                    onGameChallenge = {navController.navigate(Destinacije.Nivo_challenge.ruta)},
+                    onLogOut = {navController.navigate(Destinacije.Login.ruta)},
+                    onCheckLoginStates = {
+                        navController.navigate(Destinacije.Login.ruta) {
+                            popUpTo(Destinacije.Pocetna.ruta) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(route = Destinacije.PocetnaAdmin.ruta) {
                 userType="admin"
-                PocetnaAdmin(modifier = Modifier.padding(padding),navController,viewModelLogin)
+                PocetnaAdmin(modifier = Modifier,navController,viewModelLogin)
             }
             composable(route = Destinacije.PravilaIgre.ruta) {
-                PravilaIgre(navController)
+                PravilaIgre(onClick = { navController.navigate(Destinacije.Login.ruta) })
             }
             composable(route = Destinacije.Nivo_igra_sam.ruta) {
                 Nivo_igra_sam(navController)
@@ -365,17 +382,31 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.Login.ruta) {
                 userType=""
-                Login(navController,viewModelLogin)
+                Login(
+                    viewModelLogin,
+                    onSignUpClick = { navController.navigate(Destinacije.Registracija.ruta) },
+                    onGuestClick = { navController.navigate(Destinacije.Pocetna.ruta) },
+                    onForgotClick = { navController.navigate(Destinacije.ZaboravljenaLozinka.ruta) },
+                    onNavigate = { ruta ->
+                        navController.navigate(ruta) {
+                            popUpTo(Destinacije.Login.ruta) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(route = Destinacije.Registracija.ruta) {
                 Registracija(navController,viewModelLogin,
                     onBackToLogin ={ navController.navigate(Destinacije.Login.ruta) })
             }
             composable(route = Destinacije.ZaboravljenaLozinka.ruta) {
-                ZaboravljenaLozinka(navController,viewModelZaboravljenaLozinka)
+                ZaboravljenaLozinka(viewModel=viewModelZaboravljenaLozinka, onNavigateToQuestion = {
+                    navController.navigate(Destinacije.ZaboravljenaLozinkaPitanje.ruta)
+                })
             }
             composable(route = Destinacije.ZaboravljenaLozinkaPitanje.ruta) {
-                ZaboravljenaLozinkaPitanje(navController,viewModelZaboravljenaLozinka)
+                ZaboravljenaLozinkaPitanje(viewModelZaboravljenaLozinka, {
+                    navController.navigate(Destinacije.PromenaLozinke.ruta)
+                })
             }
             composable(route = Destinacije.PromenaLozinke.ruta) {
                 PromenaLozinke(navController,viewModelZaboravljenaLozinka,viewModelLogin)
@@ -384,7 +415,7 @@ fun BlankSpaceApp(){
                 MojProfil(navController, viewModelLogin)
             }
             composable(route = Destinacije.RangLista.ruta) {
-                RangLista(navController)
+                RangLista()
             }
             composable(route = Destinacije.PredlaganjeIzvodjaca.ruta) {
                 PredlaganjeIzvodjaca(navController,viewModelLogin)

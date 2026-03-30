@@ -14,13 +14,13 @@ import com.example.blankspace.screens.pocetne.cards.PocetnaMainCard
 import com.example.blankspace.viewModels.LoginViewModel
 
 @Composable
-fun Pocetna(modifier: Modifier = Modifier, navController: NavController,viewModelLogin:LoginViewModel) {
+fun Pocetna(modifier: Modifier = Modifier, onGameSoloClick: () -> Unit, onGameDuelClick: () -> Unit) {
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
         PocetnaMainCard(
-            onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
-            onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
+            onGameSoloClick = onGameSoloClick,
+            onGameDuelClick = onGameDuelClick
         )
     }
 }
@@ -35,6 +35,18 @@ fun checkLoginState(viewModel: LoginViewModel,navController: NavController){
             navController.navigate(Destinacije.Login.ruta) {
                 popUpTo(Destinacije.Pocetna.ruta) { inclusive = true }
             }
+        }
+    }
+}
+
+@Composable
+fun checkLoginStates(viewModel: LoginViewModel,onClick:()->Unit){
+    val loginState by viewModel.uiState.collectAsState()
+    Log.d("LOGIN check",loginState.toString())
+
+    LaunchedEffect(loginState.login) {
+        if (loginState.login == null) {
+            onClick()
         }
     }
 }

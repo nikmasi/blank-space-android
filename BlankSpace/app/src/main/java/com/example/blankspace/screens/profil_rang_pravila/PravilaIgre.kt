@@ -9,8 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +23,7 @@ import com.example.blankspace.ui.modifiers.tableRowStyle
 import  com.example.blankspace.ui.theme.*
 
 @Composable
-fun PravilaIgre(navController: NavController){
+fun PravilaIgre(onClick: () -> Unit){
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
@@ -62,7 +60,7 @@ fun PravilaIgre(navController: NavController){
 
                     item {
                         Button(
-                            onClick = { navController.navigate(Destinacije.Login.ruta) },
+                            onClick = onClick,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)

@@ -1,117 +1,48 @@
-package com.example.blankspace.screens.autorizacija
+package com.example.blankspace.screens.autorizacija.login
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.blankspace.R
-import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.autorizacija.auth_components.AuthHeader
 import com.example.blankspace.screens.autorizacija.auth_components.AuthNavigation
 import com.example.blankspace.screens.autorizacija.auth_components.ClickableTextStyled
-import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
-import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.ui.modifiers.columnMainStyle
-import com.example.blankspace.ui.modifiers.mainCardStyle
+import com.example.blankspace.ui.theme.AccentPink
+import com.example.blankspace.ui.theme.PrimaryDark
 import com.example.blankspace.viewModels.LoginViewModel
-import com.example.blankspace.viewModels.UiStateL
 import kotlinx.coroutines.delay
-import com.example.blankspace.ui.theme.*
+
 
 @Composable
-fun Login(navController: NavController, viewModelLogin: LoginViewModel) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        BgCard2()
-        Login_mainCard(
-            navController = navController,
-            viewModel = viewModelLogin,
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-}
-
-@Composable
-fun Login_mainCard(navController: NavController, viewModel: LoginViewModel, modifier: Modifier) {
-    val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    val onSignUpClick = remember { { navController.navigate(Destinacije.Registracija.ruta) } }
-    val onGuestClick = remember { { navController.navigate(Destinacije.Pocetna.ruta) } }
-    val onForgotClick = remember { { navController.navigate(Destinacije.ZaboravljenaLozinka.ruta) } }
-
-    Surface(
-        color = CardContainerColor,
-        modifier = modifier.mainCardStyle(widthFraction = 0.9f, heightFraction = 0.75f, cornerRadius = 32.dp),
-        shape = RoundedCornerShape(32.dp)
-    ) {
-        Column(
-            modifier = Modifier.columnMainStyle().padding(top=19.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-
-            LoginImage()
-            AuthHeader(stringResource(id = R.string.title_login))
-
-            LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
-
-            LoginButton(username, password, viewModel, context)
-
-            DividerWithIconModernAuth()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ForgotPassword(onClick = onForgotClick)
-                Spacer(modifier = Modifier.height(12.dp))
-                SignUpNavigation(onSignUpClick=onSignUpClick, onGuestClick = onGuestClick)
-            }
-        }
-    }
-    HandleLoginResponse(uiState = uiState, context = context, navController = navController)
-}
-
-@Composable
-fun HandleLoginResponse(uiState: UiStateL, context: android.content.Context, navController: NavController) {
-    LaunchedEffect(uiState.login?.odgovor) {
-        val odgovor = uiState.login?.odgovor
-        if (!odgovor.isNullOrEmpty() && odgovor.contains("Pogrešn")) {
-            Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    LaunchedEffect(uiState.login?.tip) {
-        uiState.login?.tip?.let {
-            when (it) {
-                "S" -> navController.navigate(Destinacije.PocetnaStudent.ruta)
-                "B" -> navController.navigate(Destinacije.PocetnaBrucos.ruta)
-                "M" -> navController.navigate(Destinacije.PocetnaMaster.ruta)
-                "A" -> navController.navigate(Destinacije.PocetnaAdmin.ruta)
-            }
-        }
-    }
-}
-
-@Composable
-private fun LoginImage() {
+fun LoginImage() {
     Image(
         painter = painterResource(id = R.mipmap.ic_launcher_foreground),
         contentDescription = "Logo",
@@ -121,7 +52,7 @@ private fun LoginImage() {
 }
 
 @Composable
-private fun LoginFields(username: String, password: String, onUsernameChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
+fun LoginFields(username: String, password: String, onUsernameChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
     OutlinedTextField(
         value = username,
         onValueChange = onUsernameChange,
@@ -155,7 +86,7 @@ private fun LoginFields(username: String, password: String, onUsernameChange: (S
 }
 
 @Composable
-fun LoginButton(username: String, password: String, viewModel: LoginViewModel, context: android.content.Context) {
+fun LoginButton(username: String, password: String, onLogin: (String, String) -> Unit, context: Context) {
     var pressed by remember { mutableStateOf(false) }
     val elevation = if (pressed) 2.dp else 8.dp
 
@@ -166,7 +97,7 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
             }
             else{
                 pressed = true
-                viewModel.fetchLogin(username,password)
+                onLogin(username,password)
             }
         },
         colors = ButtonDefaults.buttonColors(
@@ -190,7 +121,6 @@ fun LoginButton(username: String, password: String, viewModel: LoginViewModel, c
         }
     }
 }
-
 @Composable
 fun ForgotPassword(onClick: () ->Unit) {
     ClickableTextStyled(
