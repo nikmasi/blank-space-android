@@ -117,8 +117,8 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/pitanje_lozinka.png" width="270" />
   <img src="screenshots/promena_lozinka.jpg" width="270" />
   <img src="screenshots/gost.png" width="270" />
-  <img src="screenshots/home.png" width="270" />
-  <img src="screenshots/nivo.png" width="270" />
+  <img src="screenshots/home.jpg" width="270" />
+  <img src="screenshots/nivo.jpg" width="270" />
   <img src="screenshots/zanr.png" width="270" />
   <img src="screenshots/game.png" width="270" />
   <img src="screenshots/kraj_igre.png" width="270" />
@@ -130,9 +130,9 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/pretraga_i_predlaganje.png" width="270" />
   <img src="screenshots/profile.png" width="270" />
   <img src="screenshots/notifikacija.png" width="270" />
-  <img src="screenshots/rang.png" width="270" />
-  <img src="screenshots/stats.png" width="270" />
-  <img src="screenshots/stats2.png" width="270" />
-  <img src="screenshots/stats3.png" width="270" />
+  <img src="screenshots/rang.jpg" width="270" />
+  <img src="screenshots/stats.jpg" width="270" />
+  <img src="screenshots/stats2.jpg" width="270" />
+  <img src="screenshots/stats3.jpg" width="270" />
   
 </p>

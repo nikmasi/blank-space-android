@@ -20,25 +20,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.igra_sam.LevelButton
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun Nivo_pogodiPevaj(navController: NavController){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+fun Nivo_pogodiPevaj(onNavigateToGenre: (String) -> Unit){
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        Nivo_pogodiPevaj_mainCardStyled(navController, modifier = Modifier.align(Alignment.Center))
+        Nivo_mainCardStyled(
+            onDifficultySelected = onNavigateToGenre,
+            modifier = Modifier.align(Alignment.Center),
+            text="Pogodi i Pevaj"
+        )
     }
 }
 
 @Composable
-fun Nivo_pogodiPevaj_mainCardStyled(navController: NavController, modifier: Modifier = Modifier) {
+fun Nivo_mainCardStyled(onDifficultySelected: (String) -> Unit, modifier: Modifier = Modifier, text:String) {
     Surface(
         color = CardContainerColor,
         modifier = modifier
@@ -54,15 +53,15 @@ fun Nivo_pogodiPevaj_mainCardStyled(navController: NavController, modifier: Modi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            NivoIgreHeaderPogodiPevaj()
+            NivoIgreHeader(text)
             Spacer(modifier = Modifier.height(42.dp))
-            NivoPogodiPevajButtonsStyled(navController)
+            NivoButtonsStyled(onDifficultySelected = onDifficultySelected)
         }
     }
 }
 
 @Composable
-fun NivoIgreHeaderPogodiPevaj() {
+fun NivoIgreHeader(text:String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Izaberi težinu",
@@ -72,7 +71,7 @@ fun NivoIgreHeaderPogodiPevaj() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Pogodi i Pevaj",
+            text = text,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = AccentPink
@@ -81,16 +80,10 @@ fun NivoIgreHeaderPogodiPevaj() {
 }
 
 @Composable
-fun NivoPogodiPevajButtonsStyled(navController: NavController) {
-    LevelButton(text = "Easy", color = Color(0xFF5AB1BB)) {
-        navController.navigate(Destinacije.Zanr_pogodiPevaj.ruta + "/easy")
-    }
+fun NivoButtonsStyled(onDifficultySelected: (String) -> Unit) {
+    LevelButton(text = "Easy", color = Color(0xFF5AB1BB)) { onDifficultySelected("easy")}
     Spacer(modifier = Modifier.height(20.dp))
-    LevelButton(text = "Normal", color = AccentPink) {
-        navController.navigate(Destinacije.Zanr_pogodiPevaj.ruta + "/normal")
-    }
+    LevelButton(text = "Normal", color = AccentPink) { onDifficultySelected("normal") }
     Spacer(modifier = Modifier.height(20.dp))
-    LevelButton(text = "Hard", color = PrimaryDark) {
-        navController.navigate(Destinacije.Zanr_pogodiPevaj.ruta + "/hard")
-    }
+    LevelButton(text = "Hard", color = PrimaryDark) { onDifficultySelected("hard") }
 }

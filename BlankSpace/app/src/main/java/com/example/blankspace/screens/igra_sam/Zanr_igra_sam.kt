@@ -42,10 +42,8 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
+import com.example.blankspace.ui.theme.*
 
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
 private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable

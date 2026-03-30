@@ -242,16 +242,26 @@ fun BlankSpaceApp(){
                 PravilaIgre(onClick = { navController.navigate(Destinacije.Login.ruta) })
             }
             composable(route = Destinacije.Nivo_igra_sam.ruta) {
-                Nivo_igra_sam(navController)
+                Nivo_igra_sam(
+                    onNavigateToGenre = { tezina ->
+                        navController.navigate("${Destinacije.Zanr_igra_sam.ruta}/$tezina")
+                    }
+                )
             }
             composable(route = Destinacije.Nivo_igra_offline.ruta) {
                 Nivo_igra_offline(navController)
             }
             composable(route = Destinacije.Nivo_pogodiPevaj.ruta) {
-                Nivo_pogodiPevaj(navController)
+                Nivo_pogodiPevaj(
+                    onNavigateToGenre = { tezina ->
+                        navController.navigate("${Destinacije.Zanr_pogodiPevaj.ruta}/$tezina")
+                    }
+                )
             }
             composable(route = Destinacije.Nivo_challenge.ruta) {
-                Nivo_challenge(navController)
+                Nivo_challenge(onNavigateToGenre = { tezina ->
+                    navController.navigate("${Destinacije.Zanr_challenge.ruta}/$tezina")
+                })
             }
             composable(route = Destinacije.Sifra_sobe_duel.ruta) {
                 Sifra_sobe_duel(navController,viewModelDuel,viewModelLogin)
