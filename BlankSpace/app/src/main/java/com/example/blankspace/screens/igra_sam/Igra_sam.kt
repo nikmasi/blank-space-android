@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,14 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.viewModels.IgraSamLista
@@ -43,7 +40,6 @@ private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7)
 private val InfoBarColor = Color(0xFFE0BBE4)
-private val TextMain = PrimaryDark
 private val TextAccent = AccentPink
 private val TimeWarningColor = Color(0xFFD32F2F)
 
@@ -53,7 +49,7 @@ val TEXT_COLOR = PrimaryDark
 
 @Composable
 fun Igra_sam(navController: NavController, selectedZanrovi: String, selectedNivo: String, runda: Int, poeni: Int, viewModelIgraSam: IgraSamViewModel) {
-    Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }

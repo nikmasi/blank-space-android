@@ -271,7 +271,13 @@ fun BlankSpaceApp(){
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
                 ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_igra_sam(navController,selectedNivo,viewModelIgraSam)
+                Zanr_igra_sam(
+                    selectedNivo = selectedNivo,
+                    onNavigateNext = { zanroviIds, nivo ->
+                        viewModelIgraSam.postaviListu(emptyList())
+                        navController.navigate(Destinacije.Igra_sam.ruta + "/$zanroviIds/$nivo/0/0")
+                    }
+                )
             }
             composable(
                 route = "${Destinacije.Zanr_igra_offline.ruta}/{selectedNivo}",
@@ -285,14 +291,24 @@ fun BlankSpaceApp(){
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_PogodiPevaj(navController,selectedNivo,viewModelIgraSam)
+                Zanr_PogodiPevaj(selectedNivo = selectedNivo,
+                    onNavigateNext = { zanroviIds, selectedNivoValue ->
+                        viewModelIgraSam.postaviListu(emptyList())
+                        navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$zanroviIds/$selectedNivoValue/0/0")
+                    }
+                )
             }
             composable(
                 route = "${Destinacije.Zanr_challenge.ruta}/{selectedNivo}",
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_challenge(navController,selectedNivo,viewModelIgraSam)
+                Zanr_challenge(selectedNivo = selectedNivo,
+                    onNavigateNext = { zanroviIds, selectedNivoValue ->
+                        viewModelIgraSam.postaviListu(emptyList())
+                        navController.navigate(Destinacije.Igra_challenge.ruta + "/$zanroviIds/$selectedNivoValue/80/0")
+                    }
+                )
             }
             composable(
                 route = "${Destinacije.Igra_sam.ruta}/{selectedZanrovi}/{selectedNivo}/{runda}/{poeni}",
@@ -364,7 +380,10 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                     val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                    Kraj_igre_igre_sam(navController,poeni,viewModelLogin,viewModelIgraSam)
+                    Kraj_igre_igre_sam(poeni,viewModelLogin,viewModelIgraSam,
+                        onClickPonovo = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+                        onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
+                    )
             }
             composable(
                 route = "${Destinacije.Kraj_igre_offline.ruta}/{poeni}",
@@ -380,7 +399,10 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                Kraj_pogodiPevaj(navController, poeni, viewModelLogin, viewModelIgraSam)
+                Kraj_pogodiPevaj(poeni, viewModelLogin, viewModelIgraSam,
+                    onClickPonovo = { navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta) },
+                    onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
+                )
             }
             composable(
                 route = "${Destinacije.Kraj_challenge.ruta}/{poeni}",
@@ -388,7 +410,10 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                Kraj_challenge(navController, poeni, viewModelLogin, viewModelIgraSam)
+                Kraj_challenge(poeni, viewModelLogin, viewModelIgraSam,
+                    onClickPonovo = { navController.navigate(Destinacije.Nivo_challenge.ruta) },
+                    onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
+                )
             }
             composable(route = Destinacije.Login.ruta) {
                 userType=""

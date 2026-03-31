@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,23 +19,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.blankspace.ui.components.BodyText
-import com.example.blankspace.ui.components.HeadlineText
-import com.example.blankspace.ui.components.SmallButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.LoginViewModel
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.blankspace.screens.pocetne.cards.BgCard2
 
 private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
@@ -45,22 +37,29 @@ private val CardContainerColor = Color(0xFFF0DAE7)
 private val TextHighlight = Color(0xFFD32F2F)
 
 @Composable
-fun Kraj_igre_igre_sam(navController: NavController, poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel) {
+fun Kraj_igre_igre_sam(
+    poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel,
+    onClickPonovo: () ->Unit, onClickKraj: () ->Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         val poeni2 = poeni / 10
         Kraj_igre_igre_sam_mainCard(
-            navController = navController,
             poeni = poeni2,
             viewModelLogin = viewModelLogin,
             igraSamViewModel = igraSamViewModel,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            onClickPonovo = onClickPonovo,
+            onClickKraj = onClickKraj
         )
     }
 }
 
 @Composable
-fun Kraj_igre_igre_sam_mainCard(navController: NavController, poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel, modifier: Modifier) {
+fun Kraj_igre_igre_sam_mainCard(
+    poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel, modifier: Modifier,
+    onClickPonovo: () ->Unit, onClickKraj: () ->Unit
+) {
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -86,7 +85,10 @@ fun Kraj_igre_igre_sam_mainCard(navController: NavController, poeni: Int, viewMo
         ) {
             KrajIgreHeaderStyled()
             KrajIgreBodyStyled(poeni)
-            KrajIgreButtonsStyled(navController)
+            KrajIgreButtonsStyled(
+                onClickPonovo = onClickPonovo,
+                onClickKraj = onClickKraj
+            )
         }
     }
 }
@@ -105,7 +107,7 @@ fun KrajIgreHeaderStyled() {
             text = "Igra je završena. Vaš rezultat je sačuvan.",
             color = PrimaryDark.copy(alpha = 0.8f),
             fontSize = 16.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -131,19 +133,18 @@ fun KrajIgreBodyStyled(poeni: Int) {
                 text = "$poeni",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Black,
-                color = TextHighlight, // Crvena za poene
+                color = TextHighlight,
                 modifier = Modifier.padding(horizontal = 0.dp)
             )
-
         }
     }
 }
 
 @Composable
-fun KrajIgreButtonsStyled(navController: NavController) {
+fun KrajIgreButtonsStyled(onClickPonovo: () ->Unit, onClickKraj: () ->Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         FullWidthStyledButton(
-            onClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+            onClick = onClickPonovo,
             text = "Igraj ponovo",
             containerColor = AccentPink
         )
@@ -151,7 +152,7 @@ fun KrajIgreButtonsStyled(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         FullWidthStyledButton(
-            onClick = { navController.navigate(Destinacije.Login.ruta) },
+            onClick = onClickKraj,
             text = "Kraj",
             containerColor = PrimaryDark.copy(alpha = 0.8f)
         )

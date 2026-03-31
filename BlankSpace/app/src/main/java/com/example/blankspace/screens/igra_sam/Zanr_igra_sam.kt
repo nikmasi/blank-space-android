@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.igra_sam
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,11 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
 import com.example.blankspace.ui.theme.*
@@ -47,22 +43,23 @@ import com.example.blankspace.ui.theme.*
 private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable
-fun Zanr_igra_sam(navController: NavController, selectedNivo: String, viewModelIgraSam: IgraSamViewModel) {
+fun Zanr_igra_sam(selectedNivo: String, onNavigateNext: (String, String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        Zanr_igra_sam_mainCard(
-            navController = navController,
+        Zanr_mainCard(
             selectedNivo = selectedNivo,
-            viewModelIgraSam = viewModelIgraSam,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            onNavigateNext = onNavigateNext,
         )
     }
 }
 
 @Composable
-fun Zanr_igra_sam_mainCard(navController: NavController, selectedNivo: String, viewModelIgraSam: IgraSamViewModel, modifier: Modifier) {
-    val context = LocalContext.current
-
+fun Zanr_mainCard(
+    selectedNivo: String,
+    modifier: Modifier,
+    onNavigateNext: (String, String) -> Unit
+) {
     val viewModel: ZanrViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -112,9 +109,7 @@ fun Zanr_igra_sam_mainCard(navController: NavController, selectedNivo: String, v
             ZanrIgraSamButton(
                 selectedZanrovi = selectedZanrovi,
                 selectedNivo = selectedNivo,
-                viewModelIgraSam = viewModelIgraSam,
-                navController = navController,
-                context = context
+                onClick = onNavigateNext
             )
         }
     }
@@ -212,18 +207,16 @@ fun ZanroviCheckboxListStyled(
 fun ZanrIgraSamButton(
     selectedZanrovi: Set<Zanr>,
     selectedNivo: String,
-    viewModelIgraSam: IgraSamViewModel,
-    navController: NavController,
-    context: Context
+    onClick: (String, String) -> Unit,
 ) {
+    val context = LocalContext.current
     Button(
         onClick = {
             if (selectedZanrovi.isNotEmpty()) {
                 val zanroviIds = selectedZanrovi.joinToString(",") { it.id.toString() }
                 val nivoString = selectedNivo.replace("[", "").replace("]", "").replace(" ", "") // Čišćenje ako je prosleđen kao lista-string
 
-                viewModelIgraSam.postaviListu(emptyList())
-                navController.navigate(Destinacije.Igra_sam.ruta + "/$zanroviIds/$nivoString/0/0")
+                onClick(zanroviIds,nivoString)
             } else {
                 Toast.makeText(context, "Morate izabrati bar jedan žanr", Toast.LENGTH_SHORT).show()
             }
