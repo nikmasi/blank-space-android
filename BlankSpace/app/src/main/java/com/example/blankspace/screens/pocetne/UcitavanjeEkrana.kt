@@ -13,13 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
@@ -33,11 +29,9 @@ import com.example.blankspace.isInternetAvailable
 import com.example.blankspace.viewModels.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.graphicsLayer
-import com.example.blankspace.ui.modifiers.horizontalVerticalPadding
 import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.ui.theme.*
 
@@ -114,75 +108,61 @@ fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginVie
         }
     }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "loading_screen_animations")
+    UcitavanjeEkranaContent(isLoading = isLoadingData.value)
+}
 
-    val iconScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = "icon_scale_animation"
-    )
+@Composable
+fun UcitavanjeEkranaContent(isLoading: Boolean) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        BgCard2()
 
-    Surface(
-        color = CardContainerColor,
-        modifier = modifier.mainCardStyle(heightFraction = 0.65f, elevation = 20.dp, cornerRadius = 32.dp),
-        shape = RoundedCornerShape(32.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+        val iconScale by infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 1.08f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "scale"
+        )
 
+        Surface(
+            color = CardContainerColor,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .mainCardStyle(heightFraction = 0.5f, elevation = 20.dp, cornerRadius = 32.dp),
+            shape = RoundedCornerShape(32.dp)
+        ) {
             Column(
-                modifier = Modifier.horizontalVerticalPadding(horizontalP = 32.dp, verticalP = 40.dp),
+                modifier = Modifier.fillMaxSize().padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.Center
             ) {
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = "BlankSpace Logo",
+                    contentDescription = "Logo",
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(150.dp)
                         .graphicsLayer {
                             scaleX = iconScale
                             scaleY = iconScale
-                        },
-                    contentScale = ContentScale.Fit
+                        }
                 )
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    LoadingQuoteText(text = "Cause I’ve got a ", color = PrimaryDark)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LoadingQuoteText(text = "blank space,", color = PrimaryDark, fontWeight = FontWeight.ExtraBold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LoadingQuoteText(text = "baby", color = PrimaryDark)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LoadingQuoteText(text = "and I’ll ", color = PrimaryDark)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LoadingQuoteText(text = "write your name", color = PrimaryDark)
-                }
+                Spacer(modifier = Modifier.height(40.dp))
 
-                if (isLoadingData.value) {
-                    CircularProgressIndicator(color = PrimaryDark)
-                } else {
-                    Text(
-                        text = "Dobrodošli!",
-                        color = PrimaryDark.copy(alpha = 0.8f),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold
+                if (isLoading) {
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(4.dp),
+                        color = PrimaryDark,
+                        trackColor = PrimaryDark.copy(alpha = 0.2f)
                     )
                 }
             }
         }
     }
-}
-
-@Composable
-fun LoadingQuoteText(text: String, color: Color, fontWeight: FontWeight = FontWeight.Bold) {
-    Text(
-        text = text,
-        color = color,
-        fontSize = 25.sp,
-        fontWeight = fontWeight,
-        modifier = Modifier.padding(vertical = 4.dp)
-    )
 }

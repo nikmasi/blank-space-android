@@ -3,7 +3,6 @@ package com.example.blankspace.screens.predlaganje
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,10 +24,8 @@ import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredlaganjeIzvodjacaViewModel
 import com.example.blankspace.viewModels.UiStateL
+import com.example.blankspace.ui.theme.*
 
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
 private val InputBorderColor = PrimaryDark.copy(alpha = 0.5f)
 private val ListItemBackground = Color(0xFFFFFFFF)
 
@@ -39,7 +36,7 @@ data class SelectedSong(
 
 @Composable
 fun PretragaPredlaganje(navController: NavController, viewModelLogin: LoginViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top= 52.dp +16.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         PretragaPredlaganje_mainCardStyled(navController,viewModelLogin, Modifier.align(Alignment.Center))
     }

@@ -30,11 +30,7 @@ fun PocetnaOffline(modifier: Modifier = Modifier, onNavigateToOffline: () -> Uni
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             PocetnaHeaderText()
-
-            PocetnaOfflineCard(
-                onNavigateToOffline = onNavigateToOffline
-            )
-
+            PocetnaOfflineCard(onNavigateToOffline = onNavigateToOffline)
             PocetnaFooterText()
         }
     }

@@ -1,8 +1,10 @@
 package com.example.blankspace.screens.igraj_u_duelu
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,16 +50,8 @@ private val PrimaryDark = Color(0xFF49006B)
 private val AccentPink = Color(0xFFEC8FB7)
 private val CardContainerColor = Color(0xFFF0DAE7) // Svetlo roza za pozadinu kartice
 private val TextMain = PrimaryDark
-private val TableHeaderBg = AccentPink.copy(alpha = 0.8f)
-private val TableRowOddBg = CardContainerColor.copy(alpha = 0.7f)
-private val TableRowEvenBg = Color.White.copy(alpha = 0.8f)
 private val WinnerColor = Color(0xFF4CAF50) // Zelena
 
-
-@Composable
-fun HeadlineTextCekanjeRezultata(text: String) {
-    Text(text, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = TextMain)
-}
 
 @Composable
 fun ActionButtonCekanjeRezultata(onClick: () -> Unit, text: String, modifier: Modifier, containerColor: Color = AccentPink) {
@@ -75,7 +71,7 @@ fun ActionButtonCekanjeRezultata(onClick: () -> Unit, text: String, modifier: Mo
 
 @Composable
 fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel,sifra:Int){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         Kraj_duela_mainCard(
             navController = navController,
@@ -85,7 +81,6 @@ fun Kraj_duela(navController: NavController,viewModelDuel:DuelViewModel,sifra:In
         )
     }
 }
-
 @Composable
 fun Kraj_duela_mainCard(
     navController: NavController,
@@ -93,64 +88,80 @@ fun Kraj_duela_mainCard(
     sifra: Int,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val uiState by viewModelDuel.uiState.collectAsState()
     val uiStateKraj by viewModelDuel.uiStateKrajDuela.collectAsState()
 
     LaunchedEffect(Unit) {
         uiState.duel?.poeni?.let {
             viewModelDuel.fetchKrajDuela(
-                it,
-                sifra,
-                uiState.duel!!.rundePoeni,
-                uiState.duel!!.runda,
-                "true"
+                it, sifra, uiState.duel!!.rundePoeni, uiState.duel!!.runda, "true"
             )
         }
     }
 
+    val rezultati = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
+    val ukupno1 = rezultati.sumOf { it.getOrElse(0) { 0 } }
+    val ukupno2 = rezultati.sumOf { it.getOrElse(1) { 0 } }
 
     Surface(
-        color = CardContainerColor, // Svetlo roza
+        color = CardContainerColor,
         modifier = modifier
-            .fillMaxWidth(0.9f)
-            .fillMaxHeight(0.8f)
-            .shadow(16.dp, RoundedCornerShape(24.dp)),
-        shape = RoundedCornerShape(24.dp)
+            .fillMaxWidth(0.92f)
+            .wrapContentHeight()
+            .shadow(24.dp, RoundedCornerShape(32.dp)),
+        shape = RoundedCornerShape(32.dp)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadlineTextCekanjeRezultata("Rezultati duela \uD83C\uDFC6")
-
-            DuelResultsTable(uiStateKraj.krajDuela?.poeni_runde ?: emptyList(), uiStateKraj.krajDuela?.igrac1, uiStateKraj.krajDuela?.igrac2)
-
-            val runde = uiStateKraj.krajDuela?.poeni_runde ?: emptyList()
-            val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
-            val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }
-            DisplayWinner(ukupno1, ukupno2)
-
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ActionButtonCekanjeRezultata(
-                    onClick = {
-                        navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
-                    },
-                    text = "Igraj ponovo",
-                    modifier = Modifier.fillMaxWidth(0.7f)
+                Text(
+                    "Duel Završen!",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AccentPink,
+                    letterSpacing = 2.sp
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                ActionButtonCekanjeRezultata(
-                    onClick = {
+                Text(
+                    "KONAČAN REZULTAT",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Black,
+                    color = PrimaryDark
+                )
+            }
 
-                        navController.navigate(Destinacije.Login.ruta)
-                    },
-                    text = "Kraj",
-                    containerColor = PrimaryDark.copy(alpha = 0.8f),
-                    modifier = Modifier.fillMaxWidth(0.7f)
+            Spacer(modifier = Modifier.height(20.dp))
+
+            DuelResultsTable(rezultati, uiStateKraj.krajDuela?.igrac1, uiStateKraj.krajDuela?.igrac2)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WinnerBanner(ukupno1, ukupno2)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ActionButtonCekanjeRezultata(
+                    onClick = { navController.navigate(Destinacije.Generisi_sifru_sobe.ruta) },
+                    text = "IGRAJ PONOVO",
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = "Kraj igre",
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable { navController.navigate(Destinacije.Login.ruta) },
+                    color = PrimaryDark.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 )
             }
         }
@@ -160,110 +171,90 @@ fun Kraj_duela_mainCard(
 @Composable
 fun DuelResultsTable(runde: List<List<Int>>, igrac1: String?, igrac2: String?) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = TableRowEvenBg // Boja pozadine celog bloka
-        ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.5f)),
+        border = BorderStroke(1.dp, PrimaryDark.copy(alpha = 0.1f))
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .border(2.dp, TextMain.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
-        ) {
-            // Zaglavlje Tabele
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Zaglavlje
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(TableHeaderBg, RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                    .background(PrimaryDark)
                     .padding(12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Runda", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp)
-                Text(igrac1 ?: "Igrač 1", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
-                Text(igrac2 ?: "Igrač 2", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                Text("#", color = Color.White.copy(alpha = 0.7f), modifier = Modifier.width(30.dp), fontWeight = FontWeight.Bold)
+                Text(igrac1 ?: "Igrač 1", color = Color.White, modifier = Modifier.weight(1f), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                Text("VS", color = AccentPink, fontWeight = FontWeight.Black, fontSize = 12.sp)
+                Text(igrac2 ?: "Igrač 2", color = Color.White, modifier = Modifier.weight(1f), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
             }
 
-            LazyColumn(contentPadding = PaddingValues(vertical = 4.dp), modifier = Modifier.height(250.dp)) {
-                itemsIndexed(runde) { index, poeni ->
-                    val isIgrac1Winner = poeni.getOrElse(0) { 0 } > poeni.getOrElse(1) { 0 }
-                    val isIgrac2Winner = poeni.getOrElse(1) { 0 } > poeni.getOrElse(0) { 0 }
+            // Redovi
+            runde.forEachIndexed { index, poeni ->
+                val p1 = poeni.getOrElse(0) { 0 }
+                val p2 = poeni.getOrElse(1) { 0 }
 
-                    val backgroundColor = if (index % 2 == 0) TableRowEvenBg else TableRowOddBg
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(if (index % 2 == 0) Color.Transparent else PrimaryDark.copy(alpha = 0.03f))
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("${index + 1}.", color = PrimaryDark.copy(alpha = 0.4f), modifier = Modifier.width(30.dp), fontSize = 12.sp)
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(backgroundColor)
-                            .padding(vertical = 8.dp, horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "${index + 1}", color = TextMain, fontSize = 14.sp)
-
-                        // Poeni Igrača 1
-                        Text(
-                            text = "${poeni.getOrElse(0) { 0 }}",
-                            fontWeight = if (isIgrac1Winner) FontWeight.ExtraBold else FontWeight.Normal,
-                            color = if (isIgrac1Winner) WinnerColor else TextMain,
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        // Poeni Igrača 2
-                        Text(
-                            text = "${poeni.getOrElse(1) { 0 }}",
-                            fontWeight = if (isIgrac2Winner) FontWeight.ExtraBold else FontWeight.Normal,
-                            color = if (isIgrac2Winner) WinnerColor else TextMain,
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-
-                item {
-                    val ukupno1 = runde.sumOf { it.getOrElse(0) { 0 } }
-                    val ukupno2 = runde.sumOf { it.getOrElse(1) { 0 } }
-
-                    val isIgrac1OverallWinner = ukupno1 > ukupno2
-                    val isIgrac2OverallWinner = ukupno2 > ukupno1
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(TableHeaderBg.copy(alpha = 0.9f))
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "UKUPNO", fontWeight = FontWeight.Black, color = Color.White, fontSize = 15.sp)
-                        Text(
-                            text = "$ukupno1",
-                            fontWeight = FontWeight.Black,
-                            color = if (isIgrac1OverallWinner) WinnerColor else Color.White,
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "$ukupno2",
-                            fontWeight = FontWeight.Black,
-                            color = if (isIgrac2OverallWinner) WinnerColor else Color.White,
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    ResultCell(p1, p1 > p2, Modifier.weight(1f))
+                    Spacer(modifier = Modifier.width(20.dp))
+                    ResultCell(p2, p2 > p1, Modifier.weight(1f))
                 }
             }
         }
     }
 }
 
+@Composable
+fun ResultCell(poeni: Int, isWinner: Boolean, modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = poeni.toString(),
+            fontSize = 18.sp,
+            fontWeight = if (isWinner) FontWeight.Black else FontWeight.Medium,
+            color = if (isWinner) WinnerColor else PrimaryDark
+        )
+        if (isWinner) {
+            Text(" ⭐", fontSize = 10.sp)
+        }
+    }
+}
+
+@Composable
+fun WinnerBanner(ukupno1: Int, ukupno2: Int) {
+    val (text, color) = when {
+        ukupno1 > ukupno2 -> "POBEDNIK: IGRAČ 1" to WinnerColor
+        ukupno2 > ukupno1 -> "POBEDNIK: IGRAČ 2" to WinnerColor
+        else -> "REMI!" to PrimaryDark.copy(alpha = 0.6f)
+    }
+
+    Surface(
+        color = color.copy(alpha = 0.15f),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(2.dp, color.copy(alpha = 0.3f))
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            color = color,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Black,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 @Composable
 fun DisplayWinner(ukupno1: Int, ukupno2: Int) {
     val winnerText = when {

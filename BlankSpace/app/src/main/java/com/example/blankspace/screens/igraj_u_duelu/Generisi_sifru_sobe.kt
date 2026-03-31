@@ -74,11 +74,9 @@ fun ActionButton(onClick: () -> Unit, text: String, modifier: Modifier, containe
     }
 }
 
-
-
 @Composable
 fun Generisi_sifru_sobe(navController: NavController,viewModelDuel:DuelViewModel){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         Generisi_sifru_sobe_mainCard(
             navController = navController,

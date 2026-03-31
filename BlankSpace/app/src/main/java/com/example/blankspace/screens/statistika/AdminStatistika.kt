@@ -1,8 +1,5 @@
 package com.example.blankspace.screens.statistika
 
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,65 +10,104 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.AdminStatistikaViewModel
-import com.example.blankspace.ui.components.SmallButton // Pretpostavljena komponenta
 import com.example.blankspace.viewModels.AdminStatistikaUiState
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val HighlightColor = Color(0xFF66BB6A)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun AdminStatistika(navController: NavController, viewModel: AdminStatistikaViewModel = hiltViewModel()) {
+fun AdminStatistika(viewModel: AdminStatistikaViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchAdminStatistika()
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        AdminStatistika_mainCard(
-            navController = navController,
-            viewModel = viewModel,
+        AdminStatistikaContent(
+            uiState = uiState,
             modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun AdminStatistika_mainCard(navController: NavController, viewModel: AdminStatistikaViewModel, modifier: Modifier) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchAdminStatistika()
-    }
-    Spacer(modifier = Modifier.height(34.dp))
+fun AdminStatistikaContent(uiState: AdminStatistikaUiState, modifier: Modifier) {
     Surface(
         color = CardContainerColor,
         modifier = modifier
-            .fillMaxWidth(0.92f)
-            .fillMaxHeight(0.7f)
+            .fillMaxWidth(0.94f)
+            .fillMaxHeight(0.85f)
             .shadow(16.dp, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 24.dp),
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AdminStatistikaHeader()
-            Spacer(modifier = Modifier.height(16.dp))
 
-            when {
-                uiState.isRefreshing -> CircularProgressIndicator(color = AccentPink)
-                uiState.error != null -> Text("Greška pri učitavanju: ${uiState.error}", color = Color.Red)
-                else -> StatistikaContent(uiState)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (uiState.isRefreshing) {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = PrimaryDark)
+                }
+            } else if (uiState.error != null) {
+                Text("Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    item {
+                        StatistikaSekcija(
+                            title = "OSNOVNI SISTEMSKI PODACI",
+                            titleColor = PrimaryDark
+                        ) {
+                            StatistikaRed("Registrovanih korisnika", uiState.informacije?.ukupnoKorisnika.toString())
+                            StatistikaRed("Pesama u bazi", uiState.informacije?.ukupnoPesama.toString())
+                            StatistikaRed("Predloga pesama", uiState.informacije?.ukupnoPredlogaPesamaNaCekanju.toString())
+                            StatistikaRed("Predloga izvođača", uiState.informacije?.ukupnoPredlogaIzvodjacaNaCekanju.toString())
+                        }
+                    }
+
+                    item {
+                        StatistikaSekcija(
+                            title = "NAJBOLJI KORISNICI",
+                            titleColor = PrimaryDark
+                        ) {
+                            StatistikaRed(
+                                title = "Najviše ličnih poena",
+                                value = "${uiState.informacije?.korisnikSaNajviseLicnihPoenaIme ?: "Nema"}\n(${uiState.informacije?.korisnikSaNajviseLicnihPoenaPoeni ?: 0} pts)",
+                            )
+                            StatistikaRed(
+                                title = "Najviši rang",
+                                value = "${uiState.informacije?.korisnikSaNajviseRangPoenimaIme ?: "Nema"}\n(${uiState.informacije?.korisnikSaNajviseRangPoenimaPoeni ?: 0} pts)",
+                                valueColor = HighlightColor
+                            )
+                        }
+                    }
+
+                    item {
+                        StatistikaSekcija(
+                            title = "AKTIVNOST IGARA",
+                            titleColor = PrimaryDark
+                        ) {
+                            StatistikaRed("Ukupno odigranih duela", uiState.informacije?.brojDuela.toString(), valueColor = HighlightColor)
+                        }
+                    }
+                }
             }
         }
     }
@@ -79,85 +115,37 @@ fun AdminStatistika_mainCard(navController: NavController, viewModel: AdminStati
 
 @Composable
 fun AdminStatistikaHeader() {
-    Text(
-        text = "Kompletna Statistika",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-    Text(
-        text = "Pregled ključnih metrika sistema.",
-        color = PrimaryDark.copy(alpha = 0.8f),
-        fontSize = 16.sp,
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-    )
-}
-
-@Composable
-fun StatistikaContent(uiState: AdminStatistikaUiState) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item { GlavniPodaciCard(uiState) }
-        item { KorisniciStatistikaCard(uiState) }
-        item { SadrzajStatistikaCard(uiState) }
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Sistemski Izveštaj",
+            color = PrimaryDark,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 26.sp
+        )
+        Text(
+            text = "Pregled performansi i baze u realnom vremenu",
+            color = PrimaryDark.copy(alpha = 0.6f),
+            fontSize = 14.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
     }
 }
 
 @Composable
-fun GlavniPodaciCard(uiState: AdminStatistikaUiState) {
-    StatistikaKard(title = "Glavni Podaci", titleColor = AccentPink) {
-        StatistikaRed("Ukupno registrovanih korisnika:", uiState.informacije?.ukupnoKorisnika.toString())
-        Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        StatistikaRed("Ukupno pesama u bazi:", uiState.informacije?.ukupnoPesama.toString())
-        Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        StatistikaRed("Ukupno predloga pesama:", uiState.informacije?.ukupnoPredlogaPesamaNaCekanju.toString())
-        Divider(color = PrimaryDark.copy(alpha = 0.1f))
-        StatistikaRed("Ukupno predloga izvodjaca:",
-            uiState.informacije?.ukupnoPredlogaIzvodjacaNaCekanju.toString())
-
-    }
-}
-
-@Composable
-fun KorisniciStatistikaCard(uiState: AdminStatistikaUiState) {
-    StatistikaKard(title = "Korisnička Aktivnost", titleColor = PrimaryDark) {
-        StatistikaRed("Korisnik sa najvise licnih poena:",
-            uiState.informacije?.korisnikSaNajviseLicnihPoenaIme + ", "+
-                    uiState.informacije?.korisnikSaNajviseLicnihPoenaPoeni.toString())
-        StatistikaRed("Korisnik sa najvise rang poena:",
-            uiState.informacije?.korisnikSaNajviseRangPoenimaIme + ", "+
-            uiState.informacije?.korisnikSaNajviseRangPoenimaPoeni.toString() ?: "Nema podataka"
-            , isValueLeft = false, valueColor = HighlightColor)
-        Divider(color = PrimaryDark.copy(alpha = 0.1f))
-    }
-}
-
-@Composable
-fun SadrzajStatistikaCard(uiState: AdminStatistikaUiState) {
-    StatistikaKard(title = "Statistika Sadržaja", titleColor = AccentPink) {
-        StatistikaRed("Ukupno odigranih duel igara:", uiState.informacije?.brojDuela.toString(), valueColor = HighlightColor)
-    }
-}
-
-@Composable
-fun StatistikaKard(title: String, titleColor: Color, content: @Composable ColumnScope.() -> Unit) {
+fun StatistikaSekcija(title: String, titleColor: Color, content: @Composable ColumnScope.() -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(16.dp)
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f)),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(14.dp)) {
             Text(
                 text = title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = titleColor,
-                modifier = Modifier.padding(bottom = 12.dp)
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Black,
+                color = titleColor.copy(alpha = 0.7f),
+                modifier = Modifier.padding(bottom = 10.dp)
             )
             content()
         }
@@ -165,27 +153,36 @@ fun StatistikaKard(title: String, titleColor: Color, content: @Composable Column
 }
 
 @Composable
-fun StatistikaRed(title: String, value: String, isValueLeft: Boolean = true, valueColor: Color = PrimaryDark) {
+fun StatistikaRed(title: String, value: String,valueColor: Color = PrimaryDark) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = if (isValueLeft) Arrangement.SpaceBetween else Arrangement.Start,
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            color = PrimaryDark.copy(alpha = 0.9f),
-            fontWeight = FontWeight.Medium,
-            modifier = if (!isValueLeft) Modifier.weight(1f) else Modifier
-        )
-        Text(
-            text = value,
-            fontSize = 16.sp,
-            color = valueColor,
-            fontWeight = FontWeight.Bold,
-            textAlign = if (isValueLeft) androidx.compose.ui.text.style.TextAlign.End else androidx.compose.ui.text.style.TextAlign.Start
-        )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                color = PrimaryDark.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        Surface(
+            color = PrimaryDark.copy(alpha = 0.05f),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(
+                text = value,
+                fontSize = 14.sp,
+                color = valueColor,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.End
+            )
+        }
     }
+    HorizontalDivider(color = PrimaryDark.copy(alpha = 0.05f), thickness = 1.dp)
 }

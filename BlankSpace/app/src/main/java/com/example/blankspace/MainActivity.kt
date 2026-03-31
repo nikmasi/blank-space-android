@@ -63,10 +63,8 @@ import com.example.blankspace.screens.igraj_u_duelu.Kraj_duela
 import com.example.blankspace.screens.igraj_u_duelu.Sifra_sobe_duel
 import com.example.blankspace.screens.pocetne.Pocetna
 import com.example.blankspace.screens.pocetne.PocetnaAdmin
-import com.example.blankspace.screens.pocetne.PocetnaBrucos
-import com.example.blankspace.screens.pocetne.PocetnaMaster
 import com.example.blankspace.screens.pocetne.PocetnaOffline
-import com.example.blankspace.screens.pocetne.PocetnaStudent
+import com.example.blankspace.screens.pocetne.PocetnaRegistrovan
 import com.example.blankspace.screens.pocetne.RangLista
 import com.example.blankspace.screens.pocetne.UcitavanjeEkrana
 import com.example.blankspace.screens.predlaganje.ImeIzvodjaca
@@ -210,15 +208,36 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"
-                PocetnaBrucos(modifier = Modifier,navController,viewModelLogin)
+                PocetnaRegistrovan(
+                    modifier = Modifier, viewModelLogin = viewModelLogin,
+                    onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+                    onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
+                    onLogOut = {navController.navigate(Destinacije.Login.ruta)},
+                    onCheckLoginStates = {
+                        navController.navigate(Destinacije.Login.ruta) {
+                            popUpTo(Destinacije.Pocetna.ruta) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(route = Destinacije.PocetnaStudent.ruta) {
                 userType="student"
-                PocetnaStudent(modifier = Modifier,navController,viewModelLogin)
+                PocetnaRegistrovan(modifier = Modifier,viewModelLogin=viewModelLogin,
+                    onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
+                    onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
+                    onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },
+                    onGameSing = {navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta)},
+                    onLogOut = {navController.navigate(Destinacije.Login.ruta)},
+                    onCheckLoginStates = {
+                        navController.navigate(Destinacije.Login.ruta) {
+                            popUpTo(Destinacije.Pocetna.ruta) { inclusive = true }
+                        }
+                    }
+                )
             }
             composable(route = Destinacije.PocetnaMaster.ruta) {
                 userType="master"
-                PocetnaMaster(modifier = Modifier,viewModelLogin,
+                PocetnaRegistrovan(modifier = Modifier,viewModelLogin,
                     onGameSoloClick = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
                     onGameDuelClick = { navController.navigate(Destinacije.Sifra_sobe_duel.ruta) },
                     onSuggestArtistClick = { navController.navigate(Destinacije.PredlaganjeIzvodjaca.ruta) },
@@ -616,12 +635,11 @@ fun BlankSpaceApp(){
                 SadrzajSoba(navController)
             }
             composable(route = Destinacije.AdminStatistika.ruta){
-                AdminStatistika(navController,viewModelAdminStatistika)
+                AdminStatistika(viewModelAdminStatistika)
             }
             composable(route = Destinacije.KorisnikPregled.ruta){
-                KorisnikPregled(navController,viewModelKorisnici,viewModelLogin)
+                KorisnikPregled(viewModelKorisnici,viewModelLogin)
             }
         }
-
     }
 }

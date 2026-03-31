@@ -3,10 +3,7 @@ package com.example.blankspace.screens.takmicenje
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,29 +17,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.Mecevi
 import com.example.blankspace.data.retrofit.models.PesmeMeceva
 import com.example.blankspace.data.retrofit.models.Protivnik
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.KorisniciViewModel
 import com.example.blankspace.viewModels.LoginViewModel
-import com.example.blankspace.viewModels.UiStateK
 import com.example.blankspace.viewModels.UiStateKorisnikPregled
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val WinColor = Color(0xFF4CAF50) // Zelena za pobedu
-private val LossColor = Color(0xFFF44336) // Crvena za poraz
-private val DrawColor = Color(0xFFFFC107) // zuta za nereseno
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun KorisnikPregled(navController: NavController, viewModelKorisnici: KorisniciViewModel, viewModelLogin:LoginViewModel) {
+fun KorisnikPregled(viewModelKorisnici: KorisniciViewModel, viewModelLogin:LoginViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         KorisnikPregled_mainCard(
-            navController = navController,
             modifier = Modifier.align(Alignment.Center),
             viewModelKorisnici,
             viewModelLogin
@@ -51,7 +39,7 @@ fun KorisnikPregled(navController: NavController, viewModelKorisnici: KorisniciV
 }
 
 @Composable
-fun KorisnikPregled_mainCard(navController: NavController, modifier: Modifier,viewModelKorisnici: KorisniciViewModel, viewModelLogin:LoginViewModel) {
+fun KorisnikPregled_mainCard(modifier: Modifier,viewModelKorisnici: KorisniciViewModel, viewModelLogin:LoginViewModel) {
 
     val uiState by viewModelKorisnici.uiStateKorisnikPregled.collectAsState()
     val uiStateLog by viewModelLogin.uiState.collectAsState()
@@ -321,28 +309,5 @@ fun PesmaMecevaRow(pesma: PesmeMeceva) {
             fontWeight = FontWeight.Bold,
             color = AccentPink
         )
-    }
-}
-
-@Composable
-fun PesmaMecevaCard(pesma: PesmeMeceva) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F0F8)) // svetlo roze pozadina
-    ) {
-        PesmaMecevaRow(pesma = pesma)
-    }
-}
-
-@Composable
-fun PesmeMecevaList(pesme: List<PesmeMeceva>) {
-    Column {
-        pesme.forEach { pesma ->
-            PesmaMecevaCard(pesma = pesma)
-        }
     }
 }

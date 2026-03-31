@@ -2,16 +2,11 @@ package com.example.blankspace.screens.igra_pogodi_i_pevaj
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,36 +18,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.igra_sam.ActionButton
+import com.example.blankspace.screens.igra_sam.BottomInfoBar
 import com.example.blankspace.screens.igra_sam.DisplayContentIgraSam
+import com.example.blankspace.screens.igra_sam.HelpButtonsSectionIgraSam
 import com.example.blankspace.screens.igra_sam.LoadingStateIgraSam
+import com.example.blankspace.screens.igra_sam.SpeechButton
 import com.example.blankspace.viewModels.IgraSamLista
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val InfoBarColor = Color(0xFFE0BBE4)
-private val TextAccent = AccentPink
-private val TimeWarningColor = Color(0xFFD32F2F)
-
-val LIGTH_BLUE = InfoBarColor
-val TEXT_COLOR = PrimaryDark
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun Igra_pogodiPevaj(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
-    Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
@@ -166,7 +154,7 @@ fun Igra_pogodiPevaj_mainCard(
                         text = "Runda ${currentRunda}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextAccent
+                        color = AccentPink
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     LoadingStateIgraSam(uiState)
@@ -364,195 +352,4 @@ fun UserInputSectionPogodiPevaj(
         containerColor = PrimaryDark.copy(alpha = 0.5f),
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-@Composable
-fun SpeechButton(
-    context: Context,
-    speechRecognizer: SpeechRecognizer,
-    isListening: Boolean,
-    onListeningChange: (Boolean) -> Unit,
-    modifier: Modifier
-) {
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (!granted) {
-            Toast.makeText(context, "Dozvola za mikrofon je potrebna.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    Button(
-        onClick = {
-            if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
-                return@Button
-            }
-
-            if (!isListening) {
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
-                }
-                speechRecognizer.startListening(intent)
-                onListeningChange(true)
-            } else {
-                speechRecognizer.stopListening()
-                onListeningChange(false)
-            }
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isListening) TimeWarningColor else AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier.height(52.dp)
-    ) {
-        Icon(Icons.Default.PlayArrow, contentDescription = if (isListening) "Slušam" else "Govori", modifier = Modifier.size(20.dp))
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(if (isListening) "Govori" else "Govori", fontSize = 14.sp)
-    }
-}
-
-@Composable
-fun ActionButton(
-    onClick: () -> Unit,
-    text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    modifier: Modifier,
-    containerColor: Color = AccentPink,
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier.height(52.dp)
-    ) {
-        Icon(icon, contentDescription = text, modifier = Modifier.size(20.dp))
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text, fontSize = 14.sp)
-    }
-}
-
-
-@Composable
-fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, context: Context) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Pomoć: ",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            color = TEXT_COLOR,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(end = 8.dp)
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                val i=uiState.igrasam?.izvodjac ?: "Nema podataka"
-                Toast.makeText(context, "Izvođač: $i", Toast.LENGTH_SHORT).show()
-            },
-            text = "Izvođač"
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                val p = uiState.igrasam?.pesma ?: "Nema podataka"
-                Toast.makeText(context, "Pesma: $p", Toast.LENGTH_LONG).show()
-            },
-            text = "Pesma"
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                if (crta.value.contains("_")){
-                    val words = uiState.igrasam?.tacno?.split(" ") ?: return@OutlinedHelpButton
-                    val newCrta = words.joinToString(" ") { word ->
-                        if (word.isNotEmpty()) {
-                            val firstLetter = word.first().toString()
-                            val underscores = "_".repeat(word.length - 1)
-                            "$firstLetter$underscores"
-                        } else ""
-                    }
-                    crta.value= newCrta
-                }
-            },
-            text = "Slova"
-        )
-    }
-}
-
-@Composable
-fun OutlinedHelpButton(onClick: () -> Unit, text: String) {
-    OutlinedButton(
-        onClick = onClick,
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color.White,
-            contentColor = PrimaryDark
-        ),
-        shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
-            width = 1.dp,
-            brush = androidx.compose.ui.graphics.SolidColor(PrimaryDark.copy(alpha = 0.6f))
-        ),
-        modifier = Modifier.height(36.dp)
-    ) {
-        Text(text, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-@Composable
-fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(LIGTH_BLUE, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-            .padding(horizontal = 24.dp, vertical = 12.dp)
-            .height(IntrinsicSize.Min)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Runda: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                Text(
-                    text = "$runda / 7",
-                    color = PrimaryDark,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp
-                )
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Vreme: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                Text(
-                    text = "$count s",
-                    color = if (count >= 50) TimeWarningColor else PrimaryDark,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp
-                )
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Poeni: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                Text(
-                    text = "$poeni",
-                    color = Color.Black,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp
-                )
-                Text(text = " \uD834\uDD1E", color = Color.Black)
-            }
-        }
-    }
 }

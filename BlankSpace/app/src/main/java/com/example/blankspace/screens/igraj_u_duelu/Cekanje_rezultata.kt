@@ -58,7 +58,7 @@ fun BodyTextCek(text: String) {
 
 @Composable
 fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,poeni: Int,sifra:Int){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         Cekanje_rezultata_mainCard(
             navController = navController,

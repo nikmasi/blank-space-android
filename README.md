@@ -111,29 +111,33 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
 ## Screenshots
 
 <p align="center">
+  <img src="screenshots/loading.jpg" width="270" />
   <img src="screenshots/login.png" width="270" />
   <img src="screenshots/sign_up.png" width="270" />
-  <img src="screenshots/zaboravljena_lozinka.png" width="270" />
-  <img src="screenshots/pitanje_lozinka.png" width="270" />
+  <img src="screenshots/zaboravljena_lozinka.jpg" width="270" />
+  <img src="screenshots/pitanje_lozinka.jpg" width="270" />
   <img src="screenshots/promena_lozinka.jpg" width="270" />
-  <img src="screenshots/gost.png" width="270" />
+  <img src="screenshots/gost.jpg" width="270" />
   <img src="screenshots/home.jpg" width="270" />
   <img src="screenshots/nivo.jpg" width="270" />
   <img src="screenshots/zanr.jpg" width="270" />
   <img src="screenshots/game.jpg" width="270" />
   <img src="screenshots/game_pomoc.jpg" width="270" />
   <img src="screenshots/kraj_igre.jpg" width="270" />
-  <img src="screenshots/sifra_sobe.png" width="270" />
-  <img src="screenshots/generisana_sifra.png" width="270" />
-  <img src="screenshots/pogodi_i_pevaj.png" width="270" />
-  <img src="screenshots/predlozi_izvodjaca.png" width="270" />
-  <img src="screenshots/predlozi_pesmu.png" width="270" />
-  <img src="screenshots/pretraga_i_predlaganje.png" width="270" />
+  <img src="screenshots/sifra_sobe.jpg" width="270" />
+  <img src="screenshots/generisana_sifra.jpg" width="270" />
+  <img src="screenshots/cekanje_rezultata.jpg" width="270" />
+  <img src="screenshots/rezultat_duel.jpg" width="270" />
+  <img src="screenshots/pogodi_i_pevaj.jpg" width="270" />
+  <img src="screenshots/predlozi_izvodjaca.jpg" width="270" />
+  <img src="screenshots/predlozi_pesmu.jpg" width="270" />
+  <img src="screenshots/pretraga_i_predlaganje.jpg" width="270" />
   <img src="screenshots/profile.jpg" width="270" />
-  <img src="screenshots/notifikacija.png" width="270" />
+  <img src="screenshots/notifikacija.jpg" width="270" />
   <img src="screenshots/rang.jpg" width="270" />
   <img src="screenshots/stats.jpg" width="270" />
   <img src="screenshots/stats2.jpg" width="270" />
   <img src="screenshots/stats3.jpg" width="270" />
+  <img src="screenshots/admin.jpg" width="270" />
   
 </p>

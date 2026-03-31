@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.predlaganje
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,15 +29,10 @@ import com.example.blankspace.viewModels.PredlaganjePesmeViewModel
 import com.example.blankspace.viewModels.UiStateIZ
 import com.example.blankspace.viewModels.UiStateL
 import com.example.blankspace.viewModels.UiStatePP
-import com.example.blankspace.viewModels.UiStateZ
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun PredlaganjePesme(navController: NavController, viewModelLogin: LoginViewModel) {
@@ -61,7 +55,6 @@ fun PredlaganjePesme_mainCard(navController: NavController, viewModelLogin: Logi
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
     val uiStatePredlaganjePesme by viewModelPredlaganje.uiState.collectAsState()
 
-    val context = LocalContext.current
     var selectedZanrId by remember { mutableStateOf("") }
     var pesma by remember { mutableStateOf("") }
 
@@ -77,7 +70,7 @@ fun PredlaganjePesme_mainCard(navController: NavController, viewModelLogin: Logi
         }
     }
 
-    HandlePredlaganjePesmeResponse(navController, context, viewModelPredlaganje, uiStatePredlaganjePesme)
+    HandlePredlaganjePesmeResponse(navController, uiStatePredlaganjePesme)
     Spacer(modifier = Modifier.height(30.dp))
     Surface(
         color = CardContainerColor,
@@ -120,7 +113,7 @@ fun PredlaganjePesme_mainCard(navController: NavController, viewModelLogin: Logi
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                HeadlineTextPesme("Ime izvođača")
+                HeadlineText("Ime izvođača")
                 IzvodjacDropdown(
                     uiState = uiState,
                     selectedOption = selectedIzvodjacName,
@@ -143,22 +136,10 @@ fun PredlaganjePesme_mainCard(navController: NavController, viewModelLogin: Logi
                 selectedZanrId = selectedZanrId,
                 selectedIzvodjacName = selectedIzvodjacName,
                 uiStateLogin = uiStateLogin,
-                viewModelPredlaganje = viewModelPredlaganje,
-                context = context
+                viewModelPredlaganje = viewModelPredlaganje
             )
         }
     }
-}
-
-@Composable
-fun HeadlineTextPesme(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        color = PrimaryDark,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)
-    )
 }
 
 @Composable
@@ -292,10 +273,9 @@ fun ZanrSelectionListStyledPesme(
 @Composable
 fun HandlePredlaganjePesmeResponse(
     navController: NavController,
-    context: Context,
-    viewModelPredlaganje: PredlaganjePesmeViewModel,
     uiStatePredlaganjePesme: UiStatePP
 ){
+    val context = LocalContext.current
     LaunchedEffect(uiStatePredlaganjePesme.predlaganjepesme?.odgovor) {
         val odgovor = uiStatePredlaganjePesme.predlaganjepesme?.odgovor
         if (!odgovor.isNullOrEmpty()) {
@@ -319,9 +299,9 @@ fun PredlaganjePesmeButtonFull(
     selectedZanrId: String,
     selectedIzvodjacName: String,
     uiStateLogin: UiStateL,
-    viewModelPredlaganje: PredlaganjePesmeViewModel,
-    context: Context
+    viewModelPredlaganje: PredlaganjePesmeViewModel
 ) {
+    val context = LocalContext.current
     var pressed by remember { mutableStateOf(false) }
     val elevation = if (pressed) 2.dp else 8.dp
 

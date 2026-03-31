@@ -1,6 +1,7 @@
 package com.example.blankspace.screens.pocetne
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,23 +12,25 @@ import com.example.blankspace.screens.pocetne.cards.PocetnaMainCard
 import com.example.blankspace.viewModels.LoginViewModel
 
 @Composable
-fun PocetnaMaster(modifier: Modifier = Modifier,viewModelLogin:LoginViewModel,
-      onGameSoloClick: () -> Unit,
-      onGameDuelClick: () -> Unit,
-      onSuggestArtistClick: () -> Unit,
-      onSuggestSongClick: () -> Unit,
-      onSearchAndSuggestClick: () -> Unit,
-      onGameSing: () -> Unit,
-      onGameChallenge: () -> Unit,
-      onLogOut: () -> Unit,
-      onCheckLoginStates: () -> Unit
+fun PocetnaRegistrovan(
+    modifier: Modifier = Modifier,
+    viewModelLogin: LoginViewModel,
+    onLogOut: () -> Unit,
+    onCheckLoginStates: () -> Unit,
+    onGameSoloClick: (() -> Unit)? = null,
+    onGameDuelClick: (() -> Unit)? = null,
+    onSuggestArtistClick: (() -> Unit)? = null,
+    onSuggestSongClick: (() -> Unit)? = null,
+    onSearchAndSuggestClick: (() -> Unit)? = null,
+    onGameSing: (() -> Unit)? = null,
+    onGameChallenge: (() -> Unit)? = null
 ) {
+    val uiStateLogin by viewModelLogin.uiState.collectAsState()
+
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
-        checkLoginStates(viewModelLogin,onCheckLoginStates)
-
-        val uiStateLogin by viewModelLogin.uiState.collectAsState()
+        checkLoginStates(viewModelLogin, onCheckLoginStates)
 
         LaunchedEffect(uiStateLogin.login?.odgovor) {
             val odgovor = uiStateLogin.login?.odgovor
@@ -37,8 +40,8 @@ fun PocetnaMaster(modifier: Modifier = Modifier,viewModelLogin:LoginViewModel,
         }
 
         PocetnaMainCard(
-            onGameSoloClick = onGameSoloClick,
-            onGameDuelClick = onGameDuelClick,
+            onGameSoloClick = onGameSoloClick ?: {},
+            onGameDuelClick = onGameDuelClick ?: {},
             onSuggestArtistClick = onSuggestArtistClick,
             onSuggestSongClick = onSuggestSongClick,
             onSearchAndSuggestClick = onSearchAndSuggestClick,

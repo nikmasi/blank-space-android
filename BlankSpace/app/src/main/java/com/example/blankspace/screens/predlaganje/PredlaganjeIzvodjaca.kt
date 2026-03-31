@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.predlaganje
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.blankspace.ui.components.OutlinedTextFieldInput
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.PredlaganjeIzvodjacaViewModel
@@ -32,13 +30,7 @@ import com.example.blankspace.viewModels.ZanrViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-// Boje za usklađivanje
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextSecondary = Color(0xFF5A5A5A)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun PredlaganjeIzvodjaca(navController: NavController, viewModelLogin: LoginViewModel) {
@@ -69,7 +61,7 @@ fun PredlaganjeIzvodjaca_mainCard(navController: NavController, viewModelLogin: 
         viewModel.fetchCategories()
     }
 
-    HandlePredlaganjeIzvodjacaResponse(uiStatePredlaganjeIzvodjaca, context, navController, viewModelPredlaganje)
+    HandlePredlaganjeIzvodjacaResponse(uiStatePredlaganjeIzvodjaca, onBackStack = {navController.popBackStack()})
     Spacer(modifier = Modifier.height(30.dp))
     Surface(
         color = CardContainerColor,
@@ -104,7 +96,7 @@ fun PredlaganjeIzvodjaca_mainCard(navController: NavController, viewModelLogin: 
 
             Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
                 HeadlineText("Ime izvođača")
-                ImeIzvodjacaInputStyled(value = izvodjac, onValueChange = { izvodjac = it })
+                ImeIzvodjacaInputStyled(value = izvodjac, onValueChange = { izvodjac = it }, text= "Unesite ime")
                 Spacer(modifier = Modifier.height(20.dp))
 
                 HeadlineText("Odaberite žanr")
@@ -122,23 +114,10 @@ fun PredlaganjeIzvodjaca_mainCard(navController: NavController, viewModelLogin: 
                 selectedZanrId = selectedZanrId,
                 izvodjac = izvodjac,
                 uiStateLogin = uiStateLogin,
-                viewModelPredlaganje = viewModelPredlaganje,
-                context = context
+                viewModelPredlaganje = viewModelPredlaganje
             )
         }
     }
-}
-
-
-@Composable
-fun HeadlineText(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        color = PrimaryDark,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)
-    )
 }
 
 @Composable
@@ -198,10 +177,9 @@ fun ZanrSelectionListStyled(
 @Composable
 fun HandlePredlaganjeIzvodjacaResponse(
     uiStatePredlaganjeIzvodjaca: UiStatePI,
-    context: Context,
-    navController: NavController,
-    viewModelPredlaganje: PredlaganjeIzvodjacaViewModel
+    onBackStack: () -> Unit
 ) {
+    val context = LocalContext.current
     LaunchedEffect(uiStatePredlaganjeIzvodjaca.predlaganjeIzvodjaca?.odgovor) {
         val odgovor = uiStatePredlaganjeIzvodjaca.predlaganjeIzvodjaca?.odgovor
         if (!odgovor.isNullOrEmpty()) {
@@ -213,26 +191,9 @@ fun HandlePredlaganjeIzvodjacaResponse(
             }
             //viewModelPredlaganje.resetState()
             delay(1500)
-            navController.popBackStack()
+            onBackStack()
         }
     }
-}
-
-@Composable
-fun ImeIzvodjacaInputStyled(value: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text("Unesite ime") },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AccentPink,
-            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
-            cursorColor = AccentPink
-        ),
-        shape = RoundedCornerShape(12.dp)
-    )
 }
 
 @Composable
@@ -240,9 +201,9 @@ fun PredlaganjeIzvodjacaButtonFull(
     selectedZanrId: String,
     izvodjac: String,
     uiStateLogin: UiStateL,
-    viewModelPredlaganje: PredlaganjeIzvodjacaViewModel,
-    context: Context
+    viewModelPredlaganje: PredlaganjeIzvodjacaViewModel
 ) {
+    val context = LocalContext.current
     var pressed by remember { mutableStateOf(false) }
     val elevation = if (pressed) 2.dp else 8.dp
 
