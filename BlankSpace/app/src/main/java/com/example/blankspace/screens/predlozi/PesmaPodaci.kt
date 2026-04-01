@@ -28,12 +28,8 @@ import com.example.blankspace.viewModels.PredloziViewModel
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import com.example.blankspace.ui.theme.*
 
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextMain = PrimaryDark
-private val TextAccent = AccentPink
 private val InputBorderColor = PrimaryDark.copy(alpha = 0.5f)
 
 @Composable

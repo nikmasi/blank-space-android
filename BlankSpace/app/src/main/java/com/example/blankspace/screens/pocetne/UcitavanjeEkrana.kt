@@ -44,13 +44,12 @@ fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController
             navController = navController,
             loginViewModel = loginViewModel,
             databaseViewModel = databaseViewModel,
-            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel, databaseViewModel: DatabaseViewModel, modifier: Modifier) {
+fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel, databaseViewModel: DatabaseViewModel) {
     val context = LocalContext.current
     val isLoadingData = remember { mutableStateOf(true) }
     val uiStateLogin by loginViewModel.uiState.collectAsState()

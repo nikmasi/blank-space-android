@@ -30,11 +30,7 @@ import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZanrViewModel
 import kotlinx.coroutines.delay
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun IzborIzvodjacaUklanjanjePesme(navController: NavController, viewModelUklanjanje: UklanjanjeViewModel) {
@@ -207,10 +203,7 @@ fun IzvodjacUklanjanjeButtonStyled(onClick: () -> Unit) {
             pressed = true
             onClick()
         },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
+        colors = ButtonDefaults.buttonColors(containerColor = AccentPink, contentColor = Color.White),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()

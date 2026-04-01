@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,8 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.data.retrofit.models.IzvodjaciZanra
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.IzvodjaciZanraViewModel
@@ -35,19 +31,13 @@ import com.example.blankspace.viewModels.UiStateUklanjanjeIzvodjaca
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun UklanjanjeIzvodjaca(navController: NavController, zanr: Int) {
+fun UklanjanjeIzvodjaca(zanr: Int) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         UklanjanjeIzvodjaca_mainCard(
-            navController = navController,
             zanr = zanr,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -55,7 +45,7 @@ fun UklanjanjeIzvodjaca(navController: NavController, zanr: Int) {
 }
 
 @Composable
-fun UklanjanjeIzvodjaca_mainCard(navController: NavController, zanr: Int, modifier: Modifier) {
+fun UklanjanjeIzvodjaca_mainCard(zanr: Int, modifier: Modifier) {
     val viewModel: IzvodjaciZanraViewModel = hiltViewModel()
     val viewModelUklanjanje: UklanjanjeViewModel = hiltViewModel()
 

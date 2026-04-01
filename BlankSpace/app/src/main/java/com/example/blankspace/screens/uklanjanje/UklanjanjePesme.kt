@@ -21,27 +21,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.PesmeIzvodjaca
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.UiStateUklanjanjePesme
 import com.example.blankspace.viewModels.UklanjanjeViewModel
-import com.example.blankspace.viewModels.ZanrViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun UklanjanjePesme(navController: NavController, viewModelUklanjanje: UklanjanjeViewModel) {
+fun UklanjanjePesme(viewModelUklanjanje: UklanjanjeViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         UklanjanjePesme_mainCard(
-            navController = navController,
             viewModelUklanjanje = viewModelUklanjanje,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -49,7 +41,7 @@ fun UklanjanjePesme(navController: NavController, viewModelUklanjanje: Uklanjanj
 }
 
 @Composable
-fun UklanjanjePesme_mainCard(navController: NavController, viewModelUklanjanje: UklanjanjeViewModel, modifier: Modifier) {
+fun UklanjanjePesme_mainCard(viewModelUklanjanje: UklanjanjeViewModel, modifier: Modifier) {
     val uiStateUklanjanje by viewModelUklanjanje.uiStatePesma.collectAsState()
     val uiStatePesmeIzv by viewModelUklanjanje.uiStatePesmeIzv.collectAsState()
     val uiState by viewModelUklanjanje.uiStatePesmeIzvodjaca.collectAsState()
@@ -86,7 +78,6 @@ fun UklanjanjePesme_mainCard(navController: NavController, viewModelUklanjanje: 
             PesmaUklanjanjeHeader(izvodjacIme = ime)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- STILIZOVANA LISTA KARTICA ZA PESME ---
             PesmeListaZaUklanjanjeStyled(
                 pesme = uiState.pesmeIzvodjaca,
                 isLoading = uiState.isRefreshing,

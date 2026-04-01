@@ -1,11 +1,9 @@
 package com.example.blankspace.screens.sadrzaj
 
-import com.example.blankspace.data.retrofit.models.Pesma
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,47 +14,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.blankspace.data.retrofit.models.Izvodjac
+import com.example.blankspace.R
 import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.AdminStatistikaViewModel
-import com.example.blankspace.viewModels.IzvodjacZanrViewModel
 import com.example.blankspace.viewModels.PesmePoIzvodjacimaUiState
-import com.example.blankspace.viewModels.UiStateIZ
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun SadrzajPesme(navController: NavController) {
+fun SadrzajPesme() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         SadrzajPesme_mainCard(
-            navController = navController,
             modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun SadrzajPesme_mainCard(navController: NavController, modifier: Modifier) {
+fun SadrzajPesme_mainCard(modifier: Modifier) {
     val viewModel: AdminStatistikaViewModel = hiltViewModel()
-
     val uiState by viewModel.uiStatePesmePoIzvodjacima.collectAsState()
-    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchPesmePoIzvodjacima()
-    }
+    LaunchedEffect(Unit) { viewModel.fetchPesmePoIzvodjacima() }
 
     Surface(
         color = CardContainerColor,
@@ -67,13 +53,14 @@ fun SadrzajPesme_mainCard(navController: NavController, modifier: Modifier) {
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            SadrzajPesmeHeader()
+            SadrzajHeader(
+                text1 = stringResource(id = R.string.songs_overview),
+                text2 = stringResource(id = R.string.list_of_all_songs)
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             PesmaListaStyled(uiState = uiState)
@@ -83,15 +70,14 @@ fun SadrzajPesme_mainCard(navController: NavController, modifier: Modifier) {
 
 
 @Composable
-fun PesmaListaStyled(
-    uiState: PesmePoIzvodjacimaUiState
-) {
+fun PesmaListaStyled(uiState: PesmePoIzvodjacimaUiState) {
     when {
         uiState.isRefreshing -> {
             CircularProgressIndicator(color = AccentPink)
         }
         uiState.error != null -> {
-            Text(text = "Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
+            Text(text =  stringResource(id = R.string.error) + ": ${uiState.error}", color = Color.Red,
+                modifier = Modifier.padding(16.dp))
         }
         uiState.pesmePoIzvodjacima?.isEmpty() == true -> {
             Text(
@@ -102,13 +88,10 @@ fun PesmaListaStyled(
             )
         }
         else -> {
-            val grupisano = uiState.pesmePoIzvodjacima!!
-                .groupBy { it.ime_izvodjaca ?: "Nepoznat izvođač" }
+            val grupisano = uiState.pesmePoIzvodjacima!!.groupBy { it.ime_izvodjaca ?: "Nepoznat izvođač" }
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.8f)
-                    .padding(top = 8.dp),
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 grupisano.forEach { (izvodjac, pesme) ->
@@ -122,37 +105,11 @@ fun PesmaListaStyled(
 }
 
 @Composable
-fun SadrzajPesmeHeader() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Pregled pesama",
-            color = PrimaryDark,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Spisak svih pesama u sistemu po izvodjacima.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryDark.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun IzvodjacSection(
-    izvodjac: String,
-    pesme: List<PesmePoIzvodjacimaResponse>
-) {
+fun IzvodjacSection(izvodjac: String, pesme: List<PesmePoIzvodjacimaResponse>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = CardContainerColor.copy(alpha = 0.6f),
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(color = CardContainerColor.copy(alpha = 0.6f), shape = RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
         Text(
@@ -163,9 +120,7 @@ fun IzvodjacSection(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        pesme.forEach { pesma ->
-            PesmaCardItem(pesma)
-        }
+        pesme.forEach { pesma -> PesmaCardItem(pesma) }
     }
 }
 
@@ -179,11 +134,6 @@ fun PesmaCardItem(pesma: PesmePoIzvodjacimaResponse) {
             .border(1.dp, PrimaryDark.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        Text(
-            text = pesma.naziv,
-            color = PrimaryDark,
-            fontSize = 16.sp
-        )
+        Text(text = pesma.naziv, color = PrimaryDark, fontSize = 16.sp)
     }
 }
-

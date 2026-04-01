@@ -1,8 +1,5 @@
 package com.example.blankspace.screens.uklanjanje
 
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,22 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UiStatePredloziIzv
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
+import com.example.blankspace.ui.theme.*
 private val AccentPink = Color(0xFFEC8FB7)
 private val AccentGreen = Color(0xFF66BB6A)
 private val AccentRed = Color(0xFFEF5350)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable
 fun PredloziIzvodjaca(navController: NavController, viewModelPredlozi: PredloziViewModel) {

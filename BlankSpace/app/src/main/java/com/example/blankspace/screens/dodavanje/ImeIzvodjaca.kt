@@ -21,10 +21,7 @@ import com.example.blankspace.viewModels.ProveraPostojanja
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun ImeIzvodjaca(navController: NavController, viewModel: DodavanjeViewModel, zanr: String){

@@ -32,8 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.autorizacija.login.Login
-import com.example.blankspace.screens.autorizacija.PromenaLozinke
-import com.example.blankspace.screens.autorizacija.Registracija
+import com.example.blankspace.screens.autorizacija.promena_lozinke.PromenaLozinke
+import com.example.blankspace.screens.autorizacija.registracija.Registracija
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinka
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka_pitanje.ZaboravljenaLozinkaPitanje
 import com.example.blankspace.screens.dodavanje.IzborZanra2
@@ -255,7 +255,13 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PocetnaAdmin.ruta) {
                 userType="admin"
-                PocetnaAdmin(modifier = Modifier,navController,viewModelLogin)
+                PocetnaAdmin(modifier = Modifier,viewModelLogin,
+                    onLogout = {
+                        navController.navigate(Destinacije.Login.ruta) { popUpTo(0) }
+                        viewModelLogin.izloguj_se()
+                    },
+                    onNavigate = { ruta -> navController.navigate(ruta) }
+                )
             }
             composable(route = Destinacije.PravilaIgre.ruta) {
                 PravilaIgre(onClick = { navController.navigate(Destinacije.Login.ruta) })
@@ -449,8 +455,10 @@ fun BlankSpaceApp(){
                 )
             }
             composable(route = Destinacije.Registracija.ruta) {
-                Registracija(navController,viewModelLogin,
-                    onBackToLogin ={ navController.navigate(Destinacije.Login.ruta) })
+                Registracija(
+                    onBackToLogin ={ navController.navigate(Destinacije.Login.ruta) },
+                    onClickPocetna = { navController.navigate(Destinacije.PocetnaBrucos.ruta) }
+                )
             }
             composable(route = Destinacije.ZaboravljenaLozinka.ruta) {
                 ZaboravljenaLozinka(viewModel=viewModelZaboravljenaLozinka, onNavigateToQuestion = {
@@ -463,7 +471,11 @@ fun BlankSpaceApp(){
                 })
             }
             composable(route = Destinacije.PromenaLozinke.ruta) {
-                PromenaLozinke(navController,viewModelZaboravljenaLozinka,viewModelLogin)
+                PromenaLozinke(viewModelZaboravljenaLozinka,viewModelLogin, onClick = {
+                    navController.navigate(Destinacije.Login.ruta) {
+                        popUpTo(Destinacije.PromenaLozinke.ruta) { inclusive = true }
+                    }
+                })
             }
             composable(route = Destinacije.MojProfil.ruta) {
                 MojProfil(navController, viewModelLogin)
@@ -481,7 +493,7 @@ fun BlankSpaceApp(){
                 PretragaPredlaganje(navController,viewModelLogin)
             }
             composable(route = Destinacije.UklanjanjeZanra.ruta) {
-                UklanjanjeZanra(navController)
+                UklanjanjeZanra()
             }
             composable(route = Destinacije.IzborZanraUklanjanjeIzvodjaca.ruta){
                 IzborZanraUklanjanjeIzvodjaca(navController)
@@ -493,7 +505,7 @@ fun BlankSpaceApp(){
                 IzborIzvodjacaUklanjanjePesme(navController,viewModelUklanjanje)
             }
             composable(route = Destinacije.UklanjanjePesme.ruta) {
-                UklanjanjePesme(navController,viewModelUklanjanje)
+                UklanjanjePesme(viewModelUklanjanje)
             }
             composable(
                 route = "${Destinacije.UklanjanjeIzvodjaca.ruta}/{zanr}",
@@ -501,10 +513,10 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val zanr = navBackStackEntry.arguments?.getInt("zanr") ?: 0
-                UklanjanjeIzvodjaca(navController,zanr)
+                UklanjanjeIzvodjaca(zanr)
             }
             composable(route = Destinacije.UklanjanjeKorisnika.ruta){
-                UklanjanjeKorisnika(navController)
+                UklanjanjeKorisnika()
             }
             composable(route = Destinacije.PredloziIzvodjaca.ruta){
                 PredloziIzvodjaca(navController,viewModelPredlozi)
@@ -577,7 +589,12 @@ fun BlankSpaceApp(){
                 IzborIzvodjaca(navController, viewModelDodavanje,zanr)
             }
             composable(route = Destinacije.Generisi_sifru_sobe.ruta){
-                Generisi_sifru_sobe(navController,viewModelDuel)
+                Generisi_sifru_sobe(viewModelDuel,
+                    onClickDuel = { sifra ->
+                        navController.navigate(Destinacije.Duel.ruta + "/" + 0 + "/" + 0 + "/${sifra}")
+                    },
+                    onClickLogin = { navController.navigate(Destinacije.Login.ruta) }
+                )
             }
             composable(
                 route = "${Destinacije.Duel.ruta}/{runda}/{poeni}/{sifra}",
@@ -603,7 +620,10 @@ fun BlankSpaceApp(){
                 val poeni=navBackStackEntry.arguments?.getInt("poeni")?:0
 
                 val sifra=navBackStackEntry.arguments?.getInt("sifra")?:0
-                Cekanje_rezultata(navController,viewModelDuel,poeni,sifra)
+                Cekanje_rezultata(viewModelDuel,poeni,sifra,
+                    onKrajDuela ={  sifra ->
+                        navController.navigate("${Destinacije.Kraj_duela.ruta}/$sifra")
+                })
             }
             composable(
                 route = "${Destinacije.Kraj_duela.ruta}/{sifra}",
@@ -617,22 +637,22 @@ fun BlankSpaceApp(){
             }
 
             composable(route = Destinacije.SadrzajZanrova.ruta) {
-                SadrzajZanrova(navController)
+                SadrzajZanrova()
             }
             composable(route = Destinacije.SadrzajKorisnici.ruta) {
-                SadrzajKorisnici(navController)
+                SadrzajKorisnici()
             }
             composable(route = Destinacije.SadrzajIzvodjaci.ruta) {
-                SadrzajIzvodjaci(navController)
+                SadrzajIzvodjaci()
             }
             composable(route = Destinacije.SadrzajPesme.ruta) {
-                SadrzajPesme(navController)
+                SadrzajPesme()
             }
             composable(route = Destinacije.SadrzajStihovi.ruta) {
-                SadrzajStihovi(navController)
+                SadrzajStihovi()
             }
             composable(route = Destinacije.SadrzajSoba.ruta) {
-                SadrzajSoba(navController)
+                SadrzajSoba()
             }
             composable(route = Destinacije.AdminStatistika.ruta){
                 AdminStatistika(viewModelAdminStatistika)

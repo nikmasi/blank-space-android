@@ -4,12 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshotFlow
@@ -28,14 +24,7 @@ import com.example.blankspace.viewModels.PredloziViewModel
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextMain = PrimaryDark
-private val TextAccent = AccentPink
-private val InputBorderColor = PrimaryDark.copy(alpha = 0.5f)
-
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun SmallButtonStyled2(onClick: () -> Unit, text: String) {
@@ -118,7 +107,7 @@ fun PesmaPodaci2_mainCardStyled(navController: NavController, viewModel: Predloz
                 HeadlineTextStyled("Podaci o Pesmi")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Žanr: $zanr | Izvođač: $izvodjac", color = PrimaryDark.copy(alpha = 0.7f), fontSize = 14.sp)
-                Text("Pesma: ${pesma}", color = TextAccent, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("Pesma: ${pesma}", color = AccentPink, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 StyledOutlinedTextFieldInput(

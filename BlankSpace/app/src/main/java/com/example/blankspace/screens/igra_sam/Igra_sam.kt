@@ -31,8 +31,6 @@ import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
 import com.example.blankspace.ui.theme.*
-private val InfoBarColor = Color(0xFFE0BBE4)
-private val TimeWarningColor = Color(0xFFD32F2F)
 
 val LIGTH_BLUE = InfoBarColor
 val TEXT_COLOR = PrimaryDark

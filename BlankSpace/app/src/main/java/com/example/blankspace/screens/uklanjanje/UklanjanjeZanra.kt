@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.UiStateUklanjanjeZanra
@@ -33,25 +31,18 @@ import com.example.blankspace.viewModels.UklanjanjeViewModel
 import com.example.blankspace.viewModels.ZanrViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun UklanjanjeZanra(navController: NavController) {
+fun UklanjanjeZanra() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        UklanjanjeZanra_mainCard(
-            navController = navController,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        UklanjanjeZanra_mainCard(modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun UklanjanjeZanra_mainCard(navController: NavController, modifier: Modifier) {
+fun UklanjanjeZanra_mainCard(modifier: Modifier) {
     val viewModel: ZanrViewModel = hiltViewModel()
     val viewModelUklanjanje: UklanjanjeViewModel = hiltViewModel()
 
@@ -59,9 +50,7 @@ fun UklanjanjeZanra_mainCard(navController: NavController, modifier: Modifier) {
     val uiStateUklanjanje by viewModelUklanjanje.uiStateZanr.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchCategories()
-    }
+    LaunchedEffect(Unit) { viewModel.fetchCategories() }
 
     HandleUklanjanjeZanraResponse(context, viewModel, uiStateUklanjanje)
 
@@ -113,9 +102,7 @@ fun ZanroviListaZaUklanjanjeStyled(
         }
         else -> {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.8f)
-                    .padding(top = 8.dp),
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.zanrovi) { item ->
@@ -136,15 +123,8 @@ fun ZanrUklanjanjeCard(item: Zanr, onRemove: (Int) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(12.dp))
-            .background(
-                color = LightBackground,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = PrimaryDark.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(color = LightBackground, shape = RoundedCornerShape(12.dp))
+            .border(width = 1.dp, color = PrimaryDark.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(

@@ -15,44 +15,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.Izvodjac
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.IzvodjacZanrViewModel
 import com.example.blankspace.viewModels.UiStateIZ
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
+import com.example.blankspace.R
 
 @Composable
-fun SadrzajIzvodjaci(navController: NavController) {
+fun SadrzajIzvodjaci() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        SadrzajIzvodjaci_mainCard(
-            navController = navController,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        SadrzajIzvodjaci_mainCard(modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun SadrzajIzvodjaci_mainCard(navController: NavController, modifier: Modifier) {
+fun SadrzajIzvodjaci_mainCard(modifier: Modifier) {
     val viewModel: IzvodjacZanrViewModel = hiltViewModel()
-
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.fetch()
-    }
+    LaunchedEffect(Unit) { viewModel.fetch() }
 
     Surface(
         color = CardContainerColor,
@@ -63,13 +52,14 @@ fun SadrzajIzvodjaci_mainCard(navController: NavController, modifier: Modifier) 
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            SadrzajIzvodjaciHeader()
+            SadrzajHeader(
+                text1 = stringResource(id = R.string.artists_overview),
+                text2 = stringResource(id = R.string.list_of_all_artists)
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             IzvodjaciListaStyled(uiState = uiState)
@@ -77,21 +67,21 @@ fun SadrzajIzvodjaci_mainCard(navController: NavController, modifier: Modifier) 
     }
 }
 
-
 @Composable
-fun IzvodjaciListaStyled(
-    uiState: UiStateIZ
-) {
+fun IzvodjaciListaStyled(uiState: UiStateIZ) {
     when {
         uiState.isRefreshing -> {
             CircularProgressIndicator(color = AccentPink)
         }
         uiState.error != null -> {
-            Text(text = "Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
+            Text(
+                text =stringResource(id = R.string.error)+ ": ${uiState.error}", color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
         }
         uiState.izvodjaci.isEmpty() -> {
             Text(
-                text = "Nema izvodjaca za prikaz.",
+                text = stringResource(id = R.string.no_artists_found),
                 color = PrimaryDark.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 16.dp)
@@ -99,9 +89,7 @@ fun IzvodjaciListaStyled(
         }
         else -> {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.8f)
-                    .padding(top = 8.dp),
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.izvodjaci) { item ->
@@ -114,7 +102,6 @@ fun IzvodjaciListaStyled(
 
 @Composable
 fun SadrzajIzvodjacCard(item: Izvodjac) {
-    val context = LocalContext.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -122,15 +109,8 @@ fun SadrzajIzvodjacCard(item: Izvodjac) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(12.dp))
-            .background(
-                color = LightBackground,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = PrimaryDark.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(color = LightBackground, shape = RoundedCornerShape(12.dp))
+            .border(width = 1.dp, color = PrimaryDark.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
 
@@ -142,25 +122,5 @@ fun SadrzajIzvodjacCard(item: Izvodjac) {
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(16.dp))
-    }
-}
-
-@Composable
-fun SadrzajIzvodjaciHeader() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Pregled izvodjaca",
-            color = PrimaryDark,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Spisak svih izvodjaca u sistemu.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryDark.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
     }
 }

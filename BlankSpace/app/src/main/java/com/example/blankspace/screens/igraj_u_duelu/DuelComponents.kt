@@ -1,7 +1,9 @@
-package com.example.blankspace.screens.igra_sam
+package com.example.blankspace.screens.igraj_u_duelu
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.widget.Toast
@@ -11,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,43 +26,52 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.blankspace.screens.igra_sam.InfoBarColor
+import com.example.blankspace.screens.igra_sam.TimeWarningColor
 import com.example.blankspace.ui.theme.*
-import com.example.blankspace.viewModels.UiStateI
 
 @Composable
-fun OutlinedHelpButton(onClick: () -> Unit, text: String) {
-    OutlinedButton(
-        onClick = onClick,
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = Color.White,
-            contentColor = PrimaryDark
-        ),
-        shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        modifier = Modifier.height(36.dp)
-    ) {
-        Text(text, fontSize = 13.sp)
+fun SetupSpeechRecognition(
+    speechRecognizer: SpeechRecognizer, onResults: (String) -> Unit, onListeningChange: (Boolean) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() { onListeningChange(false) }
+            override fun onError(error: Int) { onListeningChange(false) }
+            override fun onResults(results: Bundle?) {
+                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                if (!matches.isNullOrEmpty()) { onResults(matches[0]) }
+                onListeningChange(false)
+            }
+            override fun onPartialResults(partialResults: Bundle?) {}
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        })
     }
 }
 
+
+
+
 @Composable
-fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
+fun BottomInfoBarDuel(runda: Int, poeni: Int, count: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = LIGTH_BLUE, shape=RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            //.align(Alignment.BottomCenter)
+            .background(InfoBarColor, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .height(IntrinsicSize.Min)
     ) {
@@ -70,21 +80,24 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Runda
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Runda: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(text = "$runda", color = PrimaryDark, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
             }
 
+            // Vreme
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Vreme: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(
                     text = "$count s",
-                    color = if (count >= 50) TimeWarningColor else PrimaryDark,
+                    color = if (count >= 50) com.example.blankspace.screens.igra_sam.TimeWarningColor else PrimaryDark,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 16.sp
                 )
             }
 
+            // Poeni
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Poeni: ", color = PrimaryDark, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                 Text(
@@ -93,15 +106,16 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 16.sp
                 )
-                Text(text = " \uD834\uDD1E", color = Color.Black)
+                Text(text = " \uD834\uDD1E", color = Color.Black) // Nota
             }
         }
     }
 }
 
 
+
 @Composable
-fun SpeechButton(
+fun SpeechButton2(
     context: Context,
     speechRecognizer: SpeechRecognizer,
     isListening: Boolean,
@@ -149,12 +163,10 @@ fun SpeechButton(
 }
 
 @Composable
-fun ActionButton(
-    onClick: () -> Unit,
-    text: String,
+fun ActionButton2(
+    onClick: () -> Unit, text: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    modifier: Modifier,
-    containerColor: Color = AccentPink,
+    modifier: Modifier, containerColor: Color = AccentPink,
 ) {
     Button(
         onClick = onClick,
@@ -168,57 +180,5 @@ fun ActionButton(
         Icon(icon, contentDescription = text, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
         Text(text, fontSize = 14.sp)
-    }
-}
-
-
-@Composable
-fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, context: Context) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Pomoć: ",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            color = TEXT_COLOR,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(end = 8.dp)
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                val i=uiState.igrasam?.izvodjac ?: "Nema podataka"
-                Toast.makeText(context, "Izvođač: $i", Toast.LENGTH_SHORT).show()
-            },
-            text = "Izvođač"
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                val p = uiState.igrasam?.pesma ?: "Nema podataka"
-                Toast.makeText(context, "Pesma: $p", Toast.LENGTH_LONG).show()
-            },
-            text = "Pesma"
-        )
-
-        OutlinedHelpButton(
-            onClick = {
-                if (crta.value.contains("_")){
-                    val words = uiState.igrasam?.tacno?.split(" ") ?: return@OutlinedHelpButton
-                    val newCrta = words.joinToString(" ") { word ->
-                        if (word.isNotEmpty()) {
-                            val firstLetter = word.first().toString()
-                            val underscores = "_".repeat(word.length - 1)
-                            "$firstLetter$underscores"
-                        } else ""
-                    }
-                    crta.value= newCrta
-                }
-            },
-            text = "Slova"
-        )
     }
 }

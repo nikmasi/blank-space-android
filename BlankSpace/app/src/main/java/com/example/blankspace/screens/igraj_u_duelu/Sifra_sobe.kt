@@ -11,11 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,62 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.igraj_u_duelu.components.ActionButtonDuel
+import com.example.blankspace.screens.igraj_u_duelu.components.HeadlineTextDuel
+import com.example.blankspace.screens.igraj_u_duelu.components.OutlinedTextFieldInput
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.DuelViewModel
 import com.example.blankspace.viewModels.LoginViewModel
-import com.example.blankspace.viewModels.UiStateL
 import com.example.blankspace.viewModels.UiStateProveriSifru
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextMain = PrimaryDark
-
-
-@Composable
-fun HeadlineTextSifraSobe(text: String) {
-    Text(text, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = TextMain)
-}
-
-@Composable
-fun ActionButtonSifraSobe(onClick: () -> Unit, text: String, modifier: Modifier, containerColor: Color = AccentPink) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier.height(48.dp)
-    ) {
-        Text(text, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OutlinedTextFieldInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    keyboardType: KeyboardType = KeyboardType.Text
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(0.8f).padding(bottom = 16.dp),
-        //keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = keyboardType),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AccentPink,
-            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
-            cursorColor = AccentPink
-        ),
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp)
-    )
-}
-
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun Sifra_sobe_duel(navController: NavController,viewModelDuel:DuelViewModel,loginViewModel: LoginViewModel){
@@ -101,7 +47,7 @@ fun Sifra_sobe_duel(navController: NavController,viewModelDuel:DuelViewModel,log
             navController = navController,
             viewModelDuel = viewModelDuel,
             loginViewModel = loginViewModel,
-            modifier = Modifier.align(Alignment.Center) // Centriranje kartice
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
@@ -120,7 +66,7 @@ fun Sifra_sobe_duel_mainCard(
     HandleProveriSifruResponse(navController,context,uiStateProveriSifru,viewModelDuel,sifra)
 
     Surface(
-        color = CardContainerColor, // Svetlo roza
+        color = CardContainerColor,
         modifier = modifier
             .fillMaxWidth(0.9f)
             .fillMaxHeight(0.6f)
@@ -128,19 +74,26 @@ fun Sifra_sobe_duel_mainCard(
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp), // Povećan padding
+            modifier = Modifier.fillMaxSize().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly // Ravnomerno raspoređivanje
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             val uiStateLogin by loginViewModel.uiState.collectAsState()
 
-            SifraSobeGenerisiNovuSifru(navController,viewModelDuel,uiStateLogin)
+            SifraSobeGenerisiNovuSifru(onGenerisiClick = {
+                uiStateLogin.login?.let { viewModelDuel.generisiSifru(it.korisnicko_ime) }
+                navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
+            })
 
-            Text("— ILI —", color = TextMain.copy(alpha = 0.6f), fontWeight = FontWeight.Bold)
+            Text("— ILI —", color = PrimaryDark.copy(alpha = 0.6f), fontWeight = FontWeight.Bold)
 
-            SifraSobeUnesiPostojecuSifru(viewModelDuel,uiStateLogin,sifra, onValueChange = { sifra = it })
+            SifraSobeUnesiPostojecuSifru(sifra, onValueChange = { sifra = it }, onUnesiClick = {
+                if (sifra.isNotEmpty()) {
+                    uiStateLogin.login?.korisnicko_ime?.let {
+                        viewModelDuel.proveriSifru(it, sifra.toInt())
+                    }
+                }
+            })
         }
     }
 }
@@ -176,16 +129,13 @@ fun HandleProveriSifruResponse(
 }
 
 @Composable
-fun SifraSobeGenerisiNovuSifru(navController: NavController,viewModelDuel: DuelViewModel,uiStateLogin: UiStateL){
+fun SifraSobeGenerisiNovuSifru(onGenerisiClick: () -> Unit){
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        HeadlineTextSifraSobe("Generiši novu šifru sobe")
+        HeadlineTextDuel("Generiši novu šifru sobe",fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(22.dp))
 
-        ActionButtonSifraSobe(
-            onClick = {
-                uiStateLogin.login?.let { viewModelDuel.generisiSifru(it.korisnicko_ime) }
-                navController.navigate(Destinacije.Generisi_sifru_sobe.ruta)
-            },
+        ActionButtonDuel(
+            onClick = onGenerisiClick,
             text = "Generiši",
             modifier = Modifier.fillMaxWidth(0.7f)
         )
@@ -193,9 +143,9 @@ fun SifraSobeGenerisiNovuSifru(navController: NavController,viewModelDuel: DuelV
 }
 
 @Composable
-fun SifraSobeUnesiPostojecuSifru(viewModelDuel: DuelViewModel,uiStateLogin: UiStateL,sifra: String,onValueChange: (String) -> Unit){
+fun SifraSobeUnesiPostojecuSifru(sifra: String, onValueChange: (String) -> Unit, onUnesiClick: () -> Unit){
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        HeadlineTextSifraSobe("Unesi postojeću šifru sobe")
+        HeadlineTextDuel("Unesi postojeću šifru sobe",fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(22.dp))
 
         OutlinedTextFieldInput(
@@ -205,15 +155,8 @@ fun SifraSobeUnesiPostojecuSifru(viewModelDuel: DuelViewModel,uiStateLogin: UiSt
             keyboardType = KeyboardType.Number
         )
 
-        ActionButtonSifraSobe(
-            onClick = {
-                if (sifra.isNotEmpty()) {
-                    uiStateLogin.login?.korisnicko_ime?.let {
-                        viewModelDuel.proveriSifru(it, sifra.toInt())
-                    }
-                } else {
-                }
-            },
+        ActionButtonDuel(
+            onClick = onUnesiClick,
             text = "Unesi",
             modifier = Modifier.fillMaxWidth(0.7f)
         )

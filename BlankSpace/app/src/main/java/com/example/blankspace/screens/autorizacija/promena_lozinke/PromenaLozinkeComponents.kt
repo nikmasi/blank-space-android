@@ -1,6 +1,5 @@
 package com.example.blankspace.screens.autorizacija.promena_lozinke
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -72,8 +72,8 @@ fun ChangePasswordButtonStyled(
     potvrdaLozinke: String,
     uiState: UiStateZL,
     viewModel: ZaboravljenaLozinkaViewModel,
-    context: Context
 ) {
+    val context = LocalContext.current
     var pressed by remember { mutableStateOf(false) }
     val elevation = if (pressed) 2.dp else 8.dp
 

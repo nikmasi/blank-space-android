@@ -1,11 +1,9 @@
 package com.example.blankspace.screens.sadrzaj
 
-import com.example.blankspace.data.retrofit.models.Pesma
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,49 +14,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.blankspace.data.retrofit.models.Izvodjac
-import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
+import com.example.blankspace.R
 import com.example.blankspace.data.retrofit.models.StihoviPoPesmamaResponse
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.AdminStatistikaViewModel
-import com.example.blankspace.viewModels.IzvodjacZanrViewModel
-import com.example.blankspace.viewModels.PesmePoIzvodjacimaUiState
 import com.example.blankspace.viewModels.StihoviPoPesmamaUiState
-import com.example.blankspace.viewModels.UiStateIZ
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun SadrzajStihovi(navController: NavController) {
+fun SadrzajStihovi() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        SadrzajStihovi_mainCard(
-            navController = navController,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        SadrzajStihovi_mainCard(modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun SadrzajStihovi_mainCard(navController: NavController, modifier: Modifier) {
+fun SadrzajStihovi_mainCard(modifier: Modifier) {
     val viewModel: AdminStatistikaViewModel = hiltViewModel()
-
     val uiState by viewModel.uiStateStihoviPoPesmama.collectAsState()
-    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchStihoviPoPesmama()
-    }
+    LaunchedEffect(Unit) { viewModel.fetchStihoviPoPesmama() }
 
     Surface(
         color = CardContainerColor,
@@ -69,13 +51,14 @@ fun SadrzajStihovi_mainCard(navController: NavController, modifier: Modifier) {
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            SadrzajStihovaHeader()
+            SadrzajHeader(
+                text1 = stringResource(id = R.string.lyrics_overview),
+                text2 = stringResource(id = R.string.list_of_all_lyrics)
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             StihoviListaStyled(uiState = uiState)
@@ -85,13 +68,9 @@ fun SadrzajStihovi_mainCard(navController: NavController, modifier: Modifier) {
 
 
 @Composable
-fun StihoviListaStyled(
-    uiState: StihoviPoPesmamaUiState
-) {
+fun StihoviListaStyled(uiState: StihoviPoPesmamaUiState) {
     when {
-        uiState.isRefreshing -> {
-            CircularProgressIndicator(color = AccentPink)
-        }
+        uiState.isRefreshing -> { CircularProgressIndicator(color = AccentPink) }
         uiState.error != null -> {
             Text(text = "Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
         }
@@ -104,22 +83,14 @@ fun StihoviListaStyled(
             )
         }
         else -> {
-            val grupisano = uiState.stihoviPoPesmama!!
-                .groupBy { it.pesma ?: "Nepoznata pesma" }
+            val grupisano = uiState.stihoviPoPesmama!!.groupBy { it.pesma ?: "Nepoznata pesma" }
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.8f)
-                    .padding(top = 8.dp),
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 grupisano.forEach { (pesma,stih) ->
-                    item {
-                        StihSection(
-                            pesma,
-                            stihovi = stih
-                        )
-                    }
+                    item { StihSection(pesma, stihovi = stih) }
                 }
             }
         }
@@ -127,37 +98,11 @@ fun StihoviListaStyled(
 }
 
 @Composable
-fun SadrzajStihovaHeader() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Pregled stihova",
-            color = PrimaryDark,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Spisak svih stihova u sistemu po pesmama.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryDark.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun StihSection(
-    pesma: String,
-    stihovi: List<StihoviPoPesmamaResponse>
-) {
+fun StihSection(pesma: String, stihovi: List<StihoviPoPesmamaResponse>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = CardContainerColor.copy(alpha = 0.6f),
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(color = CardContainerColor.copy(alpha = 0.6f), shape = RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
         Text(
@@ -167,10 +112,7 @@ fun StihSection(
             color = PrimaryDark,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-
-        stihovi.forEach { stih ->
-            StihCardItem(stih)
-        }
+        stihovi.forEach { stih -> StihCardItem(stih) }
     }
 }
 
@@ -189,7 +131,5 @@ fun StihCardItem(stih: StihoviPoPesmamaResponse) {
             color = PrimaryDark,
             fontSize = 16.sp
         )
-
     }
 }
-

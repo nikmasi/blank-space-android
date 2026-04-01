@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.blankspace.data.retrofit.models.KorisniciResponse
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.KorisniciViewModel
@@ -33,25 +32,18 @@ import com.example.blankspace.viewModels.UiStateUklanjanjeKorisnika
 import com.example.blankspace.viewModels.UklanjanjeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun UklanjanjeKorisnika(navController: NavController) {
+fun UklanjanjeKorisnika() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        UklanjanjeKorisnika_mainCard(
-            navController = navController,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        UklanjanjeKorisnika_mainCard(modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun UklanjanjeKorisnika_mainCard(navController: NavController, modifier: Modifier) {
+fun UklanjanjeKorisnika_mainCard(modifier: Modifier) {
     val viewModel: KorisniciViewModel = hiltViewModel()
     val viewModelUklanjanje: UklanjanjeViewModel = hiltViewModel()
 

@@ -1,7 +1,6 @@
 package com.example.blankspace.screens.igraj_u_duelu
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,67 +22,53 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.igraj_u_duelu.components.BodyTextDuel
+import com.example.blankspace.screens.igraj_u_duelu.components.HeadlineTextDuel
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.DuelViewModel
-import com.example.blankspace.viewModels.UiStateCekanjeRezultata
-import com.example.blankspace.viewModels.UiStateD
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextMain = PrimaryDark
-
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun HeadlineTextCek(text: String) {
-    Text(text, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = TextMain, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-}
+fun Cekanje_rezultata(viewModelDuel:DuelViewModel,poeni: Int,sifra:Int, onKrajDuela: (Int) -> Unit){
+    val uiStateD by viewModelDuel.uiState.collectAsState()
+    val uiStateCekanjeRezultata by viewModelDuel.uiStateCekanjeRezultata.collectAsState()
+    val context = LocalContext.current
 
-@Composable
-fun BodyTextCek(text: String) {
-    Text(text, fontSize = 16.sp, color = TextMain.copy(alpha = 0.8f), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-}
-
-
-@Composable
-fun Cekanje_rezultata(navController: NavController,viewModelDuel:DuelViewModel,poeni: Int,sifra:Int){
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         Cekanje_rezultata_mainCard(
-            navController = navController,
-            viewModelDuel = viewModelDuel,
-            poeni = poeni,
-            sifra = sifra,
-            modifier = Modifier.align(Alignment.Center)
+            sifraSobe = viewModelDuel.sifraSobe.value.sifra,
+            odgovor = uiStateCekanjeRezultata.cekanjeRezultata?.odgovor,
+            modifier = Modifier.align(Alignment.Center),
+            onTick = {
+                viewModelDuel.fetchCekanjeRezultata(
+                    poeni/10,
+                    viewModelDuel.sifraSobe.value.sifra,
+                    uiStateD.duel?.rundePoeni ?: emptyList(),
+                    viewModelDuel.redniBroj.value.redniBroj
+                )
+            },
+            onShowToast = { poruka -> Toast.makeText(context, poruka, Toast.LENGTH_SHORT).show() },
+            onNavigateToKraj = {onKrajDuela(sifra)}
         )
     }
 }
 
 @Composable
 fun Cekanje_rezultata_mainCard(
-    navController: NavController,
-    viewModelDuel: DuelViewModel,
-    poeni:Int,
-    sifra:Int,
-    modifier: Modifier = Modifier
+    sifraSobe: Int, odgovor: String?, modifier: Modifier = Modifier,
+    onTick: () -> Unit, onShowToast: (String) -> Unit, onNavigateToKraj: () -> Unit
 ) {
-    val context = LocalContext.current
-    val uiStateCekanjeRezultata by viewModelDuel.uiStateCekanjeRezultata.collectAsState()
-    val uiStateD by viewModelDuel.uiState.collectAsState()
+    HandleCekanjeRezultataResponse(sifraSobe , onClick = onTick)
 
-    HandleCekanjeRezultataResponse(viewModelDuel,poeni,uiStateD)
-
-    HandleCekanjeRezultataOdgovorResponse(navController,context, viewModelDuel,poeni,uiStateCekanjeRezultata,sifra)
+    HandleCekanjeRezultataOdgovorResponse(
+        odgovor = odgovor, onShowToast = onShowToast, onNavigateToKraj = onNavigateToKraj
+    )
 
     Surface(
         color = CardContainerColor,
@@ -95,14 +79,12 @@ fun Cekanje_rezultata_mainCard(
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            HeadlineTextCek("Igra je završena.")
-            HeadlineTextCek("Rezultat se obrađuje...")
+            HeadlineTextDuel("Igra je završena.", 20.sp,FontWeight.SemiBold, true)
+            HeadlineTextDuel("Rezultat se obrađuje...", 20.sp, FontWeight.SemiBold, true)
 
             Spacer(modifier = Modifier.height(34.dp))
 
@@ -113,24 +95,19 @@ fun Cekanje_rezultata_mainCard(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            BodyTextCek("Čeka se da drugi igrač završi rundu...")
+            BodyTextDuel("Čeka se da drugi igrač završi rundu...", true)
         }
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun HandleCekanjeRezultataResponse(viewModelDuel: DuelViewModel,poeni: Int,uiStateD: UiStateD){
-    LaunchedEffect(viewModelDuel.sifraSobe.value.sifra) {
+fun HandleCekanjeRezultataResponse(sifraSobe: Int, onClick: () -> Unit){
+    LaunchedEffect(sifraSobe) {
         delay(1000)
 
         while (true) {
-            viewModelDuel.fetchCekanjeRezultata(
-                poeni/10,
-                viewModelDuel.sifraSobe.value.sifra,
-                uiStateD.duel?.rundePoeni ?: emptyList(),
-                viewModelDuel.redniBroj.value.redniBroj
-            )
+            onClick()
             delay(3000)
         }
     }
@@ -138,28 +115,16 @@ fun HandleCekanjeRezultataResponse(viewModelDuel: DuelViewModel,poeni: Int,uiSta
 
 @Composable
 fun HandleCekanjeRezultataOdgovorResponse(
-    navController: NavController,
-    context: Context,
-    viewModelDuel: DuelViewModel,
-    poeni: Int,
-    uiStateCekanjeRezultata: UiStateCekanjeRezultata,
-    sifra:Int
+    odgovor: String?, onShowToast: (String) -> Unit, onNavigateToKraj: () -> Unit
 ){
-    LaunchedEffect(uiStateCekanjeRezultata.cekanjeRezultata?.odgovor) {
-        val odgovor = uiStateCekanjeRezultata.cekanjeRezultata?.odgovor
-
+    LaunchedEffect(odgovor) {
         if (!odgovor.isNullOrEmpty()) {
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
-            }
+            onShowToast(odgovor)
 
             if (odgovor.contains("Čeka se rezultat duela")) {
                 return@LaunchedEffect
             }
-
-            navController.navigate(Destinacije.Kraj_duela.ruta+"/$sifra")
+            onNavigateToKraj()
         }
-
     }
 }

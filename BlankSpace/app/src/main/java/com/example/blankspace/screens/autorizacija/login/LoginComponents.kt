@@ -37,9 +37,7 @@ import com.example.blankspace.screens.autorizacija.auth_components.AuthNavigatio
 import com.example.blankspace.screens.autorizacija.auth_components.ClickableTextStyled
 import com.example.blankspace.ui.theme.AccentPink
 import com.example.blankspace.ui.theme.PrimaryDark
-import com.example.blankspace.viewModels.LoginViewModel
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun LoginImage() {

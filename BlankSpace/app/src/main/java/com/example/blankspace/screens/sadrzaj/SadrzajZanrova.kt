@@ -1,11 +1,7 @@
 package com.example.blankspace.screens.sadrzaj
 
-
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,44 +15,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.example.blankspace.R
 import com.example.blankspace.data.retrofit.models.Zanr
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
-fun SadrzajZanrova(navController: NavController) {
+fun SadrzajZanrova() {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
-        SadrzajZanrova_mainCard(
-            navController = navController,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        SadrzajZanrova_mainCard(modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-fun SadrzajZanrova_mainCard(navController: NavController, modifier: Modifier) {
+fun SadrzajZanrova_mainCard(modifier: Modifier) {
     val viewModel: ZanrViewModel = hiltViewModel()
-
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchCategories()
-    }
+    LaunchedEffect(Unit) { viewModel.fetchCategories() }
 
     Surface(
         color = CardContainerColor,
@@ -67,13 +52,14 @@ fun SadrzajZanrova_mainCard(navController: NavController, modifier: Modifier) {
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            SadrzajZanrovaHeader()
+            SadrzajHeader(
+                text1 = stringResource(id = R.string.genres_overview),
+                text2 = stringResource(id = R.string.list_of_all_genres)
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             ZanroviListaStyled(uiState = uiState)
@@ -83,13 +69,9 @@ fun SadrzajZanrova_mainCard(navController: NavController, modifier: Modifier) {
 
 
 @Composable
-fun ZanroviListaStyled(
-    uiState: UiStateZ
-) {
+fun ZanroviListaStyled(uiState: UiStateZ) {
     when {
-        uiState.isRefreshing -> {
-            CircularProgressIndicator(color = AccentPink)
-        }
+        uiState.isRefreshing -> { CircularProgressIndicator(color = AccentPink) }
         uiState.error != null -> {
             Text(text = "Greška: ${uiState.error}", color = Color.Red, modifier = Modifier.padding(16.dp))
         }
@@ -103,14 +85,10 @@ fun ZanroviListaStyled(
         }
         else -> {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.8f)
-                    .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp) // Razmak između kartica
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(uiState.zanrovi) { item ->
-                    SadrzajZanrCard(item = item)
-                }
+                items(uiState.zanrovi) { item -> SadrzajZanrCard(item = item) }
             }
         }
     }
@@ -118,26 +96,16 @@ fun ZanroviListaStyled(
 
 @Composable
 fun SadrzajZanrCard(item: Zanr) {
-    val context = LocalContext.current
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(12.dp))
-            .background(
-                color = LightBackground,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = PrimaryDark.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(color = LightBackground, shape = RoundedCornerShape(12.dp))
+            .border(width = 1.dp, color = PrimaryDark.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        // Ime žanra
         Text(
             text = item.naziv.toString(),
             color = PrimaryDark,
@@ -146,25 +114,5 @@ fun SadrzajZanrCard(item: Zanr) {
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(16.dp))
-    }
-}
-
-@Composable
-fun SadrzajZanrovaHeader() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Pregled žanrova",
-            color = PrimaryDark,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Spisak svih žanrova u sistemu.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = PrimaryDark.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
     }
 }
