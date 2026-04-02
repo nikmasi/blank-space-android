@@ -2,6 +2,8 @@ package com.example.blankspace.screens.igra_sam
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.widget.Toast
@@ -21,18 +23,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,7 +74,7 @@ fun BottomInfoBar(runda: Int, poeni: Int, count: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = LIGTH_BLUE, shape=RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .background(color = InfoBarColor, shape=RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .height(IntrinsicSize.Min)
     ) {
@@ -183,7 +196,7 @@ fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, con
             text = "Pomoć: ",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = TEXT_COLOR,
+            color = PrimaryDark,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -221,4 +234,91 @@ fun HelpButtonsSectionIgraSam(crta: MutableState<String>, uiState: UiStateI, con
             text = "Slova"
         )
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserInputSectionIgraSam(
+    onClickDalje: () -> Unit, onClickPusti: () -> Unit, onClickProveri: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var odgovor by remember { mutableStateOf("") }
+    var isListening by remember { mutableStateOf(false) }
+    val speechRecognizer = remember { SpeechRecognizer.createSpeechRecognizer(context) }
+
+    val recognitionListener = remember {
+        object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() { isListening = false }
+            override fun onError(error: Int) {
+                isListening = false
+                Toast.makeText(context, "Greška: $error", Toast.LENGTH_SHORT).show()
+            }
+            override fun onResults(results: Bundle?) {
+                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                if (!matches.isNullOrEmpty()) { odgovor = matches[0] }
+                isListening = false
+            }
+            override fun onPartialResults(partialResults: Bundle?) {}
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        speechRecognizer.setRecognitionListener(recognitionListener)
+    }
+
+    OutlinedTextField(
+        value = odgovor,
+        onValueChange = { odgovor = it },
+        label = { Text("Tvoj odgovor") },
+        modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = AccentPink,
+            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
+            cursorColor = AccentPink
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp)
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SpeechButton(
+            context = context,
+            speechRecognizer = speechRecognizer,
+            isListening = isListening,
+            onListeningChange = { isListening = it },
+            modifier = Modifier.weight(1.5f).padding(end = 4.dp)
+        )
+
+        ActionButton(
+            onClick = onClickPusti,
+            text = "Pusti",
+            icon = Icons.Default.PlayArrow,
+            modifier = Modifier.weight(1.5f).padding(end = 4.dp)
+        )
+
+        ActionButton(
+            onClick = {onClickProveri(odgovor)},
+            text = "Proveri",
+            icon = Icons.Default.Check,
+            modifier = Modifier.weight(1.5f)
+        )
+    }
+
+    ActionButton(
+        onClick = onClickDalje,
+        text = "Preskoči/Dalje",
+        icon = Icons.Default.ArrowForward,
+        containerColor = PrimaryDark.copy(alpha = 0.8f),
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+    )
 }

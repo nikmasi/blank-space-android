@@ -29,7 +29,7 @@ private val CardContainerColor = Color(0xFFF0DAE7)
 
 @Composable
 fun Kraj_challenge(poeni:Int,viewModelLogin: LoginViewModel,igraSamViewModel: IgraSamViewModel,onClickPonovo: () ->Unit, onClickKraj: () ->Unit){
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         val poeni2 = poeni/10
         Kraj_challenge_mainCardStyled(poeni2,viewModelLogin,igraSamViewModel, modifier = Modifier.align(Alignment.Center),

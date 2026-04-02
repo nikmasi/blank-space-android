@@ -54,11 +54,10 @@ import  com.example.blankspace.ui.theme.*
 fun Zanr_igra_offline(navController: NavController,selectedNivo:String,databaseViewModel: DatabaseViewModel){
     val zanrovi by databaseViewModel.allZanrovi.collectAsState(initial = null)
 
-    Box(modifier = Modifier.fillMaxSize().padding(top=52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         if (zanrovi == null) {
-            // da izbegnemo bljesak
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = AccentPink

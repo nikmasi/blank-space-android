@@ -48,10 +48,7 @@ fun LevelButton(text: String, color: Color, onClick: () -> Unit) {
             pressed = true
             onClick()
         },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = color,
-            contentColor = Color.White
-        ),
+        colors = ButtonDefaults.buttonColors(containerColor = color, contentColor = Color.White),
         shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
         modifier = Modifier.fillMaxWidth().height(60.dp)

@@ -30,11 +30,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val TextHighlight = Color(0xFFD32F2F)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun Kraj_igre_igre_sam(

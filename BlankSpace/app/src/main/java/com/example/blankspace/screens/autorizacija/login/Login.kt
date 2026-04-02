@@ -22,13 +22,29 @@ import com.example.blankspace.viewModels.UiStateL
 import com.example.blankspace.ui.theme.*
 
 @Composable
-fun Login(viewModelLogin: LoginViewModel,
-    onSignUpClick: () -> Unit, onGuestClick: () -> Unit,
-    onForgotClick: () -> Unit, onNavigate: (String) -> Unit
+fun Login(
+    viewModelLogin: LoginViewModel, onSignUpClick: () -> Unit,
+    onGuestClick: () -> Unit, onForgotClick: () -> Unit, onNavigate: (String) -> Unit
 ) {
 
     val uiState by viewModelLogin.uiState.collectAsState()
 
+    LoginContent(
+        uiState = uiState,
+        onSignUpClick = onSignUpClick,
+        onGuestClick = onGuestClick,
+        onForgotClick = onForgotClick,
+        onLogin = { u, p -> viewModelLogin.fetchLogin(u, p) },
+        onNavigate = onNavigate
+    )
+}
+
+@Composable
+fun LoginContent(
+    uiState: UiStateL, onSignUpClick: () -> Unit,
+    onGuestClick: () -> Unit, onForgotClick: () -> Unit,
+    onLogin: (String, String) -> Unit, onNavigate: (String) -> Unit
+){
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
@@ -37,9 +53,7 @@ fun Login(viewModelLogin: LoginViewModel,
             onSignUpClick = onSignUpClick,
             onGuestClick = onGuestClick,
             onForgotClick = onForgotClick,
-            onLogin = { username, password ->
-                viewModelLogin.fetchLogin(username, password)
-            },
+            onLogin = onLogin
         )
     }
 
@@ -59,8 +73,6 @@ fun Login_mainCard(
     onForgotClick: () -> Unit,
     onLogin: (String,String) -> Unit
 ) {
-    val context = LocalContext.current
-
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -80,7 +92,7 @@ fun Login_mainCard(
 
             LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
 
-            LoginButton(username, password, onLogin, context)
+            LoginButton(username, password, onLogin)
 
             DividerWithIconModernAuth()
 

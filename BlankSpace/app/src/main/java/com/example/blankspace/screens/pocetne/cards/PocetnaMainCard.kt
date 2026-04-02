@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun PocetnaMainCard(
     onGameSoloClick: () -> Unit,
-    onGameDuelClick: () -> Unit,
+    onGameDuelClick:(()->Unit)? =null,
     onSuggestArtistClick :(()->Unit)? =null,
     onSuggestSongClick :(()->Unit)? =null,
     onSearchAndSuggestClick :(()->Unit)? =null,
@@ -71,10 +71,12 @@ fun PocetnaMainCard(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    GameButton(
-                        text = "Igraj u duelu",
-                        onClick = onGameDuelClick
-                    )
+                    onGameDuelClick?.let {
+                        GameButton(
+                            text = "Igraj u duelu",
+                            onClick = onGameDuelClick
+                        )
+                    }
 
                     onGameSing?.let {
                         Spacer(modifier = Modifier.height(8.dp))

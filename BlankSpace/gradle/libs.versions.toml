@@ -18,6 +18,7 @@ navigationComposeHilt = "1.2.0"
 securityCryptoKtx = "1.0.0"
 security_crypto = "1.0.0"
 roomDatabase = "2.6.1"
+navigationTesting = "2.9.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ androidx-security-crypto = { group = "androidx.security", name = "security-crypt
 androidx-room-runtime = { group = "androidx.room", name ="room-runtime", version.ref = "roomDatabase" }
 androidx-room-ktx = { group = "androidx.room", name ="room-ktx", version.ref = "roomDatabase" }
 androidx-room-compiler = { group = "androidx.room", name ="room-compiler", version.ref = "roomDatabase" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationTesting" }
 
 
 [plugins]

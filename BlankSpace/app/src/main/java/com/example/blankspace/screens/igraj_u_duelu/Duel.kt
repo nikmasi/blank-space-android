@@ -137,14 +137,14 @@ fun Duel_mainCard(navController: NavController,runda:Int,poeni:Int,viewModel: Du
                             duel.stihpoznat.forEach { stih->
                                 Text(
                                     text = stih,
-                                    color= TEXT_COLOR,
+                                    color= PrimaryDark,
                                     fontSize = 16.sp,
                                     textAlign = TextAlign.Center
                                 )
                             }
                             Text(
                                 "${crta.value}",
-                                color = TEXT_COLOR,
+                                color = PrimaryDark,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
                                 modifier = Modifier.padding(vertical = 8.dp),

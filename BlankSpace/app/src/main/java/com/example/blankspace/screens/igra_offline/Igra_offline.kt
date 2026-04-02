@@ -36,17 +36,12 @@ import com.example.blankspace.viewModels.IgraOfflineLista
 import com.example.blankspace.viewModels.UiStateIgraOffline
 import kotlinx.coroutines.delay
 import  com.example.blankspace.ui.theme.*
+import com.example.blankspace.ui.theme.*
 
-private val InfoBarColor = Color(0xFFE0BBE4)
-private val TextAccent = AccentPink
-private val TimeWarningColor = Color(0xFFD32F2F)
-
-val LIGTH_BLUE = InfoBarColor
-val TEXT_COLOR = PrimaryDark
 
 @Composable
 fun Igra_offline(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,databaseViewModel: DatabaseViewModel) {
-    Box(modifier = Modifier.fillMaxSize().padding(top = 52.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         val selectedNivoList = selectedNivo.split(",").map { it.trim() }
@@ -116,7 +111,7 @@ fun Igra_offline_mainCard(
                         text = "Runda ${uiState.igraoffline?.runda ?: runda}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextAccent
+                        color = AccentPink
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     DisplayContentIgraOfflineStyled(uiState, crta)
@@ -167,7 +162,7 @@ fun DisplayContentIgraOfflineStyled(uiState: UiStateIgraOffline, crta: MutableSt
             igrasam.stihpoznat.forEach { stih ->
                 Text(
                     text = stih,
-                    color = TEXT_COLOR.copy(alpha = 0.8f),
+                    color = PrimaryDark.copy(alpha = 0.8f),
                     fontSize = fontSize,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(vertical = 2.dp)
@@ -415,7 +410,7 @@ fun HelpButtonsSectionIgraOfflineStyled(crta: MutableState<String>, uiState: UiS
             text = "Pomoć: ",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = TEXT_COLOR,
+            color = PrimaryDark,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -480,7 +475,7 @@ fun BottomInfoBarOffline(runda: Int, poeni: Int, count: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(LIGTH_BLUE, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .background(InfoBarColor, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .height(IntrinsicSize.Min)
     ) {

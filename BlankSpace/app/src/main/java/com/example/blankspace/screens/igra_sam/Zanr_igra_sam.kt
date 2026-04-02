@@ -55,11 +55,7 @@ fun Zanr_igra_sam(selectedNivo: String, onNavigateNext: (String, String) -> Unit
 }
 
 @Composable
-fun Zanr_mainCard(
-    selectedNivo: String,
-    modifier: Modifier,
-    onNavigateNext: (String, String) -> Unit
-) {
+fun Zanr_mainCard(selectedNivo: String, modifier: Modifier, onNavigateNext: (String, String) -> Unit) {
     val viewModel: ZanrViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -74,21 +70,14 @@ fun Zanr_mainCard(
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
             ZanrIgreHeaderStyled()
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(vertical = 16.dp)
-            ) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 16.dp)) {
                 LoadingOrErrorState(uiState)
 
                 if (!uiState.isRefreshing && uiState.error == null) {
@@ -106,11 +95,7 @@ fun Zanr_mainCard(
                 }
             }
 
-            ZanrIgraSamButton(
-                selectedZanrovi = selectedZanrovi,
-                selectedNivo = selectedNivo,
-                onClick = onNavigateNext
-            )
+            ZanrIgraSamButton(selectedZanrovi = selectedZanrovi, selectedNivo = selectedNivo, onClick = onNavigateNext)
         }
     }
 }

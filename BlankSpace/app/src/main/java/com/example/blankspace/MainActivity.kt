@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -46,7 +45,7 @@ import com.example.blankspace.screens.igra_challenge.Nivo_challenge
 import com.example.blankspace.screens.igra_challenge.Zanr_challenge
 import com.example.blankspace.screens.igra_offline.Igra_offline
 import com.example.blankspace.screens.igra_offline.Kraj_igre_offline
-import com.example.blankspace.screens.igra_offline.ui.Nivo_igra_offline
+import com.example.blankspace.screens.igra_offline.Nivo_igra_offline
 import com.example.blankspace.screens.igra_offline.Zanr_igra_offline
 import com.example.blankspace.screens.igra_pogodi_i_pevaj.Igra_pogodiPevaj
 import com.example.blankspace.screens.igra_pogodi_i_pevaj.Kraj_pogodiPevaj
@@ -126,7 +125,6 @@ fun rememberCurrentRoute(navController: NavController): String {
     return currentDestination?.route ?: Destinacije.Pocetna.ruta
 }
 
-
 fun isInternetAvailable(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = connectivityManager.activeNetwork ?: return false
@@ -165,9 +163,8 @@ fun BlankSpaceApp(){
     var userType by remember{ mutableStateOf("") }
 
     val view = LocalView.current
-    val bottomBarColor = Color(0xFFF0DAE7) // ista boja kao tvoj LightPink
+    val bottomBarColor = Color(0xFFF0DAE7)
 
-    // Postavi system navigation bar boju
     if (!view.isInEditMode) {
         val window = (view.context as Activity).window
         SideEffect {
@@ -175,15 +172,7 @@ fun BlankSpaceApp(){
         }
     }
 
-    Scaffold(
-        topBar = {
-            /*if(currentRoute!=Destinacije.UcitavanjeEkrana.ruta && currentRoute!=Destinacije.Login.ruta
-                && currentRoute!=Destinacije.Registracija.ruta
-                && currentRoute!=Destinacije.ZaboravljenaLozinka.ruta
-            )
-                BlankSpaceTopAppBar(navController,currentRoute,viewModelLogin)
-                */},
-        bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
+    Scaffold(bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
         val padding = innerPadding
 
@@ -203,8 +192,9 @@ fun BlankSpaceApp(){
             }
             composable(route = Destinacije.PocetnaOffline.ruta) {
                 userType=""
-                PocetnaOffline(modifier = Modifier.padding(padding),
-                    onNavigateToOffline = { navController.navigate(Destinacije.Nivo_igra_offline.ruta) })
+                PocetnaOffline(
+                    onNavigateToOffline = { navController.navigate(Destinacije.Nivo_igra_offline.ruta) }
+                )
             }
             composable(route = Destinacije.PocetnaBrucos.ruta) {
                 userType="brucos"
@@ -274,7 +264,9 @@ fun BlankSpaceApp(){
                 )
             }
             composable(route = Destinacije.Nivo_igra_offline.ruta) {
-                Nivo_igra_offline(navController)
+                Nivo_igra_offline(onDifficultySelected = { nivo ->
+                    navController.navigate("${Destinacije.Zanr_igra_offline.ruta}/$nivo")
+                })
             }
             composable(route = Destinacije.Nivo_pogodiPevaj.ruta) {
                 Nivo_pogodiPevaj(
@@ -416,7 +408,10 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                Kraj_igre_offline(navController,poeni,databaseViewModel)
+                Kraj_igre_offline(poeni,
+                    onClickPonovo = { navController.navigate(Destinacije.Nivo_igra_offline.ruta) },
+                    onClickKraj = { navController.navigate(Destinacije.PocetnaOffline.ruta) }
+                )
             }
             composable(
                 route = "${Destinacije.Kraj_pogodiPevaj.ruta}/{poeni}",

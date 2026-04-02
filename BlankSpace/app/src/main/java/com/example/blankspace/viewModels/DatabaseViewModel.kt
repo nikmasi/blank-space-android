@@ -1,17 +1,13 @@
 package com.example.blankspace.viewModels
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.MyRoomRepository
 import com.example.blankspace.data.retrofit.models.IgraOfflineData
-import com.example.blankspace.data.retrofit.models.IgraSamRequest
-import com.example.blankspace.data.retrofit.models.IgraSamResponse
 import com.example.blankspace.data.retrofit.models.KrajIgreRequest
 import com.example.blankspace.data.retrofit.models.KrajIgreResponse
-import com.example.blankspace.data.room.RoomDao
 import com.example.blankspace.data.room.ZanrEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,28 +28,19 @@ class DatabaseViewModel @Inject constructor(
     }
 
     fun loadZanrovi() {
-        viewModelScope.launch {
-            val fromApi = myRoomRepository.fetchZanroviFromApi()
-        }
+        viewModelScope.launch { val fromApi = myRoomRepository.fetchZanroviFromApi() }
     }
 
     fun loadIzvodjaci() {
-        viewModelScope.launch {
-            myRoomRepository.fetchIzvodjaciFromApi()
-        }
+        viewModelScope.launch { myRoomRepository.fetchIzvodjaciFromApi() }
     }
 
     fun loadPesme() {
-        viewModelScope.launch {
-            myRoomRepository.fetchPesmaFromApi()
-        }
+        viewModelScope.launch { myRoomRepository.fetchPesmaFromApi() }
     }
     fun loadStihovi() {
-        viewModelScope.launch {
-            myRoomRepository.fetchStihoviFromApi()
-        }
+        viewModelScope.launch { myRoomRepository.fetchStihoviFromApi() }
     }
-
 
     private val _uiState = MutableStateFlow(UiStateIgraOffline())
     val uiState: StateFlow<UiStateIgraOffline> = _uiState
@@ -66,11 +53,9 @@ class DatabaseViewModel @Inject constructor(
             "lako", "easy" -> "E"
             "normalno", "medium", "srednje" -> "N"
             "tesko", "hard" -> "H"
-            else -> "N" // podrazumevano
+            else -> "N"
         }
     }
-
-
 
     private val _IgraOfflineLista= MutableStateFlow(IgraOfflineLista())
     val IgraOfflineLista: StateFlow<IgraOfflineLista> = _IgraOfflineLista
@@ -79,7 +64,6 @@ class DatabaseViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isRefreshing = true)
         try {
 
-            // Prebaci žanrove u int (ako su u string formatu)
             val intList = zanrovi.map { it.toInt() }
 
             // Filtriraj stihove po težini i žanru
@@ -106,10 +90,8 @@ class DatabaseViewModel @Inject constructor(
 
             Log.d("Nasu",randomStih.toString())
 
-            // Dohvati povezanu pesmu i izvođača
             val pesma = myRoomRepository.getPesmaPoId(randomStih.pesId)
             val izvodjac = myRoomRepository.getIzvodjacPoId(pesma.izvId)
-
 
             Log.d("Nasu pesma",pesma.toString())
 
@@ -129,11 +111,7 @@ class DatabaseViewModel @Inject constructor(
                 listaBilo = listaBilo + randomStih.pesId
             )
 
-            // Postavi state
-            _uiState.value = UiStateIgraOffline(
-                igraoffline = response,
-                isRefreshing = false
-            )
+            _uiState.value = UiStateIgraOffline(igraoffline = response, isRefreshing = false)
             _uiState.value.igraoffline?.runda= _uiState.value.igraoffline?.runda?.plus(1)!!
 
         } catch (e: Exception) {

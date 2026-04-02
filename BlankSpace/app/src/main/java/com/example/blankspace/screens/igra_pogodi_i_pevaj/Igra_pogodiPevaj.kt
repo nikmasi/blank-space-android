@@ -29,13 +29,13 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.igra_sam.ActionButton
 import com.example.blankspace.screens.igra_sam.BottomInfoBar
 import com.example.blankspace.screens.igra_sam.DisplayContentIgraSam
+import com.example.blankspace.screens.igra_sam.FetchDataEffect
 import com.example.blankspace.screens.igra_sam.HelpButtonsSectionIgraSam
 import com.example.blankspace.screens.igra_sam.LoadingStateIgraSam
 import com.example.blankspace.screens.igra_sam.SpeechButton
-import com.example.blankspace.viewModels.IgraSamLista
+import com.example.blankspace.screens.igra_sam.TimerEffect
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
-import kotlinx.coroutines.delay
 import com.example.blankspace.ui.theme.*
 
 @Composable
@@ -109,8 +109,21 @@ fun Igra_pogodiPevaj_mainCard(
     LaunchedEffect(Unit) {
         speechRecognizer.setRecognitionListener(recognitionListener)
     }
-    TimerEffectPogodiPevaj(count, navController, sZ, sN, poeni, uiState.igrasam?.runda ?: runda)
-    FetchDataEffectPogodiPevaj(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
+    TimerEffect(count,  uiState.igrasam?.runda ?: runda,
+        onNext = {
+            val nextRunda = runda + 1
+            if (nextRunda < 7) {
+                navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/$poeni") {
+                    //  popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                }
+            } else {
+                navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni") {
+                    //   popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                }
+            }
+        }
+    )
+    FetchDataEffect(selectedZanrovi, selectedNivo, runda, poeni, viewModel, context, igraSamLista)
 
     LaunchedEffect(viewModel.uiState.value.igrasam?.crtice) {
         crta.value = viewModel.uiState.value.igrasam?.crtice ?: ""
@@ -173,12 +186,67 @@ fun Igra_pogodiPevaj_mainCard(
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Uklonjen OutlinedTextField
                     Spacer(modifier = Modifier.height(20.dp))
 
                     UserInputSectionPogodiPevaj(
-                        uiState, context, navController, sZ, sN, poeni,
-                        isAudioP, odgovor, isListening, speechRecognizer, viewModel
+                        uiState, context,
+                        isAudioP, odgovor, isListening, speechRecognizer,
+                        onClickDalje = {
+                            viewModel.stopAudio()
+                            val nextRunda = runda +1
+                            if (nextRunda < 7) {
+                                navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/$poeni") {
+                                    // popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                                }
+                            } else {
+                                navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni") {
+                                    // popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                                }
+                            }
+                        },
+                        onClickProveri = {
+                            if (uiState.igrasam != null) {
+                                val normalize = { text: String ->
+                                    text.toLowerCase()
+                                        .replace("ć", "c").replace("č", "c")
+                                        .replace("đ", "dj")
+                                        .replace("ž", "z").replace("š", "s")
+                                        .filter { it.isLetterOrDigit() || it.isWhitespace() }
+                                }
+
+                                val cleanedAnswer = normalize(odgovor.value)
+                                val correctTarget = normalize(uiState.igrasam!!.tacno)
+                                val isCorrect = cleanedAnswer == correctTarget
+                                val nextRunda = runda
+
+                                if (isCorrect) {
+                                    Toast.makeText(context, "Tačan odgovor!", Toast.LENGTH_SHORT).show()
+                                    viewModel.stopAudio()
+                                    if (nextRunda < 7) {
+                                        navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/${poeni + 10}") {
+                                            //popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                                        }
+                                    } else {
+                                        navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/${poeni + 10}") {
+                                            //popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Netačan odgovor", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        onClickPusti = {
+                            if (!isAudioP.value) {
+                                uiState.igrasam?.zvuk?.let { zvukUrl ->
+                                    viewModel.downloadAudio(zvukUrl, context)
+                                }
+                                isAudioP.value = true
+                            } else {
+                                viewModel.stopAudio()
+                                isAudioP.value = false
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -191,68 +259,15 @@ fun Igra_pogodiPevaj_mainCard(
     }
 }
 
-
-@Composable
-fun TimerEffectPogodiPevaj(
-    count: MutableState<Int>,
-    navController: NavController,
-    sZ: String,
-    sN: String,
-    poeni: Int,
-    runda: Int
-) {
-    LaunchedEffect(runda) {
-        count.value = 0
-        while (count.value < 60) {
-            delay(1000)
-            count.value += 1
-        }
-        val nextRunda = runda
-        if (nextRunda < 7) {
-            navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/$poeni") {
-              //  popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-            }
-        } else {
-            navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni") {
-             //   popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-            }
-        }
-    }
-}
-
-@Composable
-fun FetchDataEffectPogodiPevaj(
-    selectedZanrovi: List<String>,
-    selectedNivo: List<String>,
-    runda: Int,
-    poeni: Int,
-    viewModel: IgraSamViewModel,
-    context: Context,
-    igraSamLista: IgraSamLista
-) {
-    LaunchedEffect(key1 = selectedZanrovi, key2 = selectedNivo, key3 = runda) {
-        if (!selectedZanrovi.isNullOrEmpty()) {
-            igraSamLista.igraSamLista?.let {
-                viewModel.fetchIgraSamData(selectedZanrovi, selectedNivo.toString(),runda,poeni,
-                    it,context)
-            }
-        }
-    }
-}
-
 @Composable
 fun UserInputSectionPogodiPevaj(
     uiState: UiStateI,
     context: Context,
-    navController: NavController,
-    sZ: String,
-    sN: String,
-    poeni: Int,
     isAudioP: MutableState<Boolean>,
     odgovor: MutableState<String>,
     isListening: MutableState<Boolean>,
     speechRecognizer: SpeechRecognizer,
-    viewModel: IgraSamViewModel
+    onClickDalje: () -> Unit, onClickPusti: () -> Unit, onClickProveri: (String) -> Unit
 ) {
     val runda = uiState.igrasam?.runda ?: 0
 
@@ -272,17 +287,7 @@ fun UserInputSectionPogodiPevaj(
         Spacer(modifier = Modifier.width(8.dp))
 
         ActionButton(
-            onClick = {
-                if (!isAudioP.value) {
-                    uiState.igrasam?.zvuk?.let { zvukUrl ->
-                        viewModel.downloadAudio(zvukUrl, context)
-                    }
-                    isAudioP.value = true
-                } else {
-                    viewModel.stopAudio()
-                    isAudioP.value = false
-                }
-            },
+            onClick = onClickPusti,
             text = if (isAudioP.value) "Zaustavi" else "Pusti",
             icon = if (isAudioP.value) Icons.Default.Check else Icons.Default.PlayArrow,
             containerColor = AccentPink.copy(alpha = 0.8f),
@@ -292,38 +297,7 @@ fun UserInputSectionPogodiPevaj(
         Spacer(modifier = Modifier.width(8.dp))
 
         ActionButton(
-            onClick = {
-                if (uiState.igrasam != null) {
-                    val normalize = { text: String ->
-                        text.toLowerCase()
-                            .replace("ć", "c").replace("č", "c")
-                            .replace("đ", "dj")
-                            .replace("ž", "z").replace("š", "s")
-                            .filter { it.isLetterOrDigit() || it.isWhitespace() }
-                    }
-
-                    val cleanedAnswer = normalize(odgovor.value)
-                    val correctTarget = normalize(uiState.igrasam!!.tacno)
-                    val isCorrect = cleanedAnswer == correctTarget
-                    val nextRunda = runda
-
-                    if (isCorrect) {
-                        Toast.makeText(context, "Tačan odgovor!", Toast.LENGTH_SHORT).show()
-                        viewModel.stopAudio()
-                        if (nextRunda < 7) {
-                            navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/${poeni + 10}") {
-                                //popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                            }
-                        } else {
-                            navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/${poeni + 10}") {
-                                //popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                            }
-                        }
-                    } else {
-                        Toast.makeText(context, "Netačan odgovor", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
+            onClick = {onClickProveri(odgovor.value)},
             text = "Proveri",
             icon = Icons.Default.Check,
             containerColor = PrimaryDark,
@@ -334,19 +308,7 @@ fun UserInputSectionPogodiPevaj(
     Spacer(modifier = Modifier.height(16.dp))
 
     ActionButton(
-        onClick = {
-            viewModel.stopAudio()
-            val nextRunda = runda
-            if (nextRunda < 7) {
-                navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$sZ/$sN/$nextRunda/$poeni") {
-                   // popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                }
-            } else {
-                navController.navigate(Destinacije.Kraj_pogodiPevaj.ruta + "/$poeni") {
-                   // popUpTo(Destinacije.Igra_pogodiPevaj.ruta) { inclusive = true }
-                }
-            }
-        },
+        onClick = onClickDalje,
         text = "Preskoči/Dalje",
         icon = Icons.Default.ArrowForward,
         containerColor = PrimaryDark.copy(alpha = 0.5f),

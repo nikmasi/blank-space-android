@@ -20,6 +20,9 @@ val HighlightColor = Color(0xFF2E7D32)
 val RULES_CARD_BG = Color.White
 val RULES_ACCENT = Color(0xFFEC8FB7)
 val RULES_TEXT_DARK = Color(0xFF49006B)
+val InfoBarColor = Color(0xFFE0BBE4)
+val TimeWarningColor = Color(0xFFD32F2F)
+val TextHighlight = Color(0xFFD32F2F)
 
 val RLCardColor = Color.White
 val RLAccentColor = Color(0xFFEC8FB7)

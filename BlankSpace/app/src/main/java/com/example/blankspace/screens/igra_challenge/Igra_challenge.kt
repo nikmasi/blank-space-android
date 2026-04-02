@@ -36,18 +36,10 @@ import com.example.blankspace.viewModels.IgraSamLista
 import com.example.blankspace.viewModels.IgraSamViewModel
 import com.example.blankspace.viewModels.UiStateI
 import kotlinx.coroutines.delay
+import com.example.blankspace.ui.theme.*
 
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
 private val InfoBarColor = Color(0xFFE0BBE4)
-private val TextMain = PrimaryDark
-private val TextAccent = AccentPink
 private val TimeWarningColor = Color(0xFFD32F2F)
-
-val LIGTH_BLUE = InfoBarColor
-val TEXT_COLOR = PrimaryDark
-
 
 @Composable
 fun Igra_challenge(navController: NavController, selectedZanrovi: String, selectedNivo: String,runda:Int,poeni:Int,viewModelIgraSam:IgraSamViewModel) {
@@ -121,7 +113,7 @@ fun Igra_challenge_mainCardStyled(
                         text = "Challenge Runda",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextAccent
+                        color = AccentPink
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     LoadingStateIgraSamStyled(uiState)
@@ -158,7 +150,7 @@ fun TimerEffectStyled(
 @Composable
 fun LoadingStateIgraSamStyled(uiState: UiStateI) {
     if (uiState.isRefreshing) {
-        CircularProgressIndicator(color = TextAccent)
+        CircularProgressIndicator(color = AccentPink)
     } else {
         uiState.error?.let {
             Text(text = "Greška: $it", color = TimeWarningColor)
@@ -175,7 +167,7 @@ fun DisplayContentIgraSamStyled(uiState: UiStateI, crta: MutableState<String>) {
             igrasam.stihpoznat.forEach { stih ->
                 Text(
                     text = stih,
-                    color = TEXT_COLOR.copy(alpha = 0.8f),
+                    color = PrimaryDark.copy(alpha = 0.8f),
                     fontSize = fontSize,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(vertical = 2.dp)
@@ -413,7 +405,7 @@ fun HelpButtonsSectionIgraSamStyled(crta: MutableState<String>, uiState: UiState
             text = "Pomoć: ",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = TEXT_COLOR,
+            color = PrimaryDark,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -478,7 +470,7 @@ fun BottomInfoBarChallenge(poeni: Int, count: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(LIGTH_BLUE, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .background(InfoBarColor, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .height(IntrinsicSize.Min)
     ) {

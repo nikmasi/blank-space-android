@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -84,7 +85,9 @@ fun LoginFields(username: String, password: String, onUsernameChange: (String) -
 }
 
 @Composable
-fun LoginButton(username: String, password: String, onLogin: (String, String) -> Unit, context: Context) {
+fun LoginButton(username: String, password: String, onLogin: (String, String) -> Unit) {
+    val context = LocalContext.current
+
     var pressed by remember { mutableStateOf(false) }
     val elevation = if (pressed) 2.dp else 8.dp
 

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blankspace.data.GameRepository
+import com.example.blankspace.data.retrofit.BASE_URL
 import com.example.blankspace.data.retrofit.models.AudioRequest
 import com.example.blankspace.data.retrofit.models.IgraSamRequest
 import com.example.blankspace.data.retrofit.models.IgraSamResponse
@@ -63,21 +64,23 @@ class IgraSamViewModel @Inject constructor(
         _IgraSamLista.value=IgraSamLista(igraSamLista = lista)
     }
 
-    // Funkcija za preuzimanje MP3 fajla
     private var mediaPlayer: MediaPlayer? = null
 
-    // Funkcija za preuzimanje MP3 fajla i puštanje
     fun downloadAudio(url: String, context: Context) {
         viewModelScope.launch {
             try {
-                // Uvek prvo zaustavi prethodnu pesmu
                 stopAudio()
 
                 val audioReq = AudioRequest(url)
                 val response = gameRepository.getAudio(audioReq)
 
-                // Kada dobiješ novi URL, pusti ga
-                playAudioFromUrl(response.audio_url)
+                val siroviUrl = response.audio_url
+                val popravljenUrl = fixAndEncodeUrl(siroviUrl)
+
+                Log.d("AudioAudio", "Originalni URL: $siroviUrl")
+                Log.d("AudioAudio", "Popravljeni URL: $popravljenUrl")
+
+                playAudioFromUrl(popravljenUrl)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     error = "Greška pri preuzimanju MP3 fajla: ${e.localizedMessage}"
@@ -86,30 +89,38 @@ class IgraSamViewModel @Inject constructor(
         }
     }
 
+    private fun fixAndEncodeUrl(url: String): String {
+        val mojServerIp = BASE_URL
+        val basePattern = Regex("http://[^/]+:8000/")
+        val urlSaNovimIp = url.replace(basePattern, "$mojServerIp")
+        return urlSaNovimIp.replace(" ", "%20")
+    }
+
     private fun playAudioFromUrl(url: String) {
         try {
-            // Uveri se da nema starih MediaPlayer instanci
+
             stopAudio()
 
             mediaPlayer = MediaPlayer().apply {
+                setAudioStreamType(android.media.AudioManager.STREAM_MUSIC)
                 setDataSource(url)
                 setOnPreparedListener { start() }
                 setOnCompletionListener {
                     _isAudioPlaying.value = false
-                    Log.d("Audio", "Audio playback completed.")
+                    Log.d("AudioAudio", "Audio playback completed.")
                 }
                 setOnErrorListener { _, what, extra ->
-                    Log.e("Audio", "MediaPlayer error: what=$what, extra=$extra")
+                    Log.e("AudioAudio", "MediaPlayer error: what=$what, extra=$extra")
                     stopAudio()
                     true
                 }
-                prepareAsync() // ✅ koristi async pripremu
+                prepareAsync()
             }
 
             _isAudioPlaying.value = true
 
         } catch (e: Exception) {
-            Log.e("Audio", "Error while playing audio: ${e.localizedMessage}")
+            Log.e("AudioAudio", "Error while playing audio: ${e.localizedMessage}")
         }
     }
 
@@ -123,11 +134,16 @@ class IgraSamViewModel @Inject constructor(
                 player.release()
             }
         } catch (e: Exception) {
-            Log.e("Audio", "Error while stopping audio: ${e.localizedMessage}")
+            Log.e("AudioAudio", "Error while stopping audio: ${e.localizedMessage}")
         } finally {
             mediaPlayer = null
             _isAudioPlaying.value = false
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopAudio()
     }
 
 }
