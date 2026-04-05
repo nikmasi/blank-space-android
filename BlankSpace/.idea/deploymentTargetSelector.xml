@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.blankspace'">
+      <SelectionState runConfigName="registracijaTest_praznaPolja_neSmePozvatiRegistraciju()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PravilaIgreTest">
+      <SelectionState runConfigName="registracijaTest_imeBezRazmaka_neSmePozvatiRegistraciju()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="klikNaKreni_ZatvaraPravila()">
+      <SelectionState runConfigName="registracijaTest_uspesnaNavigacijaNakonOdgovora()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="proveriTabeluRangova_SadrziPodatke()">
+      <SelectionState runConfigName="registracijaTest_klikNaPovratak_pozivaBackCallback()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ZaboravljenaLozinkaTest">
+      <SelectionState runConfigName="proveriPrikazElemenata_HeaderIPlaceholder()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

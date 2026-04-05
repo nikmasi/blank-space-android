@@ -28,24 +28,52 @@ import com.example.blankspace.ui.theme.*
 
 @Composable
 fun Registracija(onBackToLogin: ()->Unit, onClickPocetna: () -> Unit) {
+    val viewModel: RegistracijaViewModel = hiltViewModel()
+    val uiStateRegistracija by viewModel.uiState.collectAsState()
+
+    RegistracijaContent(
+        uiState = uiStateRegistracija,
+        onClickAction = { name, username, password, co_password, question, answer ->
+            viewModel.fetchRegistracija(name, username, password, co_password, question, answer)
+        },
+        onBackToLogin = onBackToLogin,
+        onClickPocetna = onClickPocetna
+    )
+
+}
+
+@Composable
+fun RegistracijaContent(
+    uiState: UiStateR,
+    onClickAction: (String, String, String, String, String, String) -> Unit,
+    onBackToLogin: () -> Unit,
+    onClickPocetna: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         Registracija_mainCard(
             modifier = Modifier.align(Alignment.Center),
             onBackToLogin = onBackToLogin,
-            onClickPocetna = onClickPocetna
+            onClickAction = onClickAction
         )
     }
+
+    HandleRegistrationResponse(uiState, onClick = onClickPocetna)
 }
 
 @Composable
-fun Registracija_mainCard(modifier: Modifier,onBackToLogin: ()->Unit, onClickPocetna: () -> Unit) {
-    val viewModel: RegistracijaViewModel = hiltViewModel()
-    val uiStateRegistracija by viewModel.uiState.collectAsState()
+fun Registracija_mainCard(
+    modifier: Modifier,onBackToLogin: ()->Unit,
+    onClickAction: (String, String, String, String, String, String) -> Unit
+) {
     val context = LocalContext.current
-
-    HandleRegistrationResponse(uiStateRegistracija, onClick = onClickPocetna)
+    var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var co_password by remember { mutableStateOf("") }
+    var question by remember { mutableStateOf("") }
+    var answer by remember { mutableStateOf("") }
 
     Spacer(modifier = Modifier.height(19.dp))
     Surface(
@@ -60,22 +88,15 @@ fun Registracija_mainCard(modifier: Modifier,onBackToLogin: ()->Unit, onClickPoc
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            item { AuthHeader(stringResource(id = R.string.title_signUp)) }
+            item { AuthHeader(text = stringResource(id = R.string.title_signUp)) }
 
             item {
-                var name by remember { mutableStateOf("") }
-                var username by remember { mutableStateOf("") }
-                var password by remember { mutableStateOf("") }
-                var co_password by remember { mutableStateOf("") }
-                var question by remember { mutableStateOf("") }
-                var answer by remember { mutableStateOf("") }
-
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     RegistrationFields(
                         name = name,
                         username = username,
                         password = password,
-                        co_password = co_password,
+                        coPassword = co_password,
                         question = question,
                         answer = answer,
                         onValueChange = { field, value ->
@@ -91,19 +112,21 @@ fun Registracija_mainCard(modifier: Modifier,onBackToLogin: ()->Unit, onClickPoc
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    val inf = stringResource(id = R.string.login_missing_information)
+                    val nameMessage = stringResource(id = R.string.registration_full_name_message)
                     AuthButton(
-                        text = "Registruj se",
+                        text = stringResource(id = R.string.registration_button),
                         validation = {
                             if (listOf(name, username, password, co_password, question, answer).any { it.isBlank() }) {
-                                Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, inf, Toast.LENGTH_SHORT).show()
                                 false
                             } else if (!name.contains(" ")) {
-                                Toast.makeText(context, "Ime i prezime sa razmakom!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, nameMessage, Toast.LENGTH_SHORT).show()
                                 false
                             } else true
                         },
                         onClickAction = {
-                            viewModel.fetchRegistracija(name, username, password, co_password, question, answer)
+                            onClickAction(name, username, password, co_password, question, answer)
                         },
                         modifier = Modifier
                     )

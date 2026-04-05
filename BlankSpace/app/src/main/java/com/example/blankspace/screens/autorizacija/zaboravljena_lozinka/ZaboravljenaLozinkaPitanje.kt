@@ -9,7 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.R
 import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.UiStateZLP
@@ -20,7 +22,6 @@ import com.example.blankspace.ui.theme.*
 
 @Composable
 fun ZaboravljenaLozinkaPitanje(viewModel: ZaboravljenaLozinkaViewModel, onNavigateToReset: () -> Unit) {
-
     val uiStateP by viewModel.uiStateP.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -29,7 +30,7 @@ fun ZaboravljenaLozinkaPitanje(viewModel: ZaboravljenaLozinkaViewModel, onNaviga
 
         ZaboravljenaLozinkaPitanje_mainCard(
             modifier = Modifier.align(Alignment.Center),
-            question = uiState.zaboravljenaLozinka?.pitanje_lozinka ?: "Nema pitanja",
+            question = uiState.zaboravljenaLozinka?.pitanje_lozinka ?: stringResource(id = R.string.forgot_password_no_questions),
             korisnickoIme = uiState.zaboravljenaLozinka?.korisnicko_ime ?: "",
             onAnswerSubmit = { ime, odgovor ->
                 viewModel.fetchZaboravljenaLozinkaPitanje(ime, odgovor)
@@ -41,10 +42,12 @@ fun ZaboravljenaLozinkaPitanje(viewModel: ZaboravljenaLozinkaViewModel, onNaviga
 }
 
 @Composable
-fun ZaboravljenaLozinkaPitanje_mainCard(modifier: Modifier,
-    korisnickoIme:String,question: String,onAnswerSubmit: (String, String) -> Unit) {
-
+fun ZaboravljenaLozinkaPitanje_mainCard(
+    modifier: Modifier, korisnickoIme:String,question: String,onAnswerSubmit: (String, String) -> Unit
+) {
     val context = LocalContext.current
+    var odgovor by remember { mutableStateOf("") }
+
     Surface(
         color = CardContainerColor,
         modifier = modifier
@@ -54,29 +57,24 @@ fun ZaboravljenaLozinkaPitanje_mainCard(modifier: Modifier,
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.fillMaxSize().padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            ForgotPasswordHeader(title1 = "Zaboravljena lozinka", title2 = question)
-
-            var odgovor by remember { mutableStateOf("") }
+            ForgotPasswordHeader(title1 = stringResource(id = R.string.forgot_password), title2 = question)
 
             PasswordQuestionField(odgovor, onValueChange = { odgovor = it })
 
+            val inf = stringResource(id = R.string.forgot_password_message_information)
             AuthButton(
-                text = "Potvrdi odgovor",
+                text = stringResource(id = R.string.forgot_password_conf_answer),
                 validation = {
                     if (odgovor.isBlank()) {
-                        Toast.makeText(context, "Niste uneli odgovor!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, inf, Toast.LENGTH_SHORT).show()
                         false
                     } else true
                 },
-                onClickAction = {
-                    onAnswerSubmit(korisnickoIme, odgovor)
-                },
+                onClickAction = { onAnswerSubmit(korisnickoIme, odgovor) },
                 modifier = Modifier.padding(top=12.dp, bottom = 24.dp)
             )
         }
@@ -96,9 +94,7 @@ fun HandlePasswordQuestionResponse(uiStateP: UiStateZLP, onSuccess: () -> Unit) 
                         Toast.makeText(context, odgovor, Toast.LENGTH_SHORT).show()
                     }
                 }
-                odgovor.contains("Tačan odgovor!") -> {
-                    onSuccess()
-                }
+                odgovor.contains("Tačan odgovor!") -> { onSuccess() }
             }
         }
     }

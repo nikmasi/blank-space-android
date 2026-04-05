@@ -60,9 +60,7 @@ fun LoginContent(
 
     HandleLoginResponse(
         uiState = uiState,
-        onNavigate = { ruta ->
-            onNavigate(ruta)
-        }
+        onNavigate = { ruta -> onNavigate(ruta) }
     )
 }
 
@@ -90,15 +88,16 @@ fun Login_mainCard(
         ) {
 
             LoginImage()
-            AuthHeader(stringResource(id = R.string.title_login))
+            AuthHeader(text = stringResource(id = R.string.title_login))
 
             LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
 
+            val inf= stringResource(id = R.string.login_missing_information)
             AuthButton(
                 text = stringResource(id = R.string.btn_login),
                 validation = {
                     if (username.isBlank() || password.isBlank()) {
-                        Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, inf, Toast.LENGTH_SHORT).show()
                         false
                     } else true
                 },

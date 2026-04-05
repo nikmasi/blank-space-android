@@ -14,15 +14,44 @@
     <string name="login_continue_as_guest">Nastavi kao gost</string>
     <string name="divider_or">ILI</string>
     <string name="login_forgot_password">Zaboravili ste lozinku?</string>
+    <string name="login_missing_information">Niste uneli sve podatke!</string>
 
 
     //registracija
     <string name="title_signUp"> Registracija</string>
     <string name="registration_already_have_account">Imate nalog? </string>
     <string name="registration_log_in"> Prijavi se</string>
+    <string name="registration_button"> Registruj se</string>
+    <string name="registration_full_name_message">Ime i prezime sa razmakom!</string>
 
     <string name="welcome_msg">Dobrodošli!</string>
     <string name="rules_btn">Pravila igre</string>
+
+    <string name="full_name">Ime i prezime</string>
+    <string name="username">Korisničko ime</string>
+    <string name="password">Lozinka</string>
+    <string name="re_enter_password">Ponovo unesite lozinku</string>
+    <string name="secret_question">Pitanje za oporavak lozinke</string>
+    <string name="secret_answer">Odgovor na pitanje</string>
+
+    //zaboravljena lozinka
+    <string name="forgot_password">Zaboravljena lozinka</string>
+    <string name="forgot_password_conf_answer">Potvrdi odgovor</string>
+    <string name="forgot_password_message_information">Niste uneli odgovor!</string>
+    <string name="forgot_password_no_questions">Nema pitanja</string>
+
+    //zaboravljena lozinka pitanje
+    <string name="forgot_password_question_username">Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje.</string>
+    <string name="forgot_password_question_ask">Postavi pitanje</string>
+    <string name="forgot_password_username_req">Niste uneli korisničko ime!</string>
+
+    //promena lozinke
+    <string name="change_password">Promena lozinke</string>
+    <string name="change_password_enter_new_password">Unesite Vašu novu lozinku.</string>
+    <string name="change_password_new_password">Nova lozinka</string>
+    <string name="change_password_confirm_password">Potvrdite lozinku</string>
+    <string name="change_password_change_password">Promenite lozinku</string>
+    <string name="password_answer">Odgovor</string>
 
     //moj profil
     <string name="game_rules">Pravila igre</string>

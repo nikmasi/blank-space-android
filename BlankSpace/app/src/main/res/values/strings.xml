@@ -17,14 +17,43 @@
     <string name="login_continue_as_guest">Continue as a guest</string>
     <string name="divider_or">OR</string>
     <string name="login_forgot_password">Forgot your password?</string>
+    <string name="login_missing_information">Missing information!</string>
 
     //registracija
     <string name="title_signUp"> Sign up</string>
     <string name="registration_already_have_account">Already have an account? </string>
     <string name="registration_log_in"> Log in</string>
+    <string name="registration_button"> Register</string>
+    <string name="registration_full_name_message">First and last name with a space</string>
 
     <string name="welcome_msg">Welcome!</string>
     <string name="rules_btn">Game Rules</string>
+
+    <string name="full_name">Full name</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="re_enter_password">Re-enter Password</string>
+    <string name="secret_question">Account recovery question</string>
+    <string name="secret_answer">Answer to the question</string>
+
+    //zaboravljena lozinka
+    <string name="forgot_password">Forgot password</string>
+    <string name="forgot_password_conf_answer">Confirm answer</string>
+    <string name="forgot_password_message_information">You have not entered an answer!</string>
+    <string name="forgot_password_no_questions">No questions</string>
+
+    //zaboravljena lozinka pitanje
+    <string name="forgot_password_question_username">Enter your username to set up your security question.</string>
+    <string name="forgot_password_question_ask">Ask a question</string>
+    <string name="forgot_password_username_req">Username is required!</string>
+
+    //promena lozinke
+    <string name="change_password">Change Password</string>
+    <string name="change_password_enter_new_password">Enter your new password.</string>
+    <string name="change_password_new_password">New Password</string>
+    <string name="change_password_confirm_password">Confirm Password</string>
+    <string name="change_password_change_password">Change Password</string>
+    <string name="password_answer">Answer</string>
 
     //moj profil
     <string name="game_rules">Game Rules</string>

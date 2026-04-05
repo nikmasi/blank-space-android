@@ -12,24 +12,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.R
 import com.example.blankspace.ui.theme.AccentPink
 import com.example.blankspace.ui.theme.PrimaryDark
 
 @Composable
 fun RegistrationFields(name: String, username: String, password: String,
-    co_password: String, question: String, answer: String, onValueChange: (String, String) -> Unit
+    coPassword: String, question: String, answer: String, onValueChange: (String, String) -> Unit
 ) {
-    val fields = remember(name, username, password, co_password, question, answer) {
+    val fullName = stringResource(id = R.string.full_name)
+    val userName = stringResource(id = R.string.username)
+    val pass =stringResource(id = R.string.password)
+    val reEnterPass =stringResource(id = R.string.re_enter_password)
+    val secretQuestion =stringResource(id = R.string.secret_question)
+    val secretAnswer =stringResource(id = R.string.secret_answer)
+
+    val fields = remember(name, username, password, coPassword, question, answer) {
         listOf(
-            Triple("Ime i prezime", name) { value: String -> onValueChange("name", value) },
-            Triple("Korisničko ime", username) { value: String -> onValueChange("username", value) },
-            Triple("Lozinka", password) { value: String -> onValueChange("password", value) },
-            Triple("Ponovo unesite lozinku", co_password) { value: String -> onValueChange("co_password", value) },
-            Triple("Pitanje za oporavak lozinke", question) { value: String -> onValueChange("question", value) },
-            Triple("Odgovor na pitanje", answer) { value: String -> onValueChange("answer", value) }
+            Triple(fullName, name) { value: String -> onValueChange("name", value) },
+            Triple(userName, username) { value: String -> onValueChange("username", value) },
+            Triple(pass, password) { value: String -> onValueChange("password", value) },
+            Triple(reEnterPass, coPassword) { value: String -> onValueChange("co_password", value) },
+            Triple(secretQuestion, question) { value: String -> onValueChange("question", value) },
+            Triple(secretAnswer, answer) { value: String -> onValueChange("answer", value) }
         )
     }
 

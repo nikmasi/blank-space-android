@@ -8,7 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.R
 import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.modifiers.columnMainStyle
@@ -24,7 +26,6 @@ import com.example.blankspace.ui.theme.*
 fun ZaboravljenaLozinka(
     viewModel: ZaboravljenaLozinkaViewModel,onNavigateToQuestion: () -> Unit,onResetClick: (String) -> Unit
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -53,25 +54,26 @@ fun ZaboravljenaLozinka_mainCard(modifier: Modifier, onResetClick: (String) -> U
             verticalArrangement = Arrangement.Center
         ) {
             ForgotPasswordHeader(
-                title1 = "Zaboravljena lozinka",
-                title2 = "Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje."
+                title1 = stringResource(id = R.string.forgot_password),
+                title2 = stringResource(id = R.string.forgot_password_question_username)
             )
 
             var username by remember { mutableStateOf("") }
 
             PasswordFieldStyled(
-                label = "Korisničko ime",
+                label = stringResource(id = R.string.textField_username),
                 value = username,
                 onValueChange = { username = it }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            val inf = stringResource(id = R.string.forgot_password_username_req)
             AuthButton(
-                text = "Postavi pitanje",
+                text = stringResource(id = R.string.forgot_password_question_ask),
                 validation = {
                     if (username.isBlank()) {
-                        Toast.makeText(context, "Niste uneli korisničko ime!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, inf, Toast.LENGTH_SHORT).show()
                         false
                     } else true
                 },

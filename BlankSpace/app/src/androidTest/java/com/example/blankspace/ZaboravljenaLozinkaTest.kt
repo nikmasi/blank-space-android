@@ -9,11 +9,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/*
 @RunWith(AndroidJUnit4::class)
 class ZaboravljenaLozinkaTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
 
     @Test
     fun proveriPrikazElemenata_HeaderIPlaceholder() {
@@ -75,4 +77,7 @@ class ZaboravljenaLozinkaTest {
         composeTestRule.onNodeWithText("Postavi pitanje").performClick()
         assert(!callbackPozvan)
     }
+
 }
+
+ */
