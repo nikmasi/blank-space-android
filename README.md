@@ -1,4 +1,4 @@
-# 🎵 Blank Space – Android Lyrics Guessing Game
+# Blank Space – Android Lyrics Guessing Game
 
 Blank Space is an Android mobile game where users guess and complete missing lyrics from popular songs across different genres and difficulty levels.  
 
@@ -21,6 +21,7 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - Offline gameplay using locally stored data
 - Daily reminder notifications
 - Web scraping integration for song discovery
+- Shake-to-Talk Integration: Shake the device to instantly trigger voice recognition, allowing for a seamless, hands-free "Guess & Sing" experience.
 
 ---
 
@@ -45,6 +46,7 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - EncryptedSharedPreferences (secure JWT token storage)
 - MediaPlayer (audio playback)
 - Android SpeechRecognizer API (voice input)
+- Android Sensor API: (Accelerometer) for motion-based event triggering.
 
 ### Backend
 - Django (Python)
@@ -75,6 +77,7 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - Voice input mode implemented with SpeechRecognizer
 - Audio playback synchronized with gameplay using MediaPlayer
 - Hands-free gameplay experience for advanced users
+- Haptic & Motion Feedback: Integrated Accelerometer-based Shake
 
 ---
 

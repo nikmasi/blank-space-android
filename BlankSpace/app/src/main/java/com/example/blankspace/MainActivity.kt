@@ -31,10 +31,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.autorizacija.login.Login
-import com.example.blankspace.screens.autorizacija.promena_lozinke.PromenaLozinke
+import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.PromenaLozinke
 import com.example.blankspace.screens.autorizacija.registracija.Registracija
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinka
-import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka_pitanje.ZaboravljenaLozinkaPitanje
+import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinkaPitanje
 import com.example.blankspace.screens.dodavanje.IzborZanra2
 import com.example.blankspace.screens.dodavanje.PesmaPodaci
 import com.example.blankspace.screens.dodavanje.PesmaPodaci2
@@ -74,7 +74,7 @@ import com.example.blankspace.screens.predlaganje.PredlaganjeIzvodjaca
 import com.example.blankspace.screens.predlaganje.PredlaganjePesme
 import com.example.blankspace.screens.predlaganje.PretragaPredlaganje
 import com.example.blankspace.screens.profil_rang_pravila.moj_profil.MojProfil
-import com.example.blankspace.screens.profil_rang_pravila.PravilaIgre
+import com.example.blankspace.screens.profil_rang_pravila.pravila_igre.PravilaIgre
 import com.example.blankspace.screens.sadrzaj.SadrzajIzvodjaci
 import com.example.blankspace.screens.sadrzaj.SadrzajKorisnici
 import com.example.blankspace.screens.sadrzaj.SadrzajPesme
@@ -456,9 +456,14 @@ fun BlankSpaceApp(){
                 )
             }
             composable(route = Destinacije.ZaboravljenaLozinka.ruta) {
-                ZaboravljenaLozinka(viewModel=viewModelZaboravljenaLozinka, onNavigateToQuestion = {
-                    navController.navigate(Destinacije.ZaboravljenaLozinkaPitanje.ruta)
-                })
+                ZaboravljenaLozinka(viewModel=viewModelZaboravljenaLozinka,
+                    onNavigateToQuestion = {
+                        navController.navigate(Destinacije.ZaboravljenaLozinkaPitanje.ruta)
+                    },
+                    onResetClick ={ username ->
+                        viewModelZaboravljenaLozinka.fetchZaboravljenaLozinka(username)
+                    }
+                )
             }
             composable(route = Destinacije.ZaboravljenaLozinkaPitanje.ruta) {
                 ZaboravljenaLozinkaPitanje(viewModelZaboravljenaLozinka, {
@@ -554,7 +559,10 @@ fun BlankSpaceApp(){
                 ) { navBackStackEntry ->
                 val zanr=navBackStackEntry.arguments?.getString("zanr")?:""
 
-                ImeIzvodjaca(navController,viewModelDodavanje,zanr)
+                ImeIzvodjaca(viewModelDodavanje,
+                    onProvera  = { izvodjac ->
+                        navController.navigate("${Destinacije.PesmaPodaciD.ruta}/$zanr/$izvodjac")
+                    })
             }
             composable(
                 route = "${Destinacije.PesmaPodaciD.ruta}/{zanr}/{izvodjac}",

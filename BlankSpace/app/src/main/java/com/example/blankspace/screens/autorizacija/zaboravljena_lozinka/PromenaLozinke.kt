@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.autorizacija.promena_lozinke
+package com.example.blankspace.screens.autorizacija.zaboravljena_lozinka
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.LoginViewModel
 import com.example.blankspace.viewModels.UiStateNL
@@ -40,6 +41,7 @@ fun PromenaLozinke(viewModel: ZaboravljenaLozinkaViewModel, loginViewModel: Logi
 fun PromenaLozinke_mainCard(viewModel: ZaboravljenaLozinkaViewModel, modifier: Modifier, onClick: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val uiStateNL by viewModel.uiStateNL.collectAsState()
+    val context = LocalContext.current
 
     HandlePasswordChangeResponse(uiStateNL, onClick = onClick)
 
@@ -58,7 +60,7 @@ fun PromenaLozinke_mainCard(viewModel: ZaboravljenaLozinkaViewModel, modifier: M
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            PasswordChangeHeader()
+            ForgotPasswordHeader(title1 = "Promena lozinke", title2 = "Unesite Vašu novu lozinku.")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -76,7 +78,22 @@ fun PromenaLozinke_mainCard(viewModel: ZaboravljenaLozinkaViewModel, modifier: M
                 onValueChange = { potvrdaLozinke = it })
 
             Spacer(modifier = Modifier.height(32.dp))
-            ChangePasswordButtonStyled(novaLozinka, potvrdaLozinke, uiState, viewModel)
+
+            AuthButton(
+                text = "Promenite lozinku",
+                onClickAction = {
+                    uiState.zaboravljenaLozinka?.korisnicko_ime?.let {
+                        viewModel.fetchNovaLozinka(it, novaLozinka, potvrdaLozinke)
+                    }
+                },
+                validation = {
+                    if (novaLozinka.isBlank() || potvrdaLozinke.isBlank()) {
+                        Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
+                        false
+                    } else true
+                },
+                modifier = Modifier
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.autorizacija.zaboravljena_lozinka_pitanje
+package com.example.blankspace.screens.autorizacija.zaboravljena_lozinka
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.UiStateZLP
 import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
@@ -41,8 +42,9 @@ fun ZaboravljenaLozinkaPitanje(viewModel: ZaboravljenaLozinkaViewModel, onNaviga
 
 @Composable
 fun ZaboravljenaLozinkaPitanje_mainCard(modifier: Modifier,
-                    korisnickoIme:String,question: String,onAnswerSubmit: (String, String) -> Unit) {
+    korisnickoIme:String,question: String,onAnswerSubmit: (String, String) -> Unit) {
 
+    val context = LocalContext.current
     Surface(
         color = CardContainerColor,
         modifier = modifier
@@ -58,16 +60,25 @@ fun ZaboravljenaLozinkaPitanje_mainCard(modifier: Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            PasswordQuestionHeader(question = question)
+            ForgotPasswordHeader(title1 = "Zaboravljena lozinka", title2 = question)
 
             var odgovor by remember { mutableStateOf("") }
 
             PasswordQuestionField(odgovor, onValueChange = { odgovor = it })
 
-            PasswordQuestionButton(odgovor,
-                onConfirm = { uneseniOdgovor ->
-                    onAnswerSubmit(korisnickoIme, uneseniOdgovor)
-                })
+            AuthButton(
+                text = "Potvrdi odgovor",
+                validation = {
+                    if (odgovor.isBlank()) {
+                        Toast.makeText(context, "Niste uneli odgovor!", Toast.LENGTH_SHORT).show()
+                        false
+                    } else true
+                },
+                onClickAction = {
+                    onAnswerSubmit(korisnickoIme, odgovor)
+                },
+                modifier = Modifier.padding(top=12.dp, bottom = 24.dp)
+            )
         }
     }
 }

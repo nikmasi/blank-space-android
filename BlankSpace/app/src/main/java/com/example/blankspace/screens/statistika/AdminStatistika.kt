@@ -155,9 +155,7 @@ fun StatistikaSekcija(title: String, titleColor: Color, content: @Composable Col
 @Composable
 fun StatistikaRed(title: String, value: String,valueColor: Color = PrimaryDark) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -170,10 +168,7 @@ fun StatistikaRed(title: String, value: String,valueColor: Color = PrimaryDark) 
             )
         }
 
-        Surface(
-            color = PrimaryDark.copy(alpha = 0.05f),
-            shape = RoundedCornerShape(8.dp)
-        ) {
+        Surface(color = PrimaryDark.copy(alpha = 0.05f), shape = RoundedCornerShape(8.dp)) {
             Text(
                 text = value,
                 fontSize = 14.sp,

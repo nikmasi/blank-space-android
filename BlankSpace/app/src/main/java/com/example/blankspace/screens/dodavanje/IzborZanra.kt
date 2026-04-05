@@ -24,14 +24,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.dodavanje.DodavanjeButton
+import com.example.blankspace.screens.dodavanje.DodavanjeHeader
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
-import kotlinx.coroutines.delay
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun IzborZanra(navController: NavController, viewModel: DodavanjeViewModel) {
@@ -68,7 +66,11 @@ fun IzborZanra_mainCard(navController: NavController, modifier: Modifier) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                ZanrIzborHeader()
+                DodavanjeHeader(
+                    text1 = "Izbor Žanra",
+                    text2 = "Odaberite žanr kojem pripada novi izvođač."
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 ZanroviList(uiStateZanr, selectedZanr) { selectedName ->
@@ -76,36 +78,15 @@ fun IzborZanra_mainCard(navController: NavController, modifier: Modifier) {
                 }
             }
 
-            ZanrIzborButton(onClick = {
-
-                navController.navigate(Destinacije.ImeIzvodjaca.ruta + "/${selectedZanr ?: ""}")
-
-            }, selectedZanr = selectedZanr)
+            DodavanjeButton(
+                {
+                    navController.navigate(Destinacije.ImeIzvodjaca.ruta + "/${selectedZanr ?: ""}")
+                },
+                text = if (selectedZanr == null) "Dalje" else "Dalje"
+            )
         }
     }
 }
-
-
-@Composable
-fun ZanrIzborHeader() {
-    Text(
-        text = "Izbor Žanra",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-    Text(
-        text = "Odaberite žanr kojem pripada novi izvođač.",
-        style = MaterialTheme.typography.bodyMedium,
-        color = PrimaryDark.copy(alpha = 0.8f),
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
-}
-
-
-private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable
 fun ZanroviList(uiStateZanr: UiStateZ, selectedZanr: String?, onSelect: (String) -> Unit) {
@@ -172,42 +153,6 @@ fun ZanroviList(uiStateZanr: UiStateZ, selectedZanr: String?, onSelect: (String)
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ZanrIzborButton(onClick: () -> Unit, selectedZanr: String?) {
-    var pressed by remember { mutableStateOf(false) }
-    val elevation = if (pressed) 2.dp else 8.dp
-
-    val buttonText = if (selectedZanr == null) "Dalje" else "Dalje"
-
-    Button(
-        onClick = {
-            pressed = true
-            onClick()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            text = buttonText,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            delay(100)
-            pressed = false
         }
     }
 }

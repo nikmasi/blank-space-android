@@ -2,8 +2,11 @@ package com.example.blankspace.screens.igra_pogodi_i_pevaj
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.Vibrator
 import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.Toast
@@ -23,6 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
@@ -73,6 +79,17 @@ fun Igra_pogodiPevaj_mainCard(
     viewModel: IgraSamViewModel,
     modifier: Modifier = Modifier
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.onResume()
+            if (event == Lifecycle.Event.ON_PAUSE) viewModel.onPause()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val igraSamLista by viewModel.IgraSamLista.collectAsState()
@@ -109,6 +126,25 @@ fun Igra_pogodiPevaj_mainCard(
     LaunchedEffect(Unit) {
         speechRecognizer.setRecognitionListener(recognitionListener)
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.shakeTrigger.collect @androidx.annotation.RequiresPermission(android.Manifest.permission.VIBRATE) {
+            if (!isListening.value) {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "sr-RS")
+                }
+                speechRecognizer.startListening(intent)
+                isListening.value = true
+
+                val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                vibrator.vibrate(100)
+
+                Toast.makeText(context, "Slušam...", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     TimerEffect(count,  uiState.igrasam?.runda ?: runda,
         onNext = {
             val nextRunda = runda + 1

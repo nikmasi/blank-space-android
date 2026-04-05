@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.autorizacija.auth_components.AuthHeader
 import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
 import com.example.blankspace.screens.pocetne.cards.BgCard2
@@ -73,6 +74,7 @@ fun Login_mainCard(
     onForgotClick: () -> Unit,
     onLogin: (String,String) -> Unit
 ) {
+    val context = LocalContext.current
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -92,7 +94,17 @@ fun Login_mainCard(
 
             LoginFields(username = username, password = password, onUsernameChange = { username = it }, onPasswordChange = { password = it })
 
-            LoginButton(username, password, onLogin)
+            AuthButton(
+                text = stringResource(id = R.string.btn_login),
+                validation = {
+                    if (username.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
+                        false
+                    } else true
+                },
+                onClickAction = { onLogin(username, password) },
+                modifier = Modifier.padding(top=12.dp, bottom = 24.dp)
+            )
 
             DividerWithIconModernAuth()
 

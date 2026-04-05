@@ -8,42 +8,49 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.dodavanje.DodavanjeButton
+import com.example.blankspace.screens.dodavanje.DodavanjeHeader
+import com.example.blankspace.screens.dodavanje.DodavanjeInputField
 import com.example.blankspace.viewModels.DodavanjeViewModel
-import com.example.blankspace.viewModels.ProveraPostojanja
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import com.example.blankspace.ui.theme.*
 
 @Composable
-fun ImeIzvodjaca(navController: NavController, viewModel: DodavanjeViewModel, zanr: String){
+fun ImeIzvodjaca(viewModel: DodavanjeViewModel, onProvera: (String) -> Unit) {
+    val context = LocalContext.current
+    val uiState by viewModel.uiStateProveraPostojanja.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         ImeIzvodjaca_mainCard(
-            navController = navController,
-            viewModel = viewModel,
-            zanr = zanr,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            onProvera  = onProvera,
+            onClick = { izvodjac ->
+                if (izvodjac.isBlank()) {
+                    Toast.makeText(context, "Unesite ime izvođača.", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.proveraPostojanja(izvodjac, "izvodjac")
+                }
+            },
+            odgovor = uiState.proveraDaLiPostoji?.odgovor
         )
     }
 }
 
 @Composable
-fun ImeIzvodjaca_mainCard(navController: NavController, viewModel: DodavanjeViewModel, zanr: String, modifier: Modifier) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiStateProveraPostojanja.collectAsState()
+fun ImeIzvodjaca_mainCard(
+    modifier: Modifier, onProvera: (String) -> Unit, onClick: (String) -> Unit, odgovor:String?
+) {
     var izvodjac by remember { mutableStateOf("") }
 
-    HandleProveraPostojanjaResponse(uiState, context, navController, zanr, izvodjac)
+    odgovor?.let {
+        HandleProveraPostojanjaResponse(odgovor = it, onProvera = { onProvera(izvodjac) })
+    }
 
     Surface(
         color = CardContainerColor,
@@ -54,43 +61,31 @@ fun ImeIzvodjaca_mainCard(navController: NavController, viewModel: DodavanjeView
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.fillMaxSize().padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            IzvodjacHeader()
+            DodavanjeHeader(
+                text1 = "Novi Izvođač",
+                text2 = "Unesite ime izvođača za žanr koji ste odabrali."
+            )
 
-            IzvodjacInputField(
-                value = izvodjac,
-                onValueChange = { izvodjac = it },
-                label = "Ime izvođača"
+            DodavanjeInputField(
+                value = izvodjac, onValueChange = { izvodjac = it }, label = "Ime izvođača"
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            IzvodjacButton(onClick = {
-                if (izvodjac.isBlank()) {
-                    Toast.makeText(context, "Unesite ime izvođača.", Toast.LENGTH_SHORT).show()
-                } else {
-                    viewModel.proveraPostojanja(izvodjac, "izvodjac")
-                }
-            }, text = "Proveri i nastavi")
+            DodavanjeButton(onClick = { onClick(izvodjac) }, text = "Proveri i nastavi")
         }
     }
 }
 
 @Composable
-fun HandleProveraPostojanjaResponse(
-    uiState: ProveraPostojanja,
-    context: android.content.Context,
-    navController: NavController,
-    zanr: String,
-    izvodjac: String
-) {
-    LaunchedEffect(uiState.proveraDaLiPostoji?.odgovor) {
-        val odgovor = uiState.proveraDaLiPostoji?.odgovor
+fun HandleProveraPostojanjaResponse(odgovor: String, onProvera: () -> Unit) {
+    val context = LocalContext.current
+
+    LaunchedEffect(odgovor) {
         if (!odgovor.isNullOrEmpty() && odgovor!="") {
             if (odgovor.contains("U bazi vec postoji izvodjac sa imenom:")) {
                 withContext(Dispatchers.Main) {
@@ -98,77 +93,7 @@ fun HandleProveraPostojanjaResponse(
                 }
                 return@LaunchedEffect
             }
-            navController.navigate("${Destinacije.PesmaPodaciD.ruta}/$zanr/$izvodjac")
-        }
-    }
-}
-
-@Composable
-fun IzvodjacHeader() {
-    Text(
-        text = "Novi Izvođač",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-    Text(
-        text = "Unesite ime izvođača za žanr koji ste odabrali.",
-        style = MaterialTheme.typography.bodyMedium,
-        color = PrimaryDark.copy(alpha = 0.8f),
-        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
-}
-
-@Composable
-fun IzvodjacInputField(value: String, onValueChange: (String) -> Unit, label: String) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, color = PrimaryDark) },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AccentPink,
-            unfocusedBorderColor = PrimaryDark.copy(alpha = 0.5f),
-            cursorColor = AccentPink,
-            focusedTextColor = PrimaryDark,
-            unfocusedTextColor = PrimaryDark
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun IzvodjacButton(onClick: () -> Unit, text: String) {
-    var pressed by remember { mutableStateOf(false) }
-    val elevation = if (pressed) 2.dp else 8.dp
-
-    Button(
-        onClick = {
-            pressed = true
-            onClick()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            text = text,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            delay(100)
-            pressed = false
+            onProvera()
         }
     }
 }

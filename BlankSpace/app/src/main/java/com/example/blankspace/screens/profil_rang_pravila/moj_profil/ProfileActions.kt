@@ -22,8 +22,7 @@ import com.example.blankspace.R
 
 @Composable
 fun ProfileActions(
-    onClickPravilaIgre: () -> Unit,
-    onClickLogut: () -> Unit
+    onClickPravilaIgre: () -> Unit, onClickLogut: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

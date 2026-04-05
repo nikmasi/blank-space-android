@@ -2,6 +2,7 @@ package com.example.blankspace.hilt
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.hardware.SensorManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.blankspace.data.AdminRepository
@@ -177,4 +178,14 @@ abstract class TokenModule {
 
     @Binds
     abstract fun bindTokenManager(impl: TokenManager): TokenManagerInterface
+}
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+object SensorModule {
+    @Provides
+    @Singleton
+    fun provideSensorManager(@ApplicationContext context: Context): SensorManager =
+        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 }

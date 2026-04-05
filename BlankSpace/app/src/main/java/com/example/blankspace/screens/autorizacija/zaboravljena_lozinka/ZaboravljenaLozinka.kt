@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.ui.modifiers.columnMainStyle
 import com.example.blankspace.ui.modifiers.mainCardStyle
@@ -20,7 +21,9 @@ import kotlinx.coroutines.withContext
 import com.example.blankspace.ui.theme.*
 
 @Composable
-fun ZaboravljenaLozinka(viewModel: ZaboravljenaLozinkaViewModel,onNavigateToQuestion: () -> Unit) {
+fun ZaboravljenaLozinka(
+    viewModel: ZaboravljenaLozinkaViewModel,onNavigateToQuestion: () -> Unit,onResetClick: (String) -> Unit
+) {
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -29,9 +32,7 @@ fun ZaboravljenaLozinka(viewModel: ZaboravljenaLozinkaViewModel,onNavigateToQues
 
         ZaboravljenaLozinka_mainCard(
             modifier = Modifier.align(Alignment.Center),
-            onResetClick = { username ->
-                viewModel.fetchZaboravljenaLozinka(username)
-            }
+            onResetClick = onResetClick
         )
     }
     HandleForgotPasswordResponse(uiState, onSuccess = onNavigateToQuestion)
@@ -51,22 +52,32 @@ fun ZaboravljenaLozinka_mainCard(modifier: Modifier, onResetClick: (String) -> U
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            ForgotPasswordHeader()
-
-            Text(
-                text = "Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = PrimaryDark.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 24.dp)
+            ForgotPasswordHeader(
+                title1 = "Zaboravljena lozinka",
+                title2 = "Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje."
             )
 
             var username by remember { mutableStateOf("") }
 
-            ForgotPasswordField(username = username, onValueChange = { username = it })
+            PasswordFieldStyled(
+                label = "Korisničko ime",
+                value = username,
+                onValueChange = { username = it }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            ResetPasswordButton(username = username, context = context, onResetClick= { onResetClick(username) })
+            AuthButton(
+                text = "Postavi pitanje",
+                validation = {
+                    if (username.isBlank()) {
+                        Toast.makeText(context, "Niste uneli korisničko ime!", Toast.LENGTH_SHORT).show()
+                        false
+                    } else true
+                },
+                onClickAction = { onResetClick(username) },
+                modifier = Modifier
+            )
         }
     }
 }

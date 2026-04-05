@@ -26,12 +26,7 @@ import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.UiStateZ
 import com.example.blankspace.viewModels.ZanrViewModel
-import kotlinx.coroutines.delay
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun IzborZanra2(navController: NavController, viewModel: DodavanjeViewModel) {
@@ -76,13 +71,14 @@ fun IzborZanra2_mainCard(navController: NavController, modifier: Modifier) {
                 }
             }
 
-            ZanrIzborButtonStyled(onClick = {
+            DodavanjeButton(onClick = {
                 if (selectedZanr.isNullOrBlank()) {
                     navController.navigate(Destinacije.IzborIzvodjaca.ruta + "/${selectedZanr ?: ""}")
                 } else {
                     navController.navigate(Destinacije.IzborIzvodjaca.ruta + "/$selectedZanr")
                 }
-            }, selectedZanr = selectedZanr)
+            },
+                text = if (selectedZanr.isNullOrBlank()) "Nastavi bez žanra" else "Dalje")
         }
     }
 }
@@ -172,42 +168,6 @@ fun ZanroviListStyled(uiStateZanr: UiStateZ, selectedZanr: String?, onSelect: (S
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ZanrIzborButtonStyled(onClick: () -> Unit, selectedZanr: String?) {
-    var pressed by remember { mutableStateOf(false) }
-    val elevation = if (pressed) 2.dp else 8.dp
-
-    val buttonText = if (selectedZanr.isNullOrBlank()) "Nastavi bez žanra" else "Dalje"
-
-    Button(
-        onClick = {
-            pressed = true
-            onClick()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            text = buttonText,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            delay(100)
-            pressed = false
         }
     }
 }

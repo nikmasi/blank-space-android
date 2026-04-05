@@ -12,15 +12,19 @@ import com.example.blankspace.data.retrofit.models.IgraSamRequest
 import com.example.blankspace.data.retrofit.models.IgraSamResponse
 import com.example.blankspace.data.retrofit.models.KrajIgreRequest
 import com.example.blankspace.data.retrofit.models.KrajIgreResponse
+import com.example.blankspace.screens.ShakeDetector
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class IgraSamViewModel @Inject constructor(
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val shakeDetector: ShakeDetector,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateI())
@@ -34,6 +38,19 @@ class IgraSamViewModel @Inject constructor(
 
     private val _IgraSamLista= MutableStateFlow(IgraSamLista())
     val IgraSamLista:StateFlow<IgraSamLista> = _IgraSamLista
+
+    private val _shakeTrigger = MutableSharedFlow<Unit>()
+    val shakeTrigger = _shakeTrigger.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            shakeDetector.shakeEvents.collect {
+                _shakeTrigger.emit(Unit)
+            }
+        }
+    }
+    fun onResume() = shakeDetector.start()
+    fun onPause() = shakeDetector.stop()
 
     fun fetchIgraSamData(zanrovi: List<String>, tezina: String,runda:Int,poeni:Int,listaBilo:List<Int>,context: Context) = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isRefreshing = true)
@@ -102,7 +119,7 @@ class IgraSamViewModel @Inject constructor(
             stopAudio()
 
             mediaPlayer = MediaPlayer().apply {
-                setAudioStreamType(android.media.AudioManager.STREAM_MUSIC)
+                //setAudioStreamType(android.media.AudioManager.STREAM_MUSIC)
                 setDataSource(url)
                 setOnPreparedListener { start() }
                 setOnCompletionListener {

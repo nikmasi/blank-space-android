@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.blankspace.R
+import com.example.blankspace.screens.autorizacija.auth_components.AuthButton
 import com.example.blankspace.screens.autorizacija.auth_components.AuthHeader
 import com.example.blankspace.screens.autorizacija.auth_components.AuthNavigation
 import com.example.blankspace.screens.autorizacija.auth_components.DividerWithIconModernAuth
@@ -42,6 +43,7 @@ fun Registracija(onBackToLogin: ()->Unit, onClickPocetna: () -> Unit) {
 fun Registracija_mainCard(modifier: Modifier,onBackToLogin: ()->Unit, onClickPocetna: () -> Unit) {
     val viewModel: RegistracijaViewModel = hiltViewModel()
     val uiStateRegistracija by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     HandleRegistrationResponse(uiStateRegistracija, onClick = onClickPocetna)
 
@@ -89,9 +91,22 @@ fun Registracija_mainCard(modifier: Modifier,onBackToLogin: ()->Unit, onClickPoc
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    RegistrationButton(name, username, password, co_password, question, answer, onSignUp = { name, username, password, co_password, question, answer ->
-                        viewModel.fetchRegistracija(name, username, password, co_password, question, answer)
-                    })
+                    AuthButton(
+                        text = "Registruj se",
+                        validation = {
+                            if (listOf(name, username, password, co_password, question, answer).any { it.isBlank() }) {
+                                Toast.makeText(context, "Niste uneli sve podatke!", Toast.LENGTH_SHORT).show()
+                                false
+                            } else if (!name.contains(" ")) {
+                                Toast.makeText(context, "Ime i prezime sa razmakom!", Toast.LENGTH_SHORT).show()
+                                false
+                            } else true
+                        },
+                        onClickAction = {
+                            viewModel.fetchRegistracija(name, username, password, co_password, question, answer)
+                        },
+                        modifier = Modifier
+                    )
 
                     Spacer(modifier = Modifier.height(20.dp))
                     DividerWithIconModernAuth()

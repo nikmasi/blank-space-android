@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,12 +27,7 @@ import com.example.blankspace.viewModels.DodavanjeViewModel
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-
-private val PrimaryDark = Color(0xFF49006B)
-private val AccentPink = Color(0xFFEC8FB7)
-private val CardContainerColor = Color(0xFFF0DAE7)
-private val LightBackground = Color(0xFFF7F7F7)
-
+import com.example.blankspace.ui.theme.*
 
 @Composable
 fun PesmaPodaciD(navController: NavController, viewModel: DodavanjeViewModel, zanr: String, izvodjac: String){
@@ -94,7 +88,9 @@ fun PesmaPodaciD_mainCard(navController: NavController,viewModel: DodavanjeViewM
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { SongDetailsHeader(zanr, izvodjac) }
+            item {
+                DodavanjeHeader(text1 = "Dodavanje Pesme", text2 = "Žanr: $zanr | Izvođač: $izvodjac")
+            }
 
             item {
                 SongDetailsInputs(
@@ -271,27 +267,6 @@ fun FilePickerStyled(selectedMp3Uri: Uri?, onFileSelected: (Uri) -> Unit) {
         // Originalni poziv komponente FilePicker bi išao ovde:
         // FilePicker { uri -> selectedMp3Uri = uri }
         // implementirano  sa Button/Launcher logikom.
-    }
-}
-
-@Composable
-fun SongDetailsHeader(zanr: String, izvodjac: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Dodavanje Pesme",
-            color = PrimaryDark,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 32.sp,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        Text(
-            text = "Žanr: $zanr | Izvođač: $izvodjac",
-            style = MaterialTheme.typography.titleSmall,
-            color = AccentPink,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
     }
 }
 

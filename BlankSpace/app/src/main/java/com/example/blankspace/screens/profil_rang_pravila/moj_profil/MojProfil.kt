@@ -40,10 +40,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.ui.theme.*
 
 val ProfileCardColor = Color.White
 val ProfileAccentColor = Color(0xFF49006B)
-private val PrimaryDark = Color(0xFF49006B)
 
 @Composable
 fun MojProfil(navController: NavController, viewModelLogin: LoginViewModel) {

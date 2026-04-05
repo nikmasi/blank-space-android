@@ -23,10 +23,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.screens.dodavanje.DodavanjeButton
+import com.example.blankspace.screens.dodavanje.DodavanjeHeader
 import com.example.blankspace.viewModels.DodavanjeViewModel
 import com.example.blankspace.viewModels.IzvodjaciZanraViewModel
 import com.example.blankspace.viewModels.UiStateIZU
-import kotlinx.coroutines.delay
 import com.example.blankspace.ui.theme.*
 
 @Composable
@@ -68,7 +69,11 @@ fun IzborIzvodjaca_mainCard(navController: NavController, zanr: String, modifier
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                IzvodjacIzborHeader(zanr)
+                DodavanjeHeader(
+                    text1 = "Izbor Izvođača",
+                    text2 = "Odaberite izvođača u žanru: $zanr"
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 IzvodjaciListStyled(uiStateZanr, selectedIzvodjac) { selectedName ->
@@ -76,33 +81,18 @@ fun IzborIzvodjaca_mainCard(navController: NavController, zanr: String, modifier
                 }
             }
 
-            IzvodjacIzborButtonStyled(onClick = {
-                if (selectedIzvodjac.isNullOrBlank()) {
-                    navController.navigate(Destinacije.ImeIzvodjaca.ruta + "/$zanr")
-                } else {
-                    navController.navigate(Destinacije.PesmaPodaciD.ruta + "/$zanr/$selectedIzvodjac")
-                }
-            }, selectedIzvodjac = selectedIzvodjac)
+            DodavanjeButton(
+                onClick = {
+                    if (selectedIzvodjac.isNullOrBlank()) {
+                        navController.navigate(Destinacije.ImeIzvodjaca.ruta + "/$zanr")
+                    } else {
+                        navController.navigate(Destinacije.PesmaPodaciD.ruta + "/$zanr/$selectedIzvodjac")
+                    }
+                },
+                text= if (selectedIzvodjac.isNullOrBlank()) "Dodaj novog izvođača" else "Dalje"
+            )
         }
     }
-}
-
-@Composable
-fun IzvodjacIzborHeader(zanr: String) {
-    Text(
-        text = "Izbor Izvođača",
-        color = PrimaryDark,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-    Text(
-        text = "Odaberite izvođača u žanru: $zanr",
-        style = MaterialTheme.typography.bodyMedium,
-        color = PrimaryDark.copy(alpha = 0.8f),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
 }
 
 @Composable
@@ -170,41 +160,6 @@ fun IzvodjaciListStyled(uiStateZanr: UiStateIZU, selectedIzvodjac: String?, onSe
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun IzvodjacIzborButtonStyled(onClick: () -> Unit, selectedIzvodjac: String?) {
-    var pressed by remember { mutableStateOf(false) }
-    val elevation = if (pressed) 2.dp else 8.dp
-    val buttonText = if (selectedIzvodjac.isNullOrBlank()) "Dodaj novog izvođača" else "Dalje"
-
-    Button(
-        onClick = {
-            pressed = true
-            onClick()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = AccentPink,
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .shadow(elevation, RoundedCornerShape(16.dp))
-    ) {
-        Text(
-            text = buttonText,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    LaunchedEffect(pressed) {
-        if (pressed) {
-            delay(100)
-            pressed = false
         }
     }
 }

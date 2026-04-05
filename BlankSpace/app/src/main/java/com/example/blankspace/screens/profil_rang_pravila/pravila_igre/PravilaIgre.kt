@@ -1,4 +1,4 @@
-package com.example.blankspace.screens.profil_rang_pravila
+package com.example.blankspace.screens.profil_rang_pravila.pravila_igre
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -19,9 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import  com.example.blankspace.ui.theme.*
 
 @Composable
@@ -81,10 +78,7 @@ fun PravilaIgre(onClick: () -> Unit) {
 
 @Composable
 fun RuleSection(
-    emoji: String,
-    title: String,
-    subtitle: String,
-    content: @Composable () -> Unit
+    emoji: String, title: String, subtitle: String, content: @Composable () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -219,43 +213,4 @@ fun Section3Content() {
             fontSize = 16.sp
         )
     }
-}
-
-
-@Composable
-fun BulletPoint(text: String) {
-    Row(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text("• ", color = RULES_ACCENT, fontWeight = FontWeight.Bold)
-        Text(text = text, color = Color.DarkGray, fontSize = 16.sp)
-    }
-}
-
-@Composable
-fun BulletPointSmall(text: String) {
-    Row(modifier = Modifier.padding(vertical = 2.dp)) {
-        Text("- ", color = RULES_ACCENT.copy(alpha = 0.8f), fontWeight = FontWeight.SemiBold)
-        Text(text = text, color = Color.Gray, fontSize = 14.sp)
-    }
-}
-
-@Composable
-private fun RowScope.TableCell(
-    text: String,
-    weight: Float,
-    color: Color,
-    fontWeight: FontWeight,
-    fontSize: TextUnit,
-    alignment: TextAlign,
-    paddingStart: Dp = 0.dp
-) {
-    Text(
-        text = text,
-        modifier = Modifier.weight(weight).padding(start = paddingStart),
-        textAlign = alignment,
-        color = color,
-        fontWeight = fontWeight,
-        fontSize = fontSize,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
 }

@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="loginTest_praznaPolja_ProveraOdsustvaSlanja()">
+      <SelectionState runConfigName="Tests in 'com.example.blankspace'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="loginTest_proveraKlikovaNaLinkove()">
+      <SelectionState runConfigName="PravilaIgreTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="login_proveraPromeneJezika()">
+      <SelectionState runConfigName="klikNaKreni_ZatvaraPravila()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LoginTest">
+      <SelectionState runConfigName="proveriTabeluRangova_SadrziPodatke()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="login_proveraPozivaMetode()">
+      <SelectionState runConfigName="ZaboravljenaLozinkaTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
