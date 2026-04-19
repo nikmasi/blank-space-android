@@ -117,8 +117,8 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/loading.jpg" width="270" />
   <img src="screenshots/login.png" width="270" />
   <img src="screenshots/sign_up.png" width="270" />
+  <img src="screenshots/zaboravljena_lozinka_korisnik.jpg" width="270" />
   <img src="screenshots/zaboravljena_lozinka.jpg" width="270" />
-  <img src="screenshots/pitanje_lozinka.jpg" width="270" />
   <img src="screenshots/promena_lozinka.jpg" width="270" />
   <img src="screenshots/gost.jpg" width="270" />
   <img src="screenshots/home.jpg" width="270" />
@@ -142,5 +142,6 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
   <img src="screenshots/stats2.jpg" width="270" />
   <img src="screenshots/stats3.jpg" width="270" />
   <img src="screenshots/admin.jpg" width="270" />
-  
+  <img src="screenshots/admin_predlozi_pesama.jpg" width="270" />
+  <img src="screenshots/admin_uklanjanje_pesme.jpg" width="270" />
 </p>

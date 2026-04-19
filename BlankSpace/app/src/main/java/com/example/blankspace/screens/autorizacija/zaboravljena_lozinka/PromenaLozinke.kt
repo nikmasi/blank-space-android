@@ -20,29 +20,38 @@ import com.example.blankspace.viewModels.ZaboravljenaLozinkaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.example.blankspace.ui.theme.*
+import com.example.blankspace.viewModels.UiStateZL
 
 @Composable
 fun PromenaLozinke(viewModel: ZaboravljenaLozinkaViewModel, loginViewModel: LoginViewModel, onClick: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
+    val uiStateNL by viewModel.uiStateNL.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
 
         PromenaLozinke_mainCard(
-            viewModel = viewModel,
             modifier = Modifier.align(Alignment.Center),
             onClick = {
                 loginViewModel.setKorisnikZL(uiState)
                 onClick()
+            },
+            uiState = uiState,
+            uiStateNL = uiStateNL,
+            onClickAction = { kor_ime, novaLozinka, potvrdaLozinke->
+                viewModel.fetchNovaLozinka(kor_ime, novaLozinka, potvrdaLozinke)
             }
         )
     }
 }
 
 @Composable
-fun PromenaLozinke_mainCard(viewModel: ZaboravljenaLozinkaViewModel, modifier: Modifier, onClick: () -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
-    val uiStateNL by viewModel.uiStateNL.collectAsState()
+fun PromenaLozinke_mainCard(
+    modifier: Modifier, onClick: () -> Unit,
+    uiState: UiStateZL, uiStateNL: UiStateNL,
+    onClickAction: (String, String, String) -> Unit
+) {
+
     val context = LocalContext.current
 
     var novaLozinka by remember { mutableStateOf("") }
@@ -89,7 +98,7 @@ fun PromenaLozinke_mainCard(viewModel: ZaboravljenaLozinkaViewModel, modifier: M
                 text = stringResource(id = R.string.change_password_change_password),
                 onClickAction = {
                     uiState.zaboravljenaLozinka?.korisnicko_ime?.let {
-                        viewModel.fetchNovaLozinka(it, novaLozinka, potvrdaLozinke)
+                        onClickAction(it, novaLozinka, potvrdaLozinke)
                     }
                 },
                 validation = {

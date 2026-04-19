@@ -33,14 +33,15 @@ import androidx.compose.ui.unit.sp
 import com.example.blankspace.ui.theme.*
 
 @Composable
-fun Kraj_igre_igre_sam(
-    poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel,
+fun Kraj_igre(
+    poeni: Int, viewModelLogin: LoginViewModel,
+    igraSamViewModel: IgraSamViewModel,
     onClickPonovo: () ->Unit, onClickKraj: () ->Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         val poeni2 = poeni / 10
-        Kraj_igre_igre_sam_mainCard(
+        Kraj_igre_mainCard(
             poeni = poeni2,
             viewModelLogin = viewModelLogin,
             igraSamViewModel = igraSamViewModel,
@@ -52,8 +53,9 @@ fun Kraj_igre_igre_sam(
 }
 
 @Composable
-fun Kraj_igre_igre_sam_mainCard(
-    poeni: Int, viewModelLogin: LoginViewModel, igraSamViewModel: IgraSamViewModel, modifier: Modifier,
+fun Kraj_igre_mainCard(
+    poeni: Int, viewModelLogin: LoginViewModel,
+    igraSamViewModel: IgraSamViewModel, modifier: Modifier,
     onClickPonovo: () ->Unit, onClickKraj: () ->Unit
 ) {
     val uiStateLogin by viewModelLogin.uiState.collectAsState()
@@ -73,18 +75,13 @@ fun Kraj_igre_igre_sam_mainCard(
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 24.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             KrajIgreHeaderStyled()
             KrajIgreBodyStyled(poeni)
-            KrajIgreButtonsStyled(
-                onClickPonovo = onClickPonovo,
-                onClickKraj = onClickKraj
-            )
+            KrajIgreButtonsStyled(onClickPonovo = onClickPonovo, onClickKraj = onClickKraj)
         }
     }
 }
@@ -156,11 +153,7 @@ fun KrajIgreButtonsStyled(onClickPonovo: () ->Unit, onClickKraj: () ->Unit) {
 }
 
 @Composable
-fun FullWidthStyledButton(
-    onClick: () -> Unit,
-    text: String,
-    containerColor: Color
-) {
+fun FullWidthStyledButton(onClick: () -> Unit, text: String, containerColor: Color) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(

@@ -40,22 +40,15 @@ import com.example.blankspace.screens.dodavanje.PesmaPodaci
 import com.example.blankspace.screens.dodavanje.PesmaPodaci2
 import com.example.blankspace.screens.dodavanje.PesmaPodaciD
 import com.example.blankspace.screens.igra_challenge.Igra_challenge
-import com.example.blankspace.screens.igra_challenge.Kraj_challenge
-import com.example.blankspace.screens.igra_challenge.Nivo_challenge
-import com.example.blankspace.screens.igra_challenge.Zanr_challenge
 import com.example.blankspace.screens.igra_offline.Igra_offline
 import com.example.blankspace.screens.igra_offline.Kraj_igre_offline
-import com.example.blankspace.screens.igra_offline.Nivo_igra_offline
 import com.example.blankspace.screens.igra_offline.Zanr_igra_offline
 import com.example.blankspace.screens.igra_pogodi_i_pevaj.Igra_pogodiPevaj
-import com.example.blankspace.screens.igra_pogodi_i_pevaj.Kraj_pogodiPevaj
-import com.example.blankspace.screens.igra_pogodi_i_pevaj.Nivo_pogodiPevaj
-import com.example.blankspace.screens.igra_pogodi_i_pevaj.Zanr_PogodiPevaj
 import com.example.blankspace.screens.igra_sam.Duel
 import com.example.blankspace.screens.igra_sam.Igra_sam
-import com.example.blankspace.screens.igra_sam.Kraj_igre_igre_sam
-import com.example.blankspace.screens.igra_sam.Nivo_igra_sam
-import com.example.blankspace.screens.igra_sam.Zanr_igra_sam
+import com.example.blankspace.screens.igra_sam.Kraj_igre
+import com.example.blankspace.screens.igra_sam.Nivo_igra
+import com.example.blankspace.screens.igra_sam.Zanr_igra
 import com.example.blankspace.screens.igraj_u_duelu.Cekanje_rezultata
 import com.example.blankspace.screens.igraj_u_duelu.Generisi_sifru_sobe
 import com.example.blankspace.screens.igraj_u_duelu.Kraj_duela
@@ -257,28 +250,30 @@ fun BlankSpaceApp(){
                 PravilaIgre(onClick = { navController.navigate(Destinacije.Login.ruta) })
             }
             composable(route = Destinacije.Nivo_igra_sam.ruta) {
-                Nivo_igra_sam(
+                Nivo_igra(
                     onNavigateToGenre = { tezina ->
                         navController.navigate("${Destinacije.Zanr_igra_sam.ruta}/$tezina")
-                    }
+                    },
+                    text = "Igraj sam"
                 )
             }
             composable(route = Destinacije.Nivo_igra_offline.ruta) {
-                Nivo_igra_offline(onDifficultySelected = { nivo ->
+                Nivo_igra(onNavigateToGenre = { nivo ->
                     navController.navigate("${Destinacije.Zanr_igra_offline.ruta}/$nivo")
-                })
+                }, text ="Offline igra")
             }
             composable(route = Destinacije.Nivo_pogodiPevaj.ruta) {
-                Nivo_pogodiPevaj(
+                Nivo_igra(
                     onNavigateToGenre = { tezina ->
                         navController.navigate("${Destinacije.Zanr_pogodiPevaj.ruta}/$tezina")
-                    }
+                    },
+                    text ="Pogodi i Pevaj"
                 )
             }
             composable(route = Destinacije.Nivo_challenge.ruta) {
-                Nivo_challenge(onNavigateToGenre = { tezina ->
+                Nivo_igra(onNavigateToGenre = { tezina ->
                     navController.navigate("${Destinacije.Zanr_challenge.ruta}/$tezina")
-                })
+                }, text ="Challenge mode")
             }
             composable(route = Destinacije.Sifra_sobe_duel.ruta) {
                 Sifra_sobe_duel(navController,viewModelDuel,viewModelLogin)
@@ -288,7 +283,7 @@ fun BlankSpaceApp(){
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
                 ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_igra_sam(
+                Zanr_igra(
                     selectedNivo = selectedNivo,
                     onNavigateNext = { zanroviIds, nivo ->
                         viewModelIgraSam.postaviListu(emptyList())
@@ -308,7 +303,7 @@ fun BlankSpaceApp(){
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_PogodiPevaj(selectedNivo = selectedNivo,
+                Zanr_igra(selectedNivo = selectedNivo,
                     onNavigateNext = { zanroviIds, selectedNivoValue ->
                         viewModelIgraSam.postaviListu(emptyList())
                         navController.navigate(Destinacije.Igra_pogodiPevaj.ruta + "/$zanroviIds/$selectedNivoValue/0/0")
@@ -320,7 +315,7 @@ fun BlankSpaceApp(){
                 arguments = listOf(navArgument("selectedNivo") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val selectedNivo = navBackStackEntry.arguments?.getString("selectedNivo") ?: ""
-                Zanr_challenge(selectedNivo = selectedNivo,
+                Zanr_igra(selectedNivo = selectedNivo,
                     onNavigateNext = { zanroviIds, selectedNivoValue ->
                         viewModelIgraSam.postaviListu(emptyList())
                         navController.navigate(Destinacije.Igra_challenge.ruta + "/$zanroviIds/$selectedNivoValue/80/0")
@@ -397,7 +392,7 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                     val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                    Kraj_igre_igre_sam(poeni,viewModelLogin,viewModelIgraSam,
+                    Kraj_igre(poeni,viewModelLogin,viewModelIgraSam,
                         onClickPonovo = { navController.navigate(Destinacije.Nivo_igra_sam.ruta) },
                         onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
                     )
@@ -419,7 +414,7 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                Kraj_pogodiPevaj(poeni, viewModelLogin, viewModelIgraSam,
+                Kraj_igre(poeni, viewModelLogin, viewModelIgraSam,
                     onClickPonovo = { navController.navigate(Destinacije.Nivo_pogodiPevaj.ruta) },
                     onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
                 )
@@ -430,7 +425,7 @@ fun BlankSpaceApp(){
                 )
             ) { navBackStackEntry ->
                 val poeni = navBackStackEntry.arguments?.getInt("poeni") ?: 0
-                Kraj_challenge(poeni, viewModelLogin, viewModelIgraSam,
+                Kraj_igre(poeni, viewModelLogin, viewModelIgraSam,
                     onClickPonovo = { navController.navigate(Destinacije.Nivo_challenge.ruta) },
                     onClickKraj = { navController.navigate(Destinacije.Login.ruta) }
                 )

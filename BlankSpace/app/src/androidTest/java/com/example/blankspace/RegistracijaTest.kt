@@ -5,16 +5,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.composable
-import androidx.navigation.createGraph
-import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.blankspace.data.retrofit.models.LoginResponse
-import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.autorizacija.login.LoginContent
 import com.example.blankspace.screens.autorizacija.registracija.RegistracijaContent
-import com.example.blankspace.viewModels.UiStateL
 import com.example.blankspace.viewModels.UiStateR
 import org.junit.Rule
 import org.junit.Test

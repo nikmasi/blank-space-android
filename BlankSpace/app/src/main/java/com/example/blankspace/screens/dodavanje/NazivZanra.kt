@@ -52,9 +52,7 @@ fun NazivZanra_mainCard(navController: NavController, viewModel: DodavanjeViewMo
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.fillMaxSize().padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -78,8 +76,6 @@ fun NazivZanra_mainCard(navController: NavController, viewModel: DodavanjeViewMo
                     viewModel.proveraPostojanja(zanr, "zanr")
                 }
             }, text = "Dodaj žanr")
-
-
         }
     }
 }

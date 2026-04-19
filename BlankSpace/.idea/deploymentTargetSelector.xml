@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="registracijaTest_praznaPolja_neSmePozvatiRegistraciju()">
+      <SelectionState runConfigName="promenaLozinke_mainCard_proslediTacneVrednosti()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="registracijaTest_imeBezRazmaka_neSmePozvatiRegistraciju()">
+      <SelectionState runConfigName="promenaLozinke_mainCard_praznaPolja_neProsledi()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="registracijaTest_uspesnaNavigacijaNakonOdgovora()">
+      <SelectionState runConfigName="handlePasswordChangeResponse_odgovorUspeh_pozivaOnClick()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="registracijaTest_klikNaPovratak_pozivaBackCallback()">
+      <SelectionState runConfigName="PromenaLozinkeTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="proveriPrikazElemenata_HeaderIPlaceholder()">
+      <SelectionState runConfigName="promenaLozinkeTest_klikNButton()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

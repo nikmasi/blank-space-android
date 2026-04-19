@@ -1,83 +1,131 @@
 package com.example.blankspace
 
-import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
+import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.HandleForgotPasswordResponse
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinka_mainCard
-import com.example.blankspace.ui.theme.BlankSpaceTheme
+import com.example.blankspace.viewModels.UiStateZL
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/*
 @RunWith(AndroidJUnit4::class)
 class ZaboravljenaLozinkaTest {
-
     @get:Rule
-    val composeTestRule = createComposeRule()
-
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun proveriPrikazElemenata_HeaderIPlaceholder() {
+    fun zaboravljenaLozinkaTest_proslediTacanUsername() {
+        val context = composeTestRule.activity
+        val buttonText = context.getString(R.string.forgot_password_question_ask)
+
+        var prosledjeniUsername = ""
+
         composeTestRule.setContent {
-            BlankSpaceTheme {
-                ZaboravljenaLozinka_mainCard(
-                    modifier = androidx.compose.ui.Modifier,
-                    onResetClick = {}
-                )
-            }
+            ZaboravljenaLozinka_mainCard(
+                modifier = Modifier,
+                onResetClick = { prosledjeniUsername = it }
+            )
         }
 
-        composeTestRule.onNodeWithText("Zaboravljena lozinka").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Unesite Vaše korisničko ime da bismo postavili sigurnosno pitanje.")
-            .assertIsDisplayed()
+        val username = "pera123"
 
-        composeTestRule.onNodeWithText("Korisničko ime").assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            context.getString(R.string.textField_username)
+        ).performTextInput(username)
 
-        composeTestRule.onNodeWithText("Postavi pitanje").assertIsDisplayed()
+        composeTestRule.onNodeWithText(buttonText).performClick()
+        assert(prosledjeniUsername == username)
     }
 
     @Test
-    fun unesiKorisnickoImeIKlikniDugme_PozivaCallback() {
-        var poslatoKorisnickoIme = ""
-        val testIme = "stefan123"
+    fun zaboravljenaLozinkaTest_headerPostoji() {
+        val context = composeTestRule.activity
 
         composeTestRule.setContent {
-            BlankSpaceTheme {
-                ZaboravljenaLozinka_mainCard(
-                    modifier = androidx.compose.ui.Modifier,
-                    onResetClick = { username ->
-                        poslatoKorisnickoIme = username
-                    }
-                )
-            }
+            ZaboravljenaLozinka_mainCard(
+                modifier = Modifier,
+                onResetClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithText("Korisničko ime")
-            .performTextInput(testIme)
+        composeTestRule.onNodeWithText(context.getString(R.string.forgot_password)
+        ).assertExists()
 
-        composeTestRule.onNodeWithText("Postavi pitanje").performClick()
-
-        assert(poslatoKorisnickoIme == testIme)
+        composeTestRule.onNodeWithText(context.getString(R.string.forgot_password_question_username)
+        ).assertExists()
     }
 
     @Test
-    fun praznoPolje_NePozivaResetClick() {
-        var callbackPozvan = false
+    fun handleForgotPasswordResponse_successPozivaNavigaciju() {
+        var navigacijaPozvana = false
+
+        val uiState = UiStateZL(
+            zaboravljenaLozinka = ZaboravljenaLozinkaResponse(
+                odgovor = "OK",
+                korisnicko_ime = "pera",
+                pitanje_lozinka = "kucni ljubimac",
+                odgovor_lozinka = "Dzeki",
+                tip = ""
+            )
+        )
 
         composeTestRule.setContent {
-            BlankSpaceTheme {
-                ZaboravljenaLozinka_mainCard(
-                    modifier = androidx.compose.ui.Modifier,
-                    onResetClick = { callbackPozvan = true }
-                )
-            }
+            HandleForgotPasswordResponse(
+                uiState = uiState, onSuccess = { navigacijaPozvana = true }
+            )
         }
-
-        composeTestRule.onNodeWithText("Postavi pitanje").performClick()
-        assert(!callbackPozvan)
+        composeTestRule.waitUntil(timeoutMillis = 2_000) { navigacijaPozvana }
+        assert(navigacijaPozvana)
     }
 
+    @Test
+    fun handleForgotPasswordResponse_pogresanUsername_neNavigira() {
+        var navigacijaPozvana = false
+
+        val uiState = UiStateZL(
+            zaboravljenaLozinka = ZaboravljenaLozinkaResponse(
+                odgovor = "Pogrešno korisničko ime",
+                korisnicko_ime = "pera",
+                pitanje_lozinka = "kucni ljubimac",
+                odgovor_lozinka = "Dzeki",
+                tip = ""
+            )
+        )
+
+        composeTestRule.setContent {
+            HandleForgotPasswordResponse(
+                uiState = uiState, onSuccess = { navigacijaPozvana = true }
+            )
+        }
+        composeTestRule.waitForIdle()
+        assert(!navigacijaPozvana)
+    }
+
+    @Test
+    fun zaboravljenaLozinkaTest_klikNButton() {
+        val context = composeTestRule.activity
+        val buttonText = context.getString(R.string.forgot_password_question_ask)
+
+        var backPozvan = false
+
+        composeTestRule.setContent {
+            ZaboravljenaLozinka_mainCard(
+                modifier = Modifier,
+                onResetClick = { backPozvan = true }
+            )
+        }
+
+        composeTestRule.onNodeWithText(context.getString(R.string.textField_username)
+        ).performTextInput("testUser")
+
+        composeTestRule.onNodeWithText(buttonText).performClick()
+        assert(backPozvan)
+    }
 }
-
- */

@@ -26,7 +26,7 @@ import com.example.blankspace.screens.pocetne.cards.BgCard2
 import com.example.blankspace.viewModels.PredloziViewModel
 import com.example.blankspace.viewModels.UiStatePredloziIzv
 import com.example.blankspace.ui.theme.*
-private val AccentPink = Color(0xFFEC8FB7)
+
 private val AccentGreen = Color(0xFF66BB6A)
 private val AccentRed = Color(0xFFEF5350)
 

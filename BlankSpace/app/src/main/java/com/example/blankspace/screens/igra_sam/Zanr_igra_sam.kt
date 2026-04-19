@@ -43,7 +43,7 @@ import com.example.blankspace.ui.theme.*
 private val LightBackground = Color(0xFFF7F7F7)
 
 @Composable
-fun Zanr_igra_sam(selectedNivo: String, onNavigateNext: (String, String) -> Unit) {
+fun Zanr_igra(selectedNivo: String, onNavigateNext: (String, String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         BgCard2()
         Zanr_mainCard(
