@@ -20,39 +20,38 @@ import androidx.navigation.NavController
 import com.example.blankspace.R
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.pocetne.cards.BgCard2
-import com.example.blankspace.viewModels.LoginViewModel
 import kotlinx.coroutines.delay
 import android.media.MediaPlayer
 import android.widget.Toast
-import com.example.blankspace.hasDownloadedData
-import com.example.blankspace.isInternetAvailable
 import com.example.blankspace.viewModels.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.graphicsLayer
+import com.example.blankspace.data.local.hasDownloadedData
+import com.example.blankspace.data.repository.isInternetAvailable
 import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.ui.theme.*
+import com.example.blankspace.viewModels.UiStateL
 
 @Composable
-fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController, loginViewModel: LoginViewModel, databaseViewModel: DatabaseViewModel) {
+fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController, uiStateLogin: UiStateL, databaseViewModel: DatabaseViewModel) {
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
 
         UcitavanjeEkrana_main(
             navController = navController,
-            loginViewModel = loginViewModel,
+            uiStateLogin = uiStateLogin,
             databaseViewModel = databaseViewModel,
         )
     }
 }
 
 @Composable
-fun UcitavanjeEkrana_main(navController: NavController, loginViewModel: LoginViewModel, databaseViewModel: DatabaseViewModel) {
+fun UcitavanjeEkrana_main(navController: NavController, uiStateLogin: UiStateL, databaseViewModel: DatabaseViewModel) {
     val context = LocalContext.current
     val isLoadingData = remember { mutableStateOf(true) }
-    val uiStateLogin by loginViewModel.uiState.collectAsState()
 
     val mediaPlayer = remember { MediaPlayer.create(context, R.raw.taylorswiftblankspace2) }
     val animationFinished = remember { mutableStateOf(false) }
