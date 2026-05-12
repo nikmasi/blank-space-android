@@ -1,13 +1,13 @@
 package com.example.blankspace.viewModels
 
 import app.cash.turbine.test
-import com.example.blankspace.data.retrofit.models.Zanr
+import com.example.blankspace.data.retrofit.data.Zanr
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import android.util.Log
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.ContentRepository
+import com.example.blankspace.data.repository.content.ContentRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.advanceUntilIdle

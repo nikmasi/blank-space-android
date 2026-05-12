@@ -3,10 +3,10 @@ package com.example.blankspace
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.blankspace.data.retrofit.models.NovaLozinkaResponse
+import com.example.blankspace.data.retrofit.data.NovaLozinkaResponse
 import com.example.blankspace.viewModels.UiStateNL
 import com.example.blankspace.viewModels.UiStateZL
-import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaResponse
+import com.example.blankspace.data.retrofit.data.ZaboravljenaLozinkaResponse
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.HandlePasswordChangeResponse
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue

@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.MyRoomRepository
-import com.example.blankspace.data.retrofit.models.IgraOfflineData
-import com.example.blankspace.data.retrofit.models.KrajIgreRequest
-import com.example.blankspace.data.retrofit.models.KrajIgreResponse
-import com.example.blankspace.data.room.ZanrEntity
+import com.example.blankspace.data.repository.room.MyRoomRepository
+import com.example.blankspace.data.retrofit.data.game.IgraOfflineData
+import com.example.blankspace.data.retrofit.data.game.KrajIgreRequest
+import com.example.blankspace.data.retrofit.data.game.KrajIgreResponse
+import com.example.blankspace.data.room.entity.ZanrEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

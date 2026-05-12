@@ -1,0 +1,114 @@
+package com.example.blankspace.ui.screens.sadrzaj
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.blankspace.R
+import com.example.blankspace.data.room.entity.*
+import com.example.blankspace.ui.screens.pocetne.cards.BgCard2
+import com.example.blankspace.viewModels.DatabaseViewModel
+import com.example.blankspace.viewModels.ZanrViewModel
+import com.example.blankspace.ui.theme.*
+
+@Composable
+fun SadrzajSoba() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        BgCard2()
+        SadrzajSoba_mainCard(modifier = Modifier.align(Alignment.Center))
+    }
+}
+
+@Composable
+fun SadrzajSoba_mainCard( modifier: Modifier) {
+    val viewModel: ZanrViewModel = hiltViewModel()
+    val databaseViewModel:DatabaseViewModel = hiltViewModel()
+    val uiState by databaseViewModel.allSobe.collectAsState(initial = emptyList())
+
+    LaunchedEffect(Unit) { viewModel.fetchCategories() }
+
+    Surface(
+        color = CardContainerColor,
+        modifier = modifier
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.7f)
+            .shadow(16.dp, RoundedCornerShape(24.dp)),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            SadrzajHeader(
+                text1 = stringResource(id = R.string.rooms_overview),
+                text2 = stringResource(id = R.string.list_of_all_rooms)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SobeListaStyled(uiState = uiState)
+        }
+    }
+}
+
+
+@Composable
+fun SobeListaStyled(uiState: List<SobaEntity>) {
+    when {
+        uiState.isEmpty() -> {
+            Text(
+                text = "Nema soba za prikaz ili greska.",
+                color = PrimaryDark.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+        else -> {
+            LazyColumn(
+                modifier = Modifier.fillMaxHeight(0.8f).padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(uiState) { item -> SadrzajSobaCard(item = item) }
+            }
+        }
+    }
+}
+
+@Composable
+fun SadrzajSobaCard(item: SobaEntity) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(4.dp, RoundedCornerShape(12.dp))
+            .background(color = LightBackground, shape = RoundedCornerShape(12.dp))
+            .border(width = 1.dp, color = PrimaryDark.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Text(
+            text = item.id.toString()+ " "+item.stihovi.toString(),
+            color = PrimaryDark,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+    }
+}

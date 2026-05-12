@@ -2,10 +2,10 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.IzvodjaciZanra
-import com.example.blankspace.data.retrofit.models.Zanr
-import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.IzvodjaciZanra
+import com.example.blankspace.data.retrofit.data.music.Zanr
+import com.example.blankspace.data.retrofit.data.music.ZanrNazivRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

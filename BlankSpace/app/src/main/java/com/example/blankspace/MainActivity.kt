@@ -18,28 +18,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.blankspace.navigation.adminGraph
-import com.example.blankspace.navigation.authGraph
-import com.example.blankspace.navigation.dodavanjeGraph
-import com.example.blankspace.navigation.duelGraph
-import com.example.blankspace.navigation.gameGraph
-import com.example.blankspace.navigation.offlineGraph
-import com.example.blankspace.navigation.pocetnaGraph
-import com.example.blankspace.navigation.predloziGraph
-import com.example.blankspace.navigation.profileGraph
-import com.example.blankspace.navigation.rememberCurrentRoute
-import com.example.blankspace.navigation.uklanjanjeGraph
-import com.example.blankspace.screens.Destinacije
-import com.example.blankspace.screens.pocetne.UcitavanjeEkrana
-import com.example.blankspace.screens.takmicenje.KorisnikPregled
+import com.example.blankspace.navigation.graphs.adminGraph
+import com.example.blankspace.navigation.graphs.authGraph
+import com.example.blankspace.navigation.graphs.dodavanjeGraph
+import com.example.blankspace.navigation.graphs.duelGraph
+import com.example.blankspace.navigation.graphs.gameGraph
+import com.example.blankspace.navigation.graphs.offlineGraph
+import com.example.blankspace.navigation.graphs.pocetnaGraph
+import com.example.blankspace.navigation.graphs.predloziGraph
+import com.example.blankspace.navigation.graphs.profileGraph
+import com.example.blankspace.navigation.utils.rememberCurrentRoute
+import com.example.blankspace.navigation.graphs.uklanjanjeGraph
+import com.example.blankspace.ui.screens.Destinacije
+import com.example.blankspace.ui.screens.pocetne.UcitavanjeEkrana
 import com.example.blankspace.ui.bars.BlankSpaceBottomBar
 import com.example.blankspace.ui.theme.BlankSpaceTheme
-import com.example.blankspace.viewModels.DatabaseViewModel
-import com.example.blankspace.viewModels.KorisniciViewModel
 import com.example.blankspace.viewModels.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,10 +53,10 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 fun BlankSpaceApp(){
+    // TODO: This ViewModel should ideally be scoped closer to the NavHost.
+    //  For now, it remains here due to navigation graph dependencies.
     val viewModelLogin: LoginViewModel = hiltViewModel()
-    val viewModelKorisnici: KorisniciViewModel = hiltViewModel()
 
-    val databaseViewModel: DatabaseViewModel = viewModel()
     val navController = rememberNavController()
     val currentRoute = rememberCurrentRoute(navController)
 
@@ -97,11 +93,7 @@ fun BlankSpaceApp(){
             uklanjanjeGraph(navController)
 
             composable(route = Destinacije.UcitavanjeEkrana.ruta){
-                UcitavanjeEkrana(Modifier,navController, uiStateLogin = uiStateLogin, databaseViewModel)
-            }
-
-            composable(route = Destinacije.KorisnikPregled.ruta){
-                KorisnikPregled(viewModelKorisnici,viewModelLogin)
+                UcitavanjeEkrana(Modifier,navController, uiStateLogin = uiStateLogin)
             }
         }
     }

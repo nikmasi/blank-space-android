@@ -2,8 +2,8 @@ package com.example.blankspace.viewModels
 
 import android.util.Log
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.GameRepository
-import com.example.blankspace.data.retrofit.models.*
+import com.example.blankspace.data.repository.game.GameRepository
+import com.example.blankspace.data.retrofit.data.*
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

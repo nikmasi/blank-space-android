@@ -1,9 +1,9 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.Izvodjac
-import com.example.blankspace.data.retrofit.models.Zanr
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.Izvodjac
+import com.example.blankspace.data.retrofit.data.Zanr
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

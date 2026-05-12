@@ -2,8 +2,8 @@ package com.example.blankspace.viewModels
 
 import android.content.Context
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.MyRoomRepository
-import com.example.blankspace.data.room.*
+import com.example.blankspace.data.repository.room.MyRoomRepository
+import com.example.blankspace.data.room.entity.ZanrEntity
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle

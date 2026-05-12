@@ -2,9 +2,9 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.MojProfilRequest
-import com.example.blankspace.data.retrofit.models.MojProfilResponse
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.user.MojProfilRequest
+import com.example.blankspace.data.retrofit.data.user.MojProfilResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +39,7 @@ class MojProfilViewModel @Inject constructor(
 }
 
 data class UiStateMP(
-    val mojprofil:MojProfilResponse?=null,
+    val mojprofil: MojProfilResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null
 )

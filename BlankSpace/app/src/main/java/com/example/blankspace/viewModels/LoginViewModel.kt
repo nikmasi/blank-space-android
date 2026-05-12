@@ -2,9 +2,9 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.AuthRepository
-import com.example.blankspace.data.retrofit.models.LoginRequest
-import com.example.blankspace.data.retrofit.models.LoginResponse
+import com.example.blankspace.data.repository.auth.AuthRepository
+import com.example.blankspace.data.retrofit.data.LoginRequest
+import com.example.blankspace.data.retrofit.data.LoginResponse
 import com.example.blankspace.data.storage.TokenManagerInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

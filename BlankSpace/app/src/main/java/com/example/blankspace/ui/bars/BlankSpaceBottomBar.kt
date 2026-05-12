@@ -11,10 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.blankspace.screens.listaBrucos
-import com.example.blankspace.screens.listaMaster
-import com.example.blankspace.screens.listaStudent
-
+import com.example.blankspace.ui.screens.listaBrucos
+import com.example.blankspace.ui.screens.listaMaster
+import com.example.blankspace.ui.screens.listaStudent
 
 @Composable
 fun BlankSpaceBottomBar(navController: NavController, currentRoute: String, userType: String) {

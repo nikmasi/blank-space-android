@@ -1,10 +1,10 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.IzvodjaciZanra
-import com.example.blankspace.data.retrofit.models.Zanr
-import com.example.blankspace.data.retrofit.models.ZanrNazivRequest
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.IzvodjaciZanra
+import com.example.blankspace.data.retrofit.data.Zanr
+import com.example.blankspace.data.retrofit.data.ZanrNazivRequest
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

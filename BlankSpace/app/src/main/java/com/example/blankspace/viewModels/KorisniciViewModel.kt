@@ -3,10 +3,10 @@ package com.example.blankspace.viewModels
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.AdminRepository
-import com.example.blankspace.data.retrofit.models.KorisniciResponse
-import com.example.blankspace.data.retrofit.models.KorisnikPregledRequest
-import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
+import com.example.blankspace.data.repository.admin.AdminRepository
+import com.example.blankspace.data.retrofit.data.user.KorisniciResponse
+import com.example.blankspace.data.retrofit.data.user.KorisnikPregledRequest
+import com.example.blankspace.data.retrofit.data.user.KorisnikPregledResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

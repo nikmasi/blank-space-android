@@ -2,12 +2,12 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.SuggestionRepository
-import com.example.blankspace.data.retrofit.models.DodajZanrResponse
-import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaOdbijRequest
-import com.example.blankspace.data.retrofit.models.PredloziIzvodjacaResponse
-import com.example.blankspace.data.retrofit.models.PredloziPesamaOdbijRequest
-import com.example.blankspace.data.retrofit.models.PredloziPesamaResponse
+import com.example.blankspace.data.repository.suggestion.SuggestionRepository
+import com.example.blankspace.data.retrofit.data.DodajZanrResponse
+import com.example.blankspace.data.retrofit.data.PredloziIzvodjacaOdbijRequest
+import com.example.blankspace.data.retrofit.data.PredloziIzvodjacaResponse
+import com.example.blankspace.data.retrofit.data.PredloziPesamaOdbijRequest
+import com.example.blankspace.data.retrofit.data.PredloziPesamaResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

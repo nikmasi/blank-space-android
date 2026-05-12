@@ -5,14 +5,14 @@ import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.GameRepository
-import com.example.blankspace.data.retrofit.BASE_URL
-import com.example.blankspace.data.retrofit.models.AudioRequest
-import com.example.blankspace.data.retrofit.models.IgraSamRequest
-import com.example.blankspace.data.retrofit.models.IgraSamResponse
-import com.example.blankspace.data.retrofit.models.KrajIgreRequest
-import com.example.blankspace.data.retrofit.models.KrajIgreResponse
-import com.example.blankspace.screens.ShakeDetector
+import com.example.blankspace.data.repository.game.GameRepository
+import com.example.blankspace.data.retrofit.api.BASE_URL
+import com.example.blankspace.data.retrofit.data.audio.AudioRequest
+import com.example.blankspace.data.retrofit.data.game.IgraSamRequest
+import com.example.blankspace.data.retrofit.data.game.IgraSamResponse
+import com.example.blankspace.data.retrofit.data.game.KrajIgreRequest
+import com.example.blankspace.data.retrofit.data.game.KrajIgreResponse
+import com.example.blankspace.ui.screens.ShakeDetector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -166,7 +166,7 @@ class IgraSamViewModel @Inject constructor(
 }
 
 data class UiStateI(
-    val igrasam:IgraSamResponse?=null,
+    val igrasam: IgraSamResponse?=null,
     val isRefreshing: Boolean = false,
     val error: String? = null
 )

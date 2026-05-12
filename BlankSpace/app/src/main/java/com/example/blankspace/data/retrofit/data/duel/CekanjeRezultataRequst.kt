@@ -1,0 +1,8 @@
+package com.example.blankspace.data.retrofit.data.duel
+
+data class CekanjeRezultataRequst(
+    val rundaPoeni: List<Int>,
+    val poeni: Int,
+    val soba:Int,
+    val redniBroj: Int
+)

@@ -3,7 +3,7 @@ package com.example.blankspace.viewModels
 import android.content.Context
 import android.content.SharedPreferences
 import app.cash.turbine.test
-import com.example.blankspace.data.retrofit.models.RegistracijaResponse
+import com.example.blankspace.data.retrofit.data.RegistracijaResponse
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -14,7 +14,7 @@ import org.junit.Test
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.AuthRepository
+import com.example.blankspace.data.repository.auth.AuthRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RegistracijaViewModelTest {

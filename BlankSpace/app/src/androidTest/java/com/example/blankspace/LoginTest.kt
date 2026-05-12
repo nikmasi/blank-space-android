@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.createGraph
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.blankspace.data.retrofit.models.LoginResponse
+import com.example.blankspace.data.retrofit.data.LoginResponse
 import com.example.blankspace.screens.Destinacije
 import com.example.blankspace.screens.autorizacija.login.LoginContent
 import com.example.blankspace.viewModels.UiStateL

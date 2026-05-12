@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.blankspace.data.retrofit.models.ZaboravljenaLozinkaPitanjeResponse
+import com.example.blankspace.data.retrofit.data.ZaboravljenaLozinkaPitanjeResponse
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.HandlePasswordQuestionResponse
 import com.example.blankspace.screens.autorizacija.zaboravljena_lozinka.ZaboravljenaLozinkaPitanje_mainCard
 import com.example.blankspace.viewModels.UiStateZLP

@@ -2,8 +2,8 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.RangListaResponse
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.RangListaResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

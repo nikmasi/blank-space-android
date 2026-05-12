@@ -1,12 +1,12 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.AdminRepository
-import com.example.blankspace.data.retrofit.models.KorisniciResponse
-import com.example.blankspace.data.retrofit.models.KorisnikPregledResponse
-import com.example.blankspace.data.retrofit.models.Mecevi
-import com.example.blankspace.data.retrofit.models.PesmeMeceva
-import com.example.blankspace.data.retrofit.models.Protivnik
+import com.example.blankspace.data.repository.admin.AdminRepository
+import com.example.blankspace.data.retrofit.data.KorisniciResponse
+import com.example.blankspace.data.retrofit.data.KorisnikPregledResponse
+import com.example.blankspace.data.retrofit.data.Mecevi
+import com.example.blankspace.data.retrofit.data.PesmeMeceva
+import com.example.blankspace.data.retrofit.data.Protivnik
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

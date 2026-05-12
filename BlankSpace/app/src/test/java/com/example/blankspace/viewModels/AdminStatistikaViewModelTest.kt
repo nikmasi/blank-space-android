@@ -1,9 +1,9 @@
 package com.example.blankspace.viewModels
 
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.AdminRepository
-import com.example.blankspace.data.retrofit.models.PesmePoIzvodjacimaResponse
-import com.example.blankspace.data.retrofit.models.StatistikaResponse
+import com.example.blankspace.data.repository.admin.AdminRepository
+import com.example.blankspace.data.retrofit.data.PesmePoIzvodjacimaResponse
+import com.example.blankspace.data.retrofit.data.StatistikaResponse
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk

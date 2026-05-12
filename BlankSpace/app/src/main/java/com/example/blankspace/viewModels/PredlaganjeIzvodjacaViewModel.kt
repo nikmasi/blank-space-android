@@ -2,13 +2,13 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.SuggestionRepository
-import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaRequset
-import com.example.blankspace.data.retrofit.models.PredlaganjeIzvodjacaResponse
-import com.example.blankspace.data.retrofit.models.PredlaganjePretraziRequest
-import com.example.blankspace.data.retrofit.models.PredlaganjePretraziResponse
-import com.example.blankspace.data.retrofit.models.WebScrapperRequest
-import com.example.blankspace.data.retrofit.models.WebScrapperResponse
+import com.example.blankspace.data.repository.suggestion.SuggestionRepository
+import com.example.blankspace.data.retrofit.data.PredlaganjeIzvodjacaRequset
+import com.example.blankspace.data.retrofit.data.PredlaganjeIzvodjacaResponse
+import com.example.blankspace.data.retrofit.data.PredlaganjePretraziRequest
+import com.example.blankspace.data.retrofit.data.PredlaganjePretraziResponse
+import com.example.blankspace.data.retrofit.data.scraper.WebScrapperRequest
+import com.example.blankspace.data.retrofit.data.scraper.WebScrapperResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,7 +56,7 @@ class PredlaganjeIzvodjacaViewModel @Inject constructor(
     fun fetchPretragaPredlaganje(korisnicko_ime: String, ime:String, reci:String) = viewModelScope.launch {
         _uiStateWebScrapper.value = _uiStateWebScrapper.value.copy(isRefreshing = true)
         try {
-            val request = WebScrapperRequest(reci=reci)
+            val request = WebScrapperRequest(reci = reci)
             //val response = repository.predlaganje_izvodjaca(request)
             val response = suggestionRepository.web_scrapper(request)
             _uiStateWebScrapper.value = UiStateWebScrapper(pesme =response, isRefreshing = false, error =null)

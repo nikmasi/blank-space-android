@@ -44,6 +44,8 @@ Blank Space is an Android mobile game where users guess and complete missing lyr
 - Hilt (Dependency Injection)
 - JUnit 4, MockK & Turbine (Unit Testing)
 - EncryptedSharedPreferences (secure JWT token storage)
+Note: EncryptedSharedPreferences is now deprecated.
+The project should be migrated to a more modern secure storage solution such as: DataStore with encryption support
 - MediaPlayer (audio playback)
 - Android SpeechRecognizer API (voice input)
 - Android Sensor API: (Accelerometer) for motion-based event triggering.

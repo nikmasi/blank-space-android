@@ -2,8 +2,8 @@ package com.example.blankspace.viewModels
 
 import app.cash.turbine.test
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.ContentRepository
-import com.example.blankspace.data.retrofit.models.MojProfilResponse
+import com.example.blankspace.data.repository.content.ContentRepository
+import com.example.blankspace.data.retrofit.data.MojProfilResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

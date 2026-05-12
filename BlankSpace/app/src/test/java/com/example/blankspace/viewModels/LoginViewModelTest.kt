@@ -12,7 +12,7 @@ import org.junit.Test
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.blankspace.MainDispatcherRule
-import com.example.blankspace.data.AuthRepository
+import com.example.blankspace.data.repository.auth.AuthRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {

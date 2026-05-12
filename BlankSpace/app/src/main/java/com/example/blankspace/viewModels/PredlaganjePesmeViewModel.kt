@@ -2,9 +2,9 @@ package com.example.blankspace.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.blankspace.data.SuggestionRepository
-import com.example.blankspace.data.retrofit.models.PredlaganjePesmeRequset
-import com.example.blankspace.data.retrofit.models.PredlaganjePesmeResponse
+import com.example.blankspace.data.repository.suggestion.SuggestionRepository
+import com.example.blankspace.data.retrofit.data.PredlaganjePesmeRequset
+import com.example.blankspace.data.retrofit.data.PredlaganjePesmeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -4,8 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.blankspace.data.room.entity.*
 import kotlinx.coroutines.flow.Flow
 
+// TODO: This interface should be split into multiple smaller interfaces
+//  (e.g. SobaDao, ZanrDao, etc.) to follow SOLID principles.
 @Dao
 interface RoomDao {
     @Query("SELECT * FROM soba")

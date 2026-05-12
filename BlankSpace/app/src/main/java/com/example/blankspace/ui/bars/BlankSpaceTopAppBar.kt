@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.blankspace.screens.Destinacije
+import com.example.blankspace.ui.screens.Destinacije
 import com.example.blankspace.ui.theme.TEXT_COLOR
 import com.example.blankspace.viewModels.LoginViewModel
 
