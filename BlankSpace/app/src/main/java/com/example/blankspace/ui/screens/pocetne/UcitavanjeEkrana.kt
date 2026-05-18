@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.blankspace.data.local.hasDownloadedData
 import com.example.blankspace.data.utils.isInternetAvailable
+import com.example.blankspace.data.worker.WorkScheduler
 import com.example.blankspace.ui.modifiers.mainCardStyle
 import com.example.blankspace.ui.theme.*
 import com.example.blankspace.viewModels.UiStateL
@@ -69,15 +70,11 @@ fun UcitavanjeEkrana_main(navController: NavController, uiStateLogin: UiStateL, 
         isLoadingData.value = false
 
         if (isInternetAvailable(context)) {
-            if (!hasDownloadedData(context)) {
-                withContext(Dispatchers.IO) {
-                    databaseViewModel.loadZanrovi()
-                    databaseViewModel.loadIzvodjaci()
-                    databaseViewModel.loadPesme()
-                    databaseViewModel.loadStihovi()
-                    context.getSharedPreferences("app_prefs", 0).edit().putBoolean("has_downloaded_data", true).apply()
-                }
-            }
+          //  if (!hasDownloadedData(context)) {
+                //WorkScheduler.startOneTimeSync(context)
+            //    Log.d("AppInit", "Error sync data to work manager")
+            //}
+            WorkScheduler.startOneTimeSync(context)
             withContext(Dispatchers.Main) {
                 if (uiStateLogin.login?.access != null) {
                     when (uiStateLogin.login?.tip) {

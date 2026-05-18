@@ -108,6 +108,11 @@ dependencies {
     testImplementation("app.cash.turbine:turbine:1.0.0")
     testImplementation("org.robolectric:robolectric:4.11.1")
 
+    //work manager
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
+
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {

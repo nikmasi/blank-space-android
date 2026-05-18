@@ -1,6 +1,7 @@
 package com.example.blankspace.data.repository.room
 
 import android.util.Log
+import androidx.work.PeriodicWorkRequest
 import com.example.blankspace.data.retrofit.api.Api
 import com.example.blankspace.data.retrofit.data.music.Izvodjac
 import com.example.blankspace.data.retrofit.data.music.Pesma
@@ -15,7 +16,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private val api: Api) {
+class MyRoomRepository @Inject constructor(
+    private val roomDao: RoomDao, private val api: Api
+) {
 
     val allZanrovi = roomDao.getZanrovi()
     val allIzvodjaci = roomDao.getIzvodjaci()
@@ -34,12 +37,10 @@ class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private
     }
 
     suspend fun fetchZanroviFromApi() {
-        try {
-            val response = api.getZanrovi()
-            val entities = response.toEntityList()
-            roomDao.deleteAll()
-            roomDao.insertAll(entities)
-        } catch (e: Exception) { }
+        val response = api.getZanrovi()
+        val entities = response.toEntityList()
+        roomDao.deleteAll()
+        roomDao.insertAll(entities)
     }
 
     fun Izvodjac.toIzvodjacEntity(): IzvodjacEntity {
@@ -114,6 +115,13 @@ class MyRoomRepository @Inject constructor(private val roomDao: RoomDao, private
 
     suspend fun getStihoviPoTeziniIZanrovima(tezina: String,zanrovi:List<Int>):List<StihoviEntity>{
         return roomDao.getStihoviPoTeziniIZanrovima(tezina,zanrovi)
+    }
+
+    suspend fun syncAllData() {
+        fetchZanroviFromApi()
+        fetchIzvodjaciFromApi()
+        fetchPesmaFromApi()
+        fetchStihoviFromApi()
     }
 
 }

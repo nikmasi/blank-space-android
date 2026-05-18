@@ -2,19 +2,9 @@ package com.example.blankspace.hilt
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.hardware.SensorManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import com.example.blankspace.data.repository.admin.AdminRepository
-import com.example.blankspace.data.repository.admin.AdminRepositoryImpl
-import com.example.blankspace.data.repository.auth.AuthRepository
-import com.example.blankspace.data.repository.auth.AuthRepositoryImpl
-import com.example.blankspace.data.repository.content.ContentRepository
-import com.example.blankspace.data.repository.content.ContentRepositoryImpl
-import com.example.blankspace.data.repository.game.GameRepository
-import com.example.blankspace.data.repository.game.GameRepositoryImpl
-import com.example.blankspace.data.repository.suggestion.SuggestionRepository
-import com.example.blankspace.data.repository.suggestion.SuggestionRepositoryImpl
+import androidx.work.WorkManager
 import com.example.blankspace.data.retrofit.api.AdminApi
 import com.example.blankspace.data.retrofit.api.Api
 import com.example.blankspace.data.retrofit.api.AuthApi
@@ -22,9 +12,6 @@ import com.example.blankspace.data.retrofit.api.BASE_URL
 import com.example.blankspace.data.retrofit.api.ContentApi
 import com.example.blankspace.data.retrofit.api.GameApi
 import com.example.blankspace.data.retrofit.api.SuggestionApi
-import com.example.blankspace.data.storage.TokenManager
-import com.example.blankspace.data.storage.TokenManagerInterface
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,7 +43,6 @@ object Module {
 
         val authInterceptor = Interceptor { chain ->
             val request = chain.request()
-            // Logika: Ako je login poziv, dodaj token (ili obrnuto zavisno od tvog API-ja)
             if (request.url.toString().contains("login")) {
                 val token = getTokenFromSharedPrefs(context)
                 val newRequest = request.newBuilder().apply {
@@ -122,70 +108,16 @@ object Module {
         val sharedPreferences = EncryptedSharedPreferences.create(
             "auth_prefs",
             MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-            context, // Koristimo injectovani Context
+            context,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
         return sharedPreferences.getString("access_token", null)
     }
 
-
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-
     @Provides
     @Singleton
-    fun provideApplicationContext(@ApplicationContext context: Context): Context {
-        return context
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager{
+        return WorkManager.getInstance(context)
     }
-
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindAuthRepository(
-        authRepositoryImpl: AuthRepositoryImpl
-    ): AuthRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindGameRepository(impl: GameRepositoryImpl): GameRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindAdminRepository(impl: AdminRepositoryImpl): AdminRepository
-
-
-    @Binds
-    @Singleton
-    abstract fun bindContentRepository(impl: ContentRepositoryImpl): ContentRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindSuggestionRepository(impl: SuggestionRepositoryImpl): SuggestionRepository
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class TokenModule {
-
-    @Binds
-    abstract fun bindTokenManager(impl: TokenManager): TokenManagerInterface
-}
-
-
-@Module
-@InstallIn(SingletonComponent::class)
-object SensorModule {
-    @Provides
-    @Singleton
-    fun provideSensorManager(@ApplicationContext context: Context): SensorManager =
-        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 }

@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.blankspace.data.worker.WorkScheduler
 import com.example.blankspace.navigation.graphs.adminGraph
 import com.example.blankspace.navigation.graphs.authGraph
 import com.example.blankspace.navigation.graphs.dodavanjeGraph
@@ -43,6 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WorkScheduler.startPeriodicSync(this)
         enableEdgeToEdge()
         setContent {
             BlankSpaceTheme {
@@ -70,6 +72,7 @@ fun BlankSpaceApp(){
         val window = (view.context as Activity).window
         SideEffect { window.navigationBarColor = bottomBarColor.toArgb() }
     }
+
 
     Scaffold(bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->

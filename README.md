@@ -49,6 +49,7 @@ The project should be migrated to a more modern secure storage solution such as:
 - MediaPlayer (audio playback)
 - Android SpeechRecognizer API (voice input)
 - Android Sensor API: (Accelerometer) for motion-based event triggering.
+- Work Manager
 
 ### Backend
 - Django (Python)
