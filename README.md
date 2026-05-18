@@ -73,6 +73,10 @@ The project should be migrated to a more modern secure storage solution such as:
 - Game data and songs cached locally using Room
 - Offline mode allows users to play without an internet connection
 
+Background Data Synchronization:
+- Implemented using WorkManager
+- Periodic sync (12 hours interval) for keeping local Room database updated
+
 ---
 
 ## Voice & Audio Integration

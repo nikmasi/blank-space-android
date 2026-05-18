@@ -23,13 +23,11 @@ import com.example.blankspace.ui.screens.pocetne.cards.BgCard2
 import kotlinx.coroutines.delay
 import android.media.MediaPlayer
 import android.widget.Toast
-import com.example.blankspace.viewModels.DatabaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.blankspace.data.local.hasDownloadedData
 import com.example.blankspace.data.utils.isInternetAvailable
 import com.example.blankspace.data.worker.WorkScheduler
@@ -41,17 +39,15 @@ import com.example.blankspace.viewModels.UiStateL
 fun UcitavanjeEkrana(modifier: Modifier = Modifier, navController: NavController, uiStateLogin: UiStateL) {
     Box(modifier = modifier.fillMaxSize()) {
         BgCard2()
-        val databaseViewModel: DatabaseViewModel = hiltViewModel()
         UcitavanjeEkrana_main(
             navController = navController,
             uiStateLogin = uiStateLogin,
-            databaseViewModel = databaseViewModel,
         )
     }
 }
 
 @Composable
-fun UcitavanjeEkrana_main(navController: NavController, uiStateLogin: UiStateL, databaseViewModel: DatabaseViewModel) {
+fun UcitavanjeEkrana_main(navController: NavController, uiStateLogin: UiStateL) {
     val context = LocalContext.current
     val isLoadingData = remember { mutableStateOf(true) }
 
@@ -70,10 +66,6 @@ fun UcitavanjeEkrana_main(navController: NavController, uiStateLogin: UiStateL, 
         isLoadingData.value = false
 
         if (isInternetAvailable(context)) {
-          //  if (!hasDownloadedData(context)) {
-                //WorkScheduler.startOneTimeSync(context)
-            //    Log.d("AppInit", "Error sync data to work manager")
-            //}
             WorkScheduler.startOneTimeSync(context)
             withContext(Dispatchers.Main) {
                 if (uiStateLogin.login?.access != null) {

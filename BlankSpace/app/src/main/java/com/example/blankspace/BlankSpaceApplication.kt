@@ -9,7 +9,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class BlankSpaceApplication : Application(){
-
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 

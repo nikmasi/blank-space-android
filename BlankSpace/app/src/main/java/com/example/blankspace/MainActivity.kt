@@ -73,7 +73,6 @@ fun BlankSpaceApp(){
         SideEffect { window.navigationBarColor = bottomBarColor.toArgb() }
     }
 
-
     Scaffold(bottomBar = { BlankSpaceBottomBar(navController,currentRoute,userType) }
     ) { innerPadding ->
         val padding = innerPadding
