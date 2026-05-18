@@ -118,6 +118,13 @@ The project includes a comprehensive unit testing suite for the ViewModel layer 
 
 ---
 
+## Related Repositories
+
+Team Web Application: https://github.com/andreeyax/Blank-space
+
+---
+
+
 ## Screenshots
 
 <p align="center">
